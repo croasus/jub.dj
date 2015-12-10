@@ -1,8 +1,11 @@
 ul(id="queue-navtabs", class="nav nav-tabs")
   li(id="queue-navtab-li", role="presentation")
     a(id="queue-navtab-a", href="#queue-tab", data-toggle='tab') Queue
+  li(id="playlists-navtab-li", role="presentation")
+    a(id="playlists-navtab-a", href="#playlists-tab", data-toggle='tab') Playlists
   li(id="settings-navtab-li", role="presentation", class="active")
     a(id="settings-navtab-a", href="#settings-tab", data-toggle='tab') Settings
+
 div(id="queue-tab-content", class="tab-content")
   div(class="tab-pane" id="queue-tab")
     div(class='panel panel-default', id='queue-panel')
@@ -35,21 +38,62 @@ div(id="queue-tab-content", class="tab-content")
                   span(id='send-to-top-icon', class='glyphicon glyphicon-chevron-up')
 
       div(class='panel-body')
-        div(id='video-queue', class='jub-list')
+        div(id='video-queue')
+          table
+            tbody(id='video-queue-tbody')
+
+  div(class="tab-pane" id="playlists-tab")
+    div(class='panel panel-default', id='playlists-panel')
+      form(class='form-inline', id='playlist-form', action='')
+        table(class='table', id='playlists-banner')
+          tbody
+            tr
+              th
+                button(class='btn btn-default left', type='button', id='copy-playlist',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Copy playlist')
+                  span(id='cp-pl-icon', class='glyphicon glyphicon-copy')
+                button(class='btn btn-default left', type='button', id='delete-playlist',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Delete playlist')
+                  span(id='delete-playlist-icon', class='glyphicon glyphicon-remove')
+
+              th
+                input(class='form-control right', id='playlist-name-input',
+                      autocomplete='off', placeholder='Rename selected playlist')
+
+      div(class='panel-body')
+        div(id='playlists', class='jub-list')
 
   div(class="tab-pane active" id="settings-tab")
     div(class='panel panel-default', id='settings-panel')
       div(class='panel-body')
         input(id='requeue-videos', type='checkbox')
-        label(for='requeue-videos') Requeue videos when they finish
+        // TODO update programmatically
+        label(id='requeue-label', for='requeue-videos') Requeue "Free Play!" videos when they finish
 
 script.
 
+  var reserved_pl_label = 'Free Play!';
   var my_queue = [];
+  var my_playlists = [];
+  var prefs_selected_playlist = null;
+
+  function selected_playlist_name() {
+    var label = $('#playlists li input[name=playlist-radios]:checked').prop('value');
+    return label == reserved_pl_label ? 'sandbox' : label;
+  }
+
+  function selected_playlist() {
+    var name = selected_playlist_name();
+    if (name) {
+      return _.find(my_playlists, function(pl) { return pl.name == name });
+    }
+  }
 
   function update_queue_buttons() {
     var dur = 100;
-    if ($('#video-queue li input:checkbox:checked').length > 0) {
+    if ($('#video-queue-tbody tr td input:checkbox:checked').length > 0) {
       $('#delete-track').fadeIn(dur);
       $('#send-to-top').fadeIn(dur);
       $('#send-to-bottom').fadeIn(dur);
@@ -61,7 +105,7 @@ script.
   }
 
   function update_select_all() {
-    if ($('#video-queue li input:checkbox').length > 0) {
+    if ($('#video-queue-tbody tr td input:checkbox').length > 0) {
       $('#select-all').css('visibility', 'visible');
       $("label[for='select-all']").show();
     } else {
@@ -69,15 +113,17 @@ script.
       $("label[for='select-all']").hide();
     }
     $('#select-all').prop('checked', false);
-    $('#select-all-label').text('Select all (' + my_queue.length + ')');
+    if (selected_playlist()) {
+      $('#select-all-label').text('Select all (' + selected_playlist().videos.length + ')');
+    }
   }
 
   function selected_tracks() {
     var indices = [];
-    var boxes = $('#video-queue li input:checkbox');
+    var boxes = $('#video-queue-tbody tr td input:checkbox');
     boxes.each(function(i,v) {
       if (v.checked) {
-        indices.push(boxes.length - i - 1);
+        indices.push(i);
       }
     });
     return indices;
@@ -86,7 +132,7 @@ script.
   // shift + click http://4pcbr.com/topic/grouped_checkboxes_select_with_shift__click
   function setup_shift_click() {
     var _last_selected = null;
-    var checkboxes = $( "#video-queue li input:checkbox" );
+    var checkboxes = $( "#video-queue-tbody tr td input:checkbox" );
 
     checkboxes.click( function( e ) {
       var ix = checkboxes.index( this );
@@ -96,24 +142,58 @@ script.
          .each( function() { this.checked = checked });
         _last_selected = null;
       } else { _last_selected = ix }
-    })
+    });
   }
 
   $('#queue-navtabs a').click(function (e) {
     $(this).tab('show');
-    $('#video-queue').trigger('redraw_items');
+    if (e.currentTarget.id == 'queue-navtab-a') {
+      $('#video-queue').trigger('redraw');
+    }
   })
 
   $('#requeue-videos').click(function (e) {
     var data = { requeueVideos: this.checked };
-    socket.emit('user update preferences', get_username(), data);
+    socket.emit('update user preferences', get_username(), data);
   });
 
-  function new_queue_li(video_obj, title_width) {
-    var li = $('<li>').addClass('queue-item');
-    var title_span = $('<span>').addClass('track');
-    var time_span = $('<span>').addClass('duration');
+  // TODO include the number of videos and the duration
+  function new_playlist_li(playlist_name) {
+    var li = $('<li>').addClass('playlist-item');
+    var name_span = $('<span>').addClass('playlist-name');
+    var shown_name = (playlist_name == 'sandbox') ? reserved_pl_label : playlist_name;
+    name_span.append(document.createTextNode(shown_name));
+    var radio = $('<input>').addClass('playlist-radio');
+    radio.attr({
+      type: 'radio',
+      name: 'playlist-radios',
+      value: playlist_name
+    });
+    radio.click( function( e ) {
+      var data = { selectedPlaylist: this.value };
+      socket.emit('update user preferences', get_username(), data);
+    });
+    li.append(radio);
+    li.append(name_span);
+    return li;
+  }
+
+  function new_queue_item(video_obj) {
+    var tr = $('<tr>').addClass('queue-item');
+    tr.css({
+      'overflow': 'visible',
+      'white-space': 'nowrap',
+    });
+    var title_td = $('<td>').addClass('track');
+    title_td.css({
+      'overflow': 'hidden',
+      'text-overflow': 'ellipsis',
+      'white-space': 'nowrap',
+    });
+    var time_td = $('<td>').addClass('duration');
+    var chk_td = $('<td>').addClass('chk-td');
     var chk = $('<input>').attr('type', 'checkbox').addClass('queue-chk')
+    chk_td.append(chk)
 
     // Set initial checkbox state.
     chk.val($(this).is(':checked'));
@@ -121,105 +201,154 @@ script.
     // The 'delete' and 'send to top' buttons only appear if a track is selected
     chk.change(update_queue_buttons);
 
-    li.append(chk)
-    li.append(title_span);
-    li.append(time_span);
+    tr.append(chk_td)
+    tr.append(title_td);
+    tr.append(time_td);
 
     var tformat = (video.duration / 1000) >= 3600 ? '%k:%M:%S' : '%M:%S';
     time = new Date(1970, 1, 1); // Unix epoch
     time.setSeconds(video.duration / 1000);
-    time_span.text('(' + strftime(tformat, time).trim() + ')');
+    time_td.text('(' + strftime(tformat, time).trim() + ')');
 
-    title_span.text(video.title);
+    title_td.text(video.title);
 
-    title_span.truncate({
-        width: title_width,
-        token: '...',
-        side: 'right',
-        multiline: false
-    });
-
-    return li;
+    return tr;
   }
 
-  // Redraw queue, taking into account the current width of the list
-  $('#video-queue').bind('redraw_items',function() {
-    // 84 = 55 + 13 + 4 + 4 + 5 + 3
-    // = duration width + checkbox width + checkbox padding + title margin-right + padding.
-    // Can't read this from the page because the elements aren't on the
-    // DOM yet. Need to compute this and truncate after everything is drawn.
-    // TODO ^ use _.defer?
-    // That will also solve #87.
-    var pad = 84;
-    var title_width = $(this).width() - pad;
+  // Redraw queue
+  $('#video-queue').bind('redraw',function() {
+    console.log('redrawing queue');
+    $("#video-queue-tbody tr").remove();
+    var pl = selected_playlist() || {};
 
-    // if scrolling, add some more padding
-    if (this.scrollHeight > $(this).height()) {
-      title_width -= scrollbar_width(); // TODO seems to need a bit more
-    }
-
-    $(this).empty();
-    for (video of my_queue) {
-      var item = new_queue_li(video, title_width);
-      $(this).prepend(item);
+    var videos = pl['videos'];
+    videos = _.sortBy(videos, 'position').reverse();
+    for (video of videos) {
+      var item = new_queue_item(video);
+      $("#video-queue-tbody").prepend(item);
     }
 
     update_select_all();
-
     setup_shift_click();
   });
 
-  function update_queue(queue) {
-    if (queue) {
-      my_queue = queue;
-      $('#video-queue').trigger('redraw_items');
+  // Redraw playlists
+  $('#playlists').bind('redraw',function() {
+    console.log('redrawing playlists');
+    $(this).empty();
+    _.chain(my_playlists)
+      .partition(function(p) { return p.name == 'sandbox'; })
+      .map(function(grp) { return _.sortBy(grp, 'name'); })
+      .flatten()
+      .each(function(p) { $(this).append(new_playlist_li(p.name)); }, this)
+      .value();
+
+    var selected;
+    var playlists = $('#playlists li input');
+    if (prefs_selected_playlist) {
+      selected = $(playlists).filter(function() {
+        return this.value == prefs_selected_playlist
+      });
     }
-    update_select_all();
-    update_queue_buttons();
+    selected = selected || playlists[0];
+    $(selected).prop('checked', true)
+  });
+
+  // playlists is an object keyed by playlist name
+  function update_playlists(playlists) {
+    if (playlists) {
+      console.log('updating playlists', _.cloneDeep(playlists));
+      my_playlists = _.cloneDeep(playlists);
+      $('#playlists').trigger('redraw');
+      $('#video-queue').trigger('redraw');
+      update_select_all();
+      update_queue_buttons();
+    }
   };
 
-  // Server tells us the contents of the queue
-  socket.on('queue', function(queue) {
-    update_queue(queue)
+  socket.on('preferences', function(preferences) {
+    console.log('received prefs', preferences);
+    if (_.has(preferences, 'selectedPlaylist')) {
+      prefs_selected_playlist = preferences.selectedPlaylist;
+      $('#playlists').trigger('redraw');
+    }
+    if (_.has(preferences, 'requeueVideos')) {
+      $('#requeue-videos').prop('checked', !!(preferences.requeueVideos));
+    }
   });
+
+  // Server tells us our list of playlists, and our selected playlist
+  socket.on('playlists', function(playlists, prefs_selected) {
+    if (prefs_selected) { prefs_selected_playlist = prefs_selected; };
+    update_playlists(playlists);
+  });
+
+  // Rename a playlist
+  $('#playlist-form').submit(function() {
+    var selected_name = selected_playlist_name();
+    var new_name = $('#playlist-name-input').val();
+    var user = get_username();
+
+    if (user == '') {
+      alert('You must be logged in to edit playlists.')
+    } else {
+      if (selected_name.length > 0 && selected_name != 'sandbox') {
+        console.log('renaming playlist', new_name);
+        socket.emit('rename playlist', user, selected_name, new_name);
+        $('#playlist-name-input').val('');
+      }
+    }
+    return false;
+  });
+
 
   // Select all
   $('#select-all').on('click', function(e) {
     var that = this;
-    $( "#video-queue li input:checkbox" )
+    $( "#video-queue-tbody tr td input:checkbox" )
       .each( function() { this.checked = that.checked });
     update_queue_buttons();
   });
 
   // Shuffle
   $('#shuffle').on('click', function(e) {
-    socket.emit('shuffle', get_username(), update_queue);
+    socket.emit('shuffle', get_username(), selected_playlist_name());
     return false;
   });
 
   // Delete track(s)
   $('#delete-track').on('click', function(e) {
-    socket.emit('delete tracks', get_username(), selected_tracks(), update_queue);
+    socket.emit('delete tracks', get_username(), selected_playlist_name(),
+                selected_tracks());
     return false;
   });
 
   // Send track(s) to top
   $('#send-to-top').on('click', function(e) {
-    socket.emit('send to top', get_username(), selected_tracks(), update_queue);
+    socket.emit('send to top', get_username(), selected_playlist_name(), selected_tracks());
     return false;
   });
 
   // Send track(s) to bottom
   $('#send-to-bottom').on('click', function(e) {
-    socket.emit('send to bottom', get_username(), selected_tracks(), update_queue);
+    socket.emit('send to bottom', get_username(), selected_playlist_name(), selected_tracks());
     return false;
   });
 
+  // Copy playlist
+  $('#copy-playlist').on('click', function(e) {
+    socket.emit('copy playlist', get_username(), selected_playlist_name());
+  });
+
+  // Delete playlist
+  $('#delete-playlist').on('click', function(e) {
+    if (selected_playlist_name() != 'sandbox') {
+      socket.emit('delete playlist', get_username(), selected_playlist_name());
+    }
+  });
+
   $( document ).ready(function() {
-    // Document is loaded so we can populate our video queue.
-    console.log('requesting queue state', get_username());
-    socket.emit('queue', get_username());
+    // Document is loaded so click the correct initially-active tab
     $('#queue-navtab-a').click();
     update_queue_buttons();
   });
-

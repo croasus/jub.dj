@@ -24,10 +24,11 @@ function refresh_sizes(player_loaded) {
                     parseInt($('#jub-container').css('padding-right'), 10)
   })
 
-  // Set queue height
+  // Set queue and playlists height
   $('#queue-panel').innerHeight(msgs_height - $('#queue-banner').outerHeight());
   $('#video-queue').innerHeight(msgs_height - $('#queue-banner').outerHeight());
-  $('#video-queue').trigger('redraw_items');
+  $('#playlists-panel').innerHeight(msgs_height - $('#playlists-banner').outerHeight());
+  $('#playlists').innerHeight(msgs_height - $('#playlists-banner').outerHeight());
 }
 
 // Wait until some short period of time has passed after the user stops

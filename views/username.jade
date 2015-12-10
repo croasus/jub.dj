@@ -30,10 +30,11 @@ script.
     socket.emit('user loaded', get_username(), function(assigned) {
       store_username(assigned.name);
 
-      // Update DJ button (and local state)
-      $('#join-dj').trigger('set-dj-state', assigned.dj);
-
-      $('#requeue-videos').prop('checked', !!(assigned.requeueVideos));
+      // Now that we have our official user name, ask for our preferences and
+      // other state info. Other parts of the page respond to these answers
+      socket.emit('preferences', assigned.name);
+      socket.emit('playlists', assigned.name);
+      socket.emit('user djing', assigned.name);
     });
   });
 
