@@ -148,8 +148,13 @@ script.
     // in which case the value of the search box is not the video id; the
     // video id was passed in with the event.
     var id = event.video_id;
-    var channel = 'video enqueue';
     var user = get_cookie('username');
+    var pl_name = selected_playlist_name();
+    if (!pl_name) {
+      console.error('no playlist selected (this should never happen)');
+      return;
+    }
+
     // We were invoked via a normal form submit
     if (id == undefined) {
       id = $('#omnibox').val();
@@ -171,7 +176,6 @@ script.
     // We've obtained the ID (either a playlist or video ID)
     if (id.length > 11) {
       var count = 0;
-      var videos_obj = { user: user }
       var done = false;
       $('#omnibox').val('');
       var wait_for_playlist = function() {
@@ -183,12 +187,11 @@ script.
       setTimeout(wait_for_playlist, 300);
       youtube_playlist(id, function(video_list) {
         done = true;
-        for (video_obj of video_list) {
-          video_obj.user = user;
-          youtube_video_specs(video_obj, function(obj) {
-            if (obj.title && obj.duration && user) {
-              } else {
-              console.log('failed to find info for video', video_obj.id);
+        for (video of video_list) {
+          video.user = user;
+          youtube_video_specs(video, function(obj) {
+            if (!(obj.title && obj.duration && user)) {
+              console.log('failed to find info for video', video.id);
             }
             count += 1;
           });
@@ -203,10 +206,9 @@ script.
             // Sort by 'position', in place
             video_list.sort(function(a, b) {
               if (a.position <= b.position) { return -1; } else { return 1; }
-                });
-            videos_obj.list = video_list;
+            });
             console.log('emitting to videos enqueue');
-            socket.emit('videos enqueue', videos_obj);
+            socket.emit('videos enqueue', user, pl_name, video_list);
             $('#omnibox').val('');
           } else {
             $('#omnibox').val($('#omnibox').val() + '.');
@@ -224,7 +226,7 @@ script.
       youtube_video_specs(video_obj, function(result_obj) {
         if (result_obj.title && result_obj.duration) {
           console.log('submitting video', result_obj);
-          socket.emit(channel, result_obj);
+          socket.emit('video enqueue', user, pl_name, result_obj);
           $('#omnibox').val('');
         } else {
           console.log('failed to find info for video', result_obj.id);
@@ -272,6 +274,7 @@ script.
     draw_mute_state();
     return false;
   });
+
   // Toggle button
   $('#toggle-image').on('click', function(e) {
     e.preventDefault();
@@ -283,6 +286,7 @@ script.
     draw_show_inline_image_state();
     return false;
   });
+
   // DJ button
   $('#join-dj').on('click', function() {
     if (!djing) {
@@ -302,4 +306,9 @@ script.
     console.log('dj-state', new_state);
     djing = new_state;
     draw_dj_state();
+  });
+
+  // Server assigns 'djing' state
+  socket.on('user djing', function(state) {
+    $('#join-dj').trigger('set-dj-state', state);
   });
