@@ -250,7 +250,7 @@ script.
   $('#dequeue').on('click', function(e) {
     var user = get_cookie('username');
     console.log('sending dequeue for:', user);
-    socket.emit('video dequeue', user);
+    socket.emit('video dequeue', user, selected_playlist_name());
     return false;
   });
 
