@@ -29,6 +29,16 @@ script.
   var player_ready = false;
   var my_video_state = {};
 
+  var PLAYER_STATE = {
+    //-1: 'unstarted',
+    0: 'ended',
+    1: 'playing',
+    2: 'paused',
+    3: 'buffering',
+    5: 'video cued',
+  }
+
+
   // Start the specified video, starting at the correct time
   function apply_video_state(state) {
     if (!player_ready)
@@ -50,7 +60,7 @@ script.
       };
       var video_progress = (state.server_time - start_time) / 1000;
       console.log("apply video state", id, video_progress);
-      if (id && video_progress) {
+      if ((typeof id == 'string') && (typeof video_progress == 'number')) {
         console.log('loading video');
         player.loadVideoById({
           'videoId': id,
@@ -221,7 +231,7 @@ script.
   // the player should play for six seconds and then stop.
   var done = false;
   function onPlayerStateChange(event) {
-    console.log('player state change to', event.data);
+    console.log('player state change to', event.data, PLAYER_STATE[event.data]);
     if (event.data == YT.PlayerState.PAUSED) {
       // TODO does this violate the youtube ToS?
       event.target.playVideo();
