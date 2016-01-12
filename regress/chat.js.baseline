@@ -154,3 +154,33 @@ broadcasting:
   is_bot: true,
   color: '#888899' }
 has time? true
+
+=== A client asks urban dictionary for a definition that doesn't exist ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: urban aldkfj,,,',
+  is_bot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: urban aldkfj,,,
+
+=== A client asks urban dictionary for a definition ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: urban dirty hairy',
+  is_bot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: urban dirty hairy
+broadcasting:
+ { text: 'Your query, aldkfj,,,, doesn\'t seem to exist.',
+  user: 'jubbot',
+  is_bot: true,
+  color: '#888899' }
+has time? true
+broadcasting:
+ { text: 'dirty hairy: If a man has an incredibly hairy ass/asshole and it appears as he has not wiped for weeks and still has dried shit in there. Preferable when the hair is brown or darker.',
+  user: 'jubbot',
+  is_bot: true,
+  color: '#888899' }
+has time? true
