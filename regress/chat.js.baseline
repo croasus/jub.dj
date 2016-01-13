@@ -154,3 +154,33 @@ broadcasting:
   is_bot: true,
   color: '#888899' }
 has time? true
+
+=== A client asks urban dictionary for a definition ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: urban defined-word',
+  is_bot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: urban defined-word
+broadcasting:
+ { text: 'defined-word: The definition',
+  user: 'jubbot',
+  is_bot: true,
+  color: '#888899' }
+has time? true
+
+=== A client asks urban dictionary for a definition that doesn't exist ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: urban aldkfj,,,',
+  is_bot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: urban aldkfj,,,
+broadcasting:
+ { text: 'Your query, aldkfj,,,, doesn\'t seem to exist.',
+  user: 'jubbot',
+  is_bot: true,
+  color: '#888899' }
+has time? true

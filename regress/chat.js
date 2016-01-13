@@ -22,28 +22,39 @@ var twitter = (function() {
     searchOneText: function(query, cb) {
       console.log('twitter search:', query);
       cb("A twitter search result");
-    },
+    }
   };
 })();
 
-var bot = require('../lib/bot')(config, gapi, twitter);
+var urbanDict = {
+  'defined-word': {definition:'The definition'}
+};
+var urban = function(query) {
+  return {
+    first: function( callback ) {
+      callback(urbanDict[query]);
+    }
+  }
+};
+
+var bot = require('../lib/bot')(config, gapi, twitter, urban);
 var chat = require('../lib/chat')(config, bot);
 
 chat.jub = (function() {
   return {
     user_update_preferences: function(user, update) {
       console.log('updating preference for', user, update);
-    },
+    }
   };
 })();
 
 chat.broadcast = function(channel, obj) {
   console.log('broadcasting:\n', obj);
-}
+};
 chat.whisper = function(user, channel, obj) {
   console.log('whispering:\n', obj);
-}
-chat.save_chat_msg = function(obj) {}
+};
+chat.save_chat_msg = function(obj) {};
 
 // Test cases
 function testCase(msg) {
@@ -143,3 +154,14 @@ chat.new_chat_message({
   text: 'This test passes #blessed'
 });
 
+testCase('A client asks urban dictionary for a definition');
+chat.new_chat_message({
+  user: TEST_USER,
+  text: 'jubbot: urban defined-word'
+});
+
+testCase('A client asks urban dictionary for a definition that doesn\'t exist');
+chat.new_chat_message({
+  user: TEST_USER,
+  text: 'jubbot: urban aldkfj,,,'
+});
