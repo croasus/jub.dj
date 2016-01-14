@@ -31,10 +31,11 @@ script.
       store_username(assigned.name);
 
       // Now that we have our official user name, ask for our preferences and
-      // other state info. Other parts of the page respond to these answers
+      // other state info. Other parts of the page respond to the answers
       socket.emit('preferences', assigned.name);
       socket.emit('playlists', assigned.name);
       socket.emit('user djing', assigned.name);
+      socket.emit('chat cache');
     });
   });
 

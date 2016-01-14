@@ -81,7 +81,7 @@ test_user set color to limegreen
 updating preference for test_user { color: 'limegreen' }
 
 === Test welcome message ===
-whispering:
+To send directly back to socket:
  { text: 'Welcome, test_user!\nLatest updates (2015-01-01):\n* Update 1\n* Update 2',
   user: 'jubbot',
   is_bot: true,

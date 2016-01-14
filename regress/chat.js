@@ -116,7 +116,9 @@ chat.new_chat_message({
 });
 
 testCase('Test welcome message');
-chat.welcome(TEST_USER);
+chat.welcome(TEST_USER, function(resp) {
+  console.log('To send directly back to socket:\n', resp);
+});
 
 testCase('Test "video started" event');
 chat.video_started({
