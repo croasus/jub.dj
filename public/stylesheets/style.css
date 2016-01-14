@@ -100,8 +100,9 @@ body {
 #playlists-panel .panel-footer {
   font-size: 12px;
 }
-#player-panel th,
-#queue-panel  th {
+#player-panel td,
+#queue-panel  td {
+  border: 0;
   padding: 5px 5px 5px 5px;
 }
 #video-queue,
@@ -153,7 +154,7 @@ body {
 #playlists-panel table {
   margin-bottom: 0px;
 }
-#playlists-panel table>tbody>tr>th {
+#playlists-panel table>tbody>tr>td {
   padding: 5px 5px 5px 5px;
   border: 0;
 }
@@ -176,6 +177,15 @@ body {
   padding: 0px 5px 0px 5px;
   text-align: right;
 }
+#playlist-name-banner tr {
+  overflow: visible;
+  white-space: nowrap;
+}
+#playlist-name-banner td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /*TODO*/
 #video-queue .queue-item .queue-chk,
@@ -184,7 +194,7 @@ body {
   margin-right: 4px;
   float: left;
 }
-#video-queue table {
+#queue-panel table {
   table-layout: fixed;
   width: 100%;
 }

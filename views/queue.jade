@@ -9,21 +9,29 @@ ul(id="queue-navtabs", class="nav nav-tabs")
 div(id="queue-tab-content", class="tab-content")
   div(class="tab-pane" id="queue-tab")
     div(class='panel panel-default', id='queue-panel')
-      table(class='table', id='queue-banner')
+      table(class='table', id='playlist-name-banner')
         tbody
           tr
-            th
-              input(id='select-all', type='checkbox',
-                    data-toggle='tooltip', title='Select all',
-                    style='visibility:hidden')
-              label(for='select-all', style='font-weight: normal; display: none;'
-                    id='select-all-label') Select all
-            th(class='right', id='queue-buttons')
+            td(id="big-playlist-name",
+              style="width: 100%; text-align: left; font-size: large; margin-top: 5px; line-height:1.9;")
+            td(class='right')
               div(class='input-group input-group-md')
                 button(class='btn btn-default', type='button', id='shuffle',
                        data-toggle='tooltip', data-placement='top',
                        title='Shuffle')
                   span(id='shuffle-icon', class='glyphicon glyphicon-random')
+
+      table(class='table', id='queue-banner')
+        tbody
+          tr
+            td
+              input(id='select-all', type='checkbox',
+                    data-toggle='tooltip', title='Select all',
+                    style='visibility:hidden')
+              label(for='select-all', style='font-weight: normal; display: none;'
+                    id='select-all-label') Select all
+            td(class='right', id='queue-buttons')
+              div(class='input-group input-group-md')
                 button(class='btn btn-default right', type='button', id='delete-track',
                        data-toggle='tooltip', data-placement='top',
                        title='Delete')
@@ -48,7 +56,7 @@ div(id="queue-tab-content", class="tab-content")
         table(class='table', id='playlists-banner')
           tbody
             tr
-              th
+              td
                 button(class='btn btn-default left', type='button', id='copy-playlist',
                        data-toggle='tooltip', data-placement='top',
                        title='Copy playlist')
@@ -58,7 +66,7 @@ div(id="queue-tab-content", class="tab-content")
                        title='Delete playlist')
                   span(id='delete-playlist-icon', class='glyphicon glyphicon-remove')
 
-              th
+              td
                 input(class='form-control right', id='playlist-name-input',
                       autocomplete='off', placeholder='Rename selected playlist')
 
@@ -80,8 +88,12 @@ script.
   var prefs_selected_playlist = null;
 
   function selected_playlist_name() {
-    var label = $('#playlists li input[name=playlist-radios]:checked').prop('value');
-    return label == reserved_pl_label ? 'sandbox' : label;
+    return $('#playlists li input[name=playlist-radios]:checked').prop('value');
+  }
+
+  function selected_playlist_display_name() {
+    var value = $('#playlists li input[name=playlist-radios]:checked').prop('value');
+    return (value == 'sandbox') ? reserved_pl_label : value;
   }
 
   function selected_playlist() {
@@ -89,6 +101,10 @@ script.
     if (name) {
       return _.find(my_playlists, function(pl) { return pl.name == name });
     }
+  }
+
+  function update_big_playlist_name() {
+    $('#big-playlist-name').text(selected_playlist_display_name());
   }
 
   function update_queue_buttons() {
@@ -230,6 +246,7 @@ script.
 
     update_select_all();
     setup_shift_click();
+    update_big_playlist_name();
   });
 
   // Redraw playlists
