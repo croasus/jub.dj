@@ -42,7 +42,7 @@ var chat = require('../lib/chat')(config, bot);
 
 chat.jub = (function() {
   return {
-    user_update_preferences: function(user, update) {
+    update_user_preferences: function(user, update) {
       console.log('updating preference for', user, update);
     }
   };
