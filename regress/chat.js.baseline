@@ -179,7 +179,7 @@ broadcasting:
 has time? true
 bot received new message: urban aldkfj,,,
 broadcasting:
- { text: 'Your query, aldkfj,,,, doesn\'t seem to exist.',
+ { text: '"aldkfj,,,"? I dunno.',
   user: 'jubbot',
   is_bot: true,
   color: '#888899' }
