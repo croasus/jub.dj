@@ -238,7 +238,9 @@ script.
     $(this).empty();
     _.chain(my_playlists)
       .partition(function(p) { return p.name == 'sandbox'; })
-      .map(function(grp) { return _.sortBy(grp, 'name'); })
+      .map(function(grp) {
+        return _.sortBy(grp, function(x) { return x.name.toLowerCase() });
+        })
       .flatten()
       .each(function(p) { $(this).append(new_playlist_li(p.name)); }, this)
       .value();
