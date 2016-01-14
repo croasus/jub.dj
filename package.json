@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "node test/baseline.js",
+    "test": "TEST=1 node test/baseline.js",
     "start": "node ./bin/www"
   },
   "engineStrict": true,
@@ -23,6 +23,7 @@
     "jade": "~1.11.0",
     "jquery": "^2.1.4",
     "lodash": "3.10.1",
+    "mockgoose": "^5.2.2",
     "moment": "^2.10.6",
     "moment-timezone": "^0.4.1",
     "mongoose": "^4.1.8",

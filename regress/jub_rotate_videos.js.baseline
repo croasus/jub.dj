@@ -1,1 +1,12 @@
+mocking mongoose! really? true
+successful connection to db jub-dj-test
 bot initialized with name jubbot
+added DJ jubbot , now dj_sched [ 'jubbot' ]
+force reload aromatt
+Socket emitting force reload undefined
+add_user callback
+[ { name: 'jubbot', color: '#888899' },
+  { name: 'aromatt', color: '#a05b43' } ]
+added DJ aromatt , now dj_sched [ 'jubbot', 'aromatt' ]
+jub stopping
+db stopping
