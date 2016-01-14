@@ -26,7 +26,9 @@ function refresh_sizes(player_loaded) {
 
   // Set queue and playlists height
   $('#queue-panel').innerHeight(msgs_height - $('#queue-banner').outerHeight());
-  $('#video-queue').innerHeight(msgs_height - $('#queue-banner').outerHeight());
+  $('#video-queue').innerHeight(msgs_height
+                                - $('#queue-banner').outerHeight()
+                                - $('#playlist-name-banner').outerHeight());
   $('#playlists-panel').innerHeight(msgs_height - $('#playlists-banner').outerHeight());
   $('#playlists').innerHeight(msgs_height - $('#playlists-banner').outerHeight());
 }
