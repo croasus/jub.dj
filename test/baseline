@@ -1,29 +1,51 @@
 #! /bin/bash
 
+# USAGE:
+#
+#    ./baseline [-b] [TEST_CASES]
+#
+#  -b: rewrite baselines
+#
+#  TEST_CASES defaults to regress/*.js
+
 regress_dir=$(dirname $0)/../regress
 
 if [[ $1 == '-b' ]]; then
   write_bl=1
+  shift
+fi
+if [[ $# -eq 0 ]]; then
+  files=$regress_dir/*.js
+else
+  files=$@
 fi
 
 exit_code=0
 
 echo
-for file in $regress_dir/*.js; do
+for file in $files; do
+  if ! [ -f $file ] ; then
+    echo "Can't find file '$file'"
+    exit 1
+  fi
   bl=${file}.baseline
   base=$(basename $file)
   printf "%-40s " "${base}:"
   # Diffing baselines
-  if [ -z $write_bl ]  ; then
+  if [ -z $write_bl ] ; then
     # Has a baseline
     if [ -f $bl ] ; then
-      diff=$(diff $bl <(node $file))
+      diff $bl <(node $file 2>${base}.err) > ${base}.diff
       if [[ $? -eq 0 ]] ; then
         printf "\e[1;32m%-6s\e[0m\n" PASSED
       else
         printf "\e[1;31m%-6s\e[0m\n" FAILED
         exit_code=1
-        echo $diff
+        cat ${base}.diff && rm ${base}.diff
+        if [ -s ${base}.err ]; then
+          echo "-- STDERR --"
+          cat ${base}.err && rm ${base}.err
+        fi
       fi
     fi
   # Writing baselines
