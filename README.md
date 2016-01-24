@@ -26,21 +26,17 @@ Then visit `http://localhost:3000/ROUTE` in your browser, where `ROUTE` is the v
 Tests are slowly being added. To run the regression tests:
 
 ```
-# Unix-like
-$ ./test/baseline
-
-# Windows or Unix-like
-$ node test/baseline.js
+$ npm test
 ```
 
 To add a new test, add a script to the `regress/` directory and run
 
 ```
 # Unix-like
-$ ./test/baseline -b
+$ TEST=1 ./test/baseline -b
 
 # Windows or Unix-like
-$ node test/baseline.js -b
+$ TEST=1 node test/baseline.js -b
 ```
 
 Make sure no other tests' baselines changed -- if they did, verify that the
