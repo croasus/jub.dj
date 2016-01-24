@@ -11,16 +11,16 @@ div(id="chat-tab-content", class="tab-content")
 
 script.
 
-  var scrolled_up = false;
-  var current_users = {};
+  var scrolledUp = false;
+  var currentUsers = {};
 
   // Basic regex that accepts a line that consists only of a URL
   var urlRegex = /^(http:\/\/|https:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*[^\s]*$/i;
   var imageRegex = /[^\s]+(\.(jpeg|jpg|png|gif|bmp))$/i;
 
-  function draw_current_users() {
+  function drawCurrentUsers() {
     $('#jubbin-list').empty();
-    for (user of current_users) {
+    for (user of currentUsers) {
       $('#jubbin-list').append(
         $('<li>').text(user.name).css('color', user.color)
       );
@@ -34,7 +34,7 @@ script.
 
     // Depending on which tab we're opening, update certain UI elements
     if (e.currentTarget.id == 'jubbin-list-navtab-a') {
-      draw_current_users();
+      drawCurrentUsers();
     } else {
       $('#messages').trigger('update_scroll');
     }
@@ -42,13 +42,13 @@ script.
 
   // Message from server saying who's connected
   socket.on('current users', function(users) {
-    current_users = users;
-    draw_current_users();
+    currentUsers = users;
+    drawCurrentUsers();
   });
 
   // Scroll chat to bottom if needed
   $('#messages').bind('update_scroll', function() {
-    if (!scrolled_up) {
+    if (!scrolledUp) {
       this.scrollTop = this.scrollHeight;
     }
   });
@@ -57,8 +57,8 @@ script.
   // TODO put this on the same, slower timing as other resize functions
   $('#messages').scroll(function() {
     var elem = $( this );
-    var max_height = parseInt(elem.css('max-height'), 10);
-    scrolled_up = (Math.abs(this.scrollHeight - this.scrollTop - elem.height()) > 10);
+    var maxHeight = parseInt(elem.css('max-height'), 10);
+    scrolledUp = (Math.abs(this.scrollHeight - this.scrollTop - elem.height()) > 10);
   });
 
   var makeLink = function(line) {
@@ -98,7 +98,7 @@ script.
       var isLink = (urlRegex).test(word);
       if(isLink) {
         var isImage = (imageRegex).test( word );
-        if ( isImage && get_cookie('hide-inline-images') != 1) {
+        if ( isImage && getCookie('hide-inline-images') != 1) {
           transformedWord = makeImage( word );
         } else {
           transformedWord = makeLink( word );
@@ -115,16 +115,16 @@ script.
     return elem;
   };
 
-  var new_chat_li = function(msg_obj) {
+  var newChatLi = function(msgObj) {
     var li = $('<li>');
 
     // Emoting?
-    if (msg_obj.emote) {
-      var full_text = msg_obj.user + ' ' + msg_obj.text;
-      li.append(li.append(document.createTextNode(full_text)));
+    if (msgObj.emote) {
+      var fullText = msgObj.user + ' ' + msgObj.text;
+      li.append(li.append(document.createTextNode(fullText)));
       li.css({
         'font-style': 'italic',
-        'color': msg_obj.color
+        'color': msgObj.color
       });
     } else {
 
@@ -138,10 +138,10 @@ script.
       var user = $('<span>');
       user.css({
         'font-weight': 'bold',
-        'color': msg_obj.color,
+        'color': msgObj.color,
         'float': 'left'
         });
-      user.append(document.createTextNode(msg_obj.user));
+      user.append(document.createTextNode(msgObj.user));
       heading.append(user);
 
       // Now add a timestamp TODO configurable format
@@ -150,27 +150,27 @@ script.
         'float': 'right',
         'color': '#666666'
       });
-      var time_format = '%I:%M:%S %p'
-      var msg_time = '';
-      if (msg_obj.hasOwnProperty('time')) {
-        msg_time = strftime(time_format, new Date(msg_obj.time));
+      var timeFormat = '%I:%M:%S %p'
+      var msgTime = '';
+      if (msgObj.hasOwnProperty('time')) {
+        msgTime = strftime(timeFormat, new Date(msgObj.time));
       } else {
-        msg_time = strftime(time_format);
+        msgTime = strftime(timeFormat);
       }
-      time.append(document.createTextNode(msg_time));
+      time.append(document.createTextNode(msgTime));
       heading.append(time);
 
       // Append heading to chat message
       li.append(heading);
 
       // Add each line of the message, with <br>'s in between
-      _.each(msg_obj.text.split('\n'), function(line) {
+      _.each(msgObj.text.split('\n'), function(line) {
         li.append('<br>');
         li.append(convertLineToElement(line));
       } );
-      if (msg_obj.hasOwnProperty( 'customPanelBorder' )) {
+      if (msgObj.hasOwnProperty( 'customPanelBorder' )) {
         li.css('list-style-position', 'inside');
-        li.css('border', '1px solid ' + msg_obj.customPanelBorder);
+        li.css('border', '1px solid ' + msgObj.customPanelBorder);
         time.css('color', '#888899');
       }
     }
@@ -178,16 +178,16 @@ script.
   }
 
   // Chat message received from server
-  socket.on('chat message', function(msg_obj) {
-    this.last_user = this.last_user || "";
-    this.last_emote = this.last_emote || false;
-    if (msg_obj.text == undefined) return;
-    msg_obj.user = msg_obj.user || '???';
+  socket.on('chat message', function(msgObj) {
+    this.lastUser = this.lastUser || "";
+    this.lastEmote = this.lastEmote || false;
+    if (msgObj.text == undefined) return;
+    msgObj.user = msgObj.user || '???';
 
     // Detect mentions and notify in title bar
-    if (msg_obj.text.indexOf(get_username()) >= 0) {
-      if (!msg_obj.is_bot) {
-        $.titleAlert(msg_obj.user + ' says...', {
+    if (msgObj.text.indexOf(getUsername()) >= 0) {
+      if (!msgObj.isBot) {
+        $.titleAlert(msgObj.user + ' says...', {
           requireBlur: true,
           duration: 0,
           interval: 700
@@ -196,19 +196,19 @@ script.
     }
 
     var list = $('#messages');
-    var chat_li;
-    if(msg_obj.user != this.last_user || msg_obj.is_bot || msg_obj.emote
-       || this.last_emote || this.last_color != msg_obj.color) {
-      this.last_emote = msg_obj.emote;
-      this.last_user = msg_obj.user;
-      this.last_color = msg_obj.color;
-      chat_li = new_chat_li(msg_obj);
-      list.append(chat_li);
+    var chatLi;
+    if(msgObj.user != this.lastUser || msgObj.isBot || msgObj.emote
+       || this.lastEmote || this.lastColor != msgObj.color) {
+      this.lastEmote = msgObj.emote;
+      this.lastUser = msgObj.user;
+      this.lastColor = msgObj.color;
+      chatLi = newChatLi(msgObj);
+      list.append(chatLi);
     } else {
-      chat_li = list.find('li').last()
-      _.each(msg_obj.text.split('\n'), function(line) {
-        chat_li.append('<br>');
-        chat_li.append(convertLineToElement(line));
+      chatLi = list.find('li').last()
+      _.each(msgObj.text.split('\n'), function(line) {
+        chatLi.append('<br>');
+        chatLi.append(convertLineToElement(line));
       } );
     }
     $('#messages').trigger('update_scroll');

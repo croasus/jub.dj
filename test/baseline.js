@@ -15,7 +15,7 @@ var fs = require('fs');
 var path = require('path');
 var sh = require('shelljs');
 var colors = require('colors');
-var child_process = require('child_process');
+var childProcess = require('child_process');
 var jsdiff = require('diff');
 
 var REGRESS_DIR = 'regress';
@@ -71,7 +71,7 @@ _.each(testCases, function(tc) {
 
   process.stdout.write(spacePad(tc.name + ':', MAX_WIDTH));
 
-  var invoked = child_process.spawnSync('node', [tc.path], { stdio: 'pipe' });
+  var invoked = childProcess.spawnSync('node', [tc.path], { stdio: 'pipe' });
   if (options.writeBaselines) {
     fs.writeFileSync(tc.baselinePath, invoked.stdout.toString());
     process.stdout.write('BASELINED\n'.blue);

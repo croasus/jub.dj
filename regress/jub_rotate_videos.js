@@ -6,12 +6,12 @@ var config = require('../test/config');
 // Set up dependencies, with mocks
 var gapi = (function() {
   return {
-    one_image_link: function(query, cb) {
+    oneImageLink: function(query, cb) {
       console.log('gapi image search:', query);
       cb([ { link: 'http://pretend.image' } ]);
     },
-    shorten_url: function(long_url, cb) {
-      console.log('shorten url:', long_url);
+    shortenUrl: function(longUrl, cb) {
+      console.log('shorten url:', longUrl);
       cb('http://pretend.shortened');
     },
   };
@@ -36,14 +36,14 @@ async.series([
     bot = require('../lib/bot')(config, gapi);
     chat = require('../lib/chat')(config, bot);
     jub = require('../lib/jub')(config, gapi, chat, db);
-    jub.add_user('aromatt', socket, function(obj) {
-      console.log('add_user callback')
+    jub.addUser('aromatt', socket, function(obj) {
+      console.log('addUser callback')
       console.log(obj);
       done()
     });
   },
   function(done) {
-    jub.add_dj('aromatt');
+    jub.addDj('aromatt');
     done();
   },
   function(done) {

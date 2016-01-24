@@ -6,7 +6,7 @@ var gapi = require('../lib/gapi')(config);
 var recorder = record(path.basename(__filename, '.js'));
 
 recorder.test(function(done) {
-  gapi.shorten_url('http://www.facebook.com', function(resp) {
+  gapi.shortenUrl('http://www.facebook.com', function(resp) {
     console.log('URL shortener resp', resp);
     done();
   });

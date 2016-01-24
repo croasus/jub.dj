@@ -1,24 +1,24 @@
 script.
 
-  var store_username = function(username) {
-    set_cookie('username', username);
+  var storeUsername = function(username) {
+    setCookie('username', username);
   }
 
   // Any desired effects of the user changing username should go in here
-  var update_username = function(username) {
-    store_username(username);
+  var updateUsername = function(username) {
+    storeUsername(username);
     socket.emit('user update', username);
   }
 
-  var get_username = function() {
-    return get_cookie('username');
+  var getUsername = function() {
+    return getCookie('username');
   }
 
   // Username input box
   $('#auth').submit(function() {
     var username = $('#username').val();
     if (username && username.length > 0) {
-      update_username(username);
+      updateUsername(username);
       $('#username').val('');
     }
     return false;
@@ -27,8 +27,8 @@ script.
   // Document is loaded so cookies are probably ready. If the username cookie
   // is empty, the server will assign us a name, and we'll store it.
   $( document ).ready(function() {
-    socket.emit('user loaded', get_username(), function(assigned) {
-      store_username(assigned.name);
+    socket.emit('user loaded', getUsername(), function(assigned) {
+      storeUsername(assigned.name);
 
       // Now that we have our official user name, ask for our preferences and
       // other state info. Other parts of the page respond to the answers
@@ -41,5 +41,5 @@ script.
 
   // Server is asking who is present
   socket.on('ping users', function() {
-    socket.emit('user present', get_username());
+    socket.emit('user present', getUsername());
   });

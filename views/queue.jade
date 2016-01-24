@@ -82,32 +82,32 @@ div(id="queue-tab-content", class="tab-content")
 
 script.
 
-  var reserved_pl_label = 'Free Play!';
-  var my_queue = [];
-  var my_playlists = [];
-  var prefs_selected_playlist = null;
+  var reservedPlLabel = 'Free Play!';
+  var myQueue = [];
+  var myPlaylists = [];
+  var prefsSelectedPlaylist = null;
 
-  function selected_playlist_name() {
+  function selectedPlaylistName() {
     return $('#playlists li input[name=playlist-radios]:checked').prop('value');
   }
 
-  function selected_playlist_display_name() {
+  function selectedPlaylistDisplayName() {
     var value = $('#playlists li input[name=playlist-radios]:checked').prop('value');
-    return (value == 'sandbox') ? reserved_pl_label : value;
+    return (value == 'sandbox') ? reservedPlLabel : value;
   }
 
-  function selected_playlist() {
-    var name = selected_playlist_name();
+  function selectedPlaylist() {
+    var name = selectedPlaylistName();
     if (name) {
-      return _.find(my_playlists, function(pl) { return pl.name == name });
+      return _.find(myPlaylists, function(pl) { return pl.name == name });
     }
   }
 
-  function update_big_playlist_name() {
-    $('#big-playlist-name').text(selected_playlist_display_name());
+  function updateBigPlaylistName() {
+    $('#big-playlist-name').text(selectedPlaylistDisplayName());
   }
 
-  function update_queue_buttons() {
+  function updateQueueButtons() {
     var dur = 100;
     if ($('#video-queue-tbody tr td input:checkbox:checked').length > 0) {
       $('#delete-track').fadeIn(dur);
@@ -120,7 +120,7 @@ script.
     }
   }
 
-  function update_select_all() {
+  function updateSelectAll() {
     if ($('#video-queue-tbody tr td input:checkbox').length > 0) {
       $('#select-all').css('visibility', 'visible');
       $("label[for='select-all']").show();
@@ -129,12 +129,12 @@ script.
       $("label[for='select-all']").hide();
     }
     $('#select-all').prop('checked', false);
-    if (selected_playlist()) {
-      $('#select-all-label').text('Select all (' + selected_playlist().videos.length + ')');
+    if (selectedPlaylist()) {
+      $('#select-all-label').text('Select all (' + selectedPlaylist().videos.length + ')');
     }
   }
 
-  function selected_tracks() {
+  function selectedTracks() {
     var indices = [];
     var boxes = $('#video-queue-tbody tr td input:checkbox');
     boxes.each(function(i,v) {
@@ -146,7 +146,7 @@ script.
   }
 
   // shift + click http://4pcbr.com/topic/grouped_checkboxes_select_with_shift__click
-  function setup_shift_click() {
+  function setupShiftClick() {
     var _last_selected = null;
     var checkboxes = $( "#video-queue-tbody tr td input:checkbox" );
 
@@ -170,63 +170,63 @@ script.
 
   $('#requeue-videos').click(function (e) {
     var data = { requeueVideos: this.checked };
-    socket.emit('update user preferences', get_username(), data);
+    socket.emit('update user preferences', getUsername(), data);
   });
 
   // TODO include the number of videos and the duration
-  function new_playlist_li(playlist_name) {
+  function newPlaylistLi(playlistName) {
     var li = $('<li>').addClass('playlist-item');
-    var name_span = $('<span>').addClass('playlist-name');
-    var shown_name = (playlist_name == 'sandbox') ? reserved_pl_label : playlist_name;
-    name_span.append(document.createTextNode(shown_name));
+    var nameSpan = $('<span>').addClass('playlist-name');
+    var shownName = (playlistName == 'sandbox') ? reservedPlLabel : playlistName;
+    nameSpan.append(document.createTextNode(shownName));
     var radio = $('<input>').addClass('playlist-radio');
     radio.attr({
       type: 'radio',
       name: 'playlist-radios',
-      value: playlist_name
+      value: playlistName
     });
     radio.click( function( e ) {
       var data = { selectedPlaylist: this.value };
-      socket.emit('update user preferences', get_username(), data);
+      socket.emit('update user preferences', getUsername(), data);
     });
     li.append(radio);
-    li.append(name_span);
+    li.append(nameSpan);
     return li;
   }
 
-  function new_queue_item(video_obj) {
+  function newQueueItem(videoObj) {
     var tr = $('<tr>').addClass('queue-item');
     tr.css({
       'overflow': 'visible',
       'white-space': 'nowrap',
     });
-    var title_td = $('<td>').addClass('track');
-    title_td.css({
+    var titleTd = $('<td>').addClass('track');
+    titleTd.css({
       'overflow': 'hidden',
       'text-overflow': 'ellipsis',
       'white-space': 'nowrap',
     });
-    var time_td = $('<td>').addClass('duration');
-    var chk_td = $('<td>').addClass('chk-td');
+    var timeTd = $('<td>').addClass('duration');
+    var chkTd = $('<td>').addClass('chk-td');
     var chk = $('<input>').attr('type', 'checkbox').addClass('queue-chk')
-    chk_td.append(chk)
+    chkTd.append(chk)
 
     // Set initial checkbox state.
     chk.val($(this).is(':checked'));
 
     // The 'delete' and 'send to top' buttons only appear if a track is selected
-    chk.change(update_queue_buttons);
+    chk.change(updateQueueButtons);
 
-    tr.append(chk_td)
-    tr.append(title_td);
-    tr.append(time_td);
+    tr.append(chkTd)
+    tr.append(titleTd);
+    tr.append(timeTd);
 
     var tformat = (video.duration / 1000) >= 3600 ? '%k:%M:%S' : '%M:%S';
     time = new Date(1970, 1, 1); // Unix epoch
     time.setSeconds(video.duration / 1000);
-    time_td.text('(' + strftime(tformat, time).trim() + ')');
+    timeTd.text('(' + strftime(tformat, time).trim() + ')');
 
-    title_td.text(video.title);
+    titleTd.text(video.title);
 
     return tr;
   }
@@ -235,38 +235,38 @@ script.
   $('#video-queue').bind('redraw',function() {
     console.log('redrawing queue');
     $("#video-queue-tbody tr").remove();
-    var pl = selected_playlist() || {};
+    var pl = selectedPlaylist() || {};
 
     var videos = pl['videos'];
     videos = _.sortBy(videos, 'position').reverse();
     for (video of videos) {
-      var item = new_queue_item(video);
+      var item = newQueueItem(video);
       $("#video-queue-tbody").prepend(item);
     }
 
-    update_select_all();
-    setup_shift_click();
-    update_big_playlist_name();
+    updateSelectAll();
+    setupShiftClick();
+    updateBigPlaylistName();
   });
 
   // Redraw playlists
   $('#playlists').bind('redraw',function() {
     console.log('redrawing playlists');
     $(this).empty();
-    _.chain(my_playlists)
+    _.chain(myPlaylists)
       .partition(function(p) { return p.name == 'sandbox'; })
       .map(function(grp) {
         return _.sortBy(grp, function(x) { return x.name.toLowerCase() });
         })
       .flatten()
-      .each(function(p) { $(this).append(new_playlist_li(p.name)); }, this)
+      .each(function(p) { $(this).append(newPlaylistLi(p.name)); }, this)
       .value();
 
     var selected;
     var playlists = $('#playlists li input');
-    if (prefs_selected_playlist) {
+    if (prefsSelectedPlaylist) {
       selected = $(playlists).filter(function() {
-        return this.value == prefs_selected_playlist
+        return this.value == prefsSelectedPlaylist
       });
     }
     selected = selected || playlists[0];
@@ -274,21 +274,21 @@ script.
   });
 
   // playlists is an object keyed by playlist name
-  function update_playlists(playlists) {
+  function updatePlaylists(playlists) {
     if (playlists) {
       console.log('updating playlists', _.cloneDeep(playlists));
-      my_playlists = _.cloneDeep(playlists);
+      myPlaylists = _.cloneDeep(playlists);
       $('#playlists').trigger('redraw');
       $('#video-queue').trigger('redraw');
-      update_select_all();
-      update_queue_buttons();
+      updateSelectAll();
+      updateQueueButtons();
     }
   };
 
   socket.on('preferences', function(preferences) {
     console.log('received prefs', preferences);
     if (_.has(preferences, 'selectedPlaylist')) {
-      prefs_selected_playlist = preferences.selectedPlaylist;
+      prefsSelectedPlaylist = preferences.selectedPlaylist;
       $('#playlists').trigger('redraw');
     }
     if (_.has(preferences, 'requeueVideos')) {
@@ -297,23 +297,23 @@ script.
   });
 
   // Server tells us our list of playlists, and our selected playlist
-  socket.on('playlists', function(playlists, prefs_selected) {
-    if (prefs_selected) { prefs_selected_playlist = prefs_selected; };
-    update_playlists(playlists);
+  socket.on('playlists', function(playlists, prefsSelected) {
+    if (prefsSelected) { prefsSelectedPlaylist = prefsSelected; };
+    updatePlaylists(playlists);
   });
 
   // Rename a playlist
   $('#playlist-form').submit(function() {
-    var selected_name = selected_playlist_name();
-    var new_name = $('#playlist-name-input').val();
-    var user = get_username();
+    var selectedName = selectedPlaylistName();
+    var newName = $('#playlist-name-input').val();
+    var user = getUsername();
 
     if (user == '') {
       alert('You must be logged in to edit playlists.')
     } else {
-      if (selected_name.length > 0 && selected_name != 'sandbox') {
-        console.log('renaming playlist', new_name);
-        socket.emit('rename playlist', user, selected_name, new_name);
+      if (selectedName.length > 0 && selectedName != 'sandbox') {
+        console.log('renaming playlist', newName);
+        socket.emit('rename playlist', user, selectedName, newName);
         $('#playlist-name-input').val('');
       }
     }
@@ -326,48 +326,48 @@ script.
     var that = this;
     $( "#video-queue-tbody tr td input:checkbox" )
       .each( function() { this.checked = that.checked });
-    update_queue_buttons();
+    updateQueueButtons();
   });
 
   // Shuffle
   $('#shuffle').on('click', function(e) {
-    socket.emit('shuffle', get_username(), selected_playlist_name());
+    socket.emit('shuffle', getUsername(), selectedPlaylistName());
     return false;
   });
 
   // Delete track(s)
   $('#delete-track').on('click', function(e) {
-    socket.emit('delete tracks', get_username(), selected_playlist_name(),
-                selected_tracks());
+    socket.emit('delete tracks', getUsername(), selectedPlaylistName(),
+                selectedTracks());
     return false;
   });
 
   // Send track(s) to top
   $('#send-to-top').on('click', function(e) {
-    socket.emit('send to top', get_username(), selected_playlist_name(), selected_tracks());
+    socket.emit('send to top', getUsername(), selectedPlaylistName(), selectedTracks());
     return false;
   });
 
   // Send track(s) to bottom
   $('#send-to-bottom').on('click', function(e) {
-    socket.emit('send to bottom', get_username(), selected_playlist_name(), selected_tracks());
+    socket.emit('send to bottom', getUsername(), selectedPlaylistName(), selectedTracks());
     return false;
   });
 
   // Copy playlist
   $('#copy-playlist').on('click', function(e) {
-    socket.emit('copy playlist', get_username(), selected_playlist_name());
+    socket.emit('copy playlist', getUsername(), selectedPlaylistName());
   });
 
   // Delete playlist
   $('#delete-playlist').on('click', function(e) {
-    if (selected_playlist_name() != 'sandbox') {
-      socket.emit('delete playlist', get_username(), selected_playlist_name());
+    if (selectedPlaylistName() != 'sandbox') {
+      socket.emit('delete playlist', getUsername(), selectedPlaylistName());
     }
   });
 
   $( document ).ready(function() {
     // Document is loaded so click the correct initially-active tab
     $('#queue-navtab-a').click();
-    update_queue_buttons();
+    updateQueueButtons();
   });

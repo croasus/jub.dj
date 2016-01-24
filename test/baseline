@@ -35,18 +35,22 @@ for file in $files; do
   if [ -z $write_bl ] ; then
     # Has a baseline
     if [ -f $bl ] ; then
-      diff $bl <(node $file 2>${base}.err) > ${base}.diff
+      diff $bl <(node $file 2>${file}.err) > ${file}.diff
       if [[ $? -eq 0 ]] ; then
         printf "\e[1;32m%-6s\e[0m\n" PASSED
       else
         printf "\e[1;31m%-6s\e[0m\n" FAILED
         exit_code=1
-        cat ${base}.diff && rm ${base}.diff
-        if [ -s ${base}.err ]; then
+        cat ${file}.diff
+        if [ -s ${file}.err ]; then
           echo "-- STDERR --"
-          cat ${base}.err && rm ${base}.err
+          cat ${file}.err
         fi
       fi
+      rm ${file}.diff
+      rm ${file}.err
+    else
+      printf "\e[1;33m%-6s\e[0m\n" 'BASELINE MISSING'
     fi
   # Writing baselines
   else

@@ -11,8 +11,7 @@ function inspect(o, i) {
   }
 }
 
-// TODO put this somewhere else or load someone else's cookie fns
-function get_cookie(name) {
+function getCookie(name) {
   var value = "; " + document.cookie;
   var parts = value.split("; " + name + "=");
   if (parts.length == 2)
@@ -21,26 +20,25 @@ function get_cookie(name) {
     return null;
 }
 
-function set_cookie(name, value, expiration_date) {
+function setCookie(name, value, expirationDate) {
   if (arguments.length < 3) {
-    expiration_date = new Date();
-    expiration_date.setFullYear( expiration_date.getFullYear() + 1 );
-    expiration_date.toUTCString();
+    expirationDate = new Date();
+    expirationDate.setFullYear( expirationDate.getFullYear() + 1 );
+    expirationDate.toUTCString();
   }
   document.cookie = name + '=' + value + '; ' +
-                    'expires=' + expiration_date;
+                    'expires=' + expirationDate;
 }
 
-// monkey-patch String with #starts_with
-// TODO don't duplicate this with the server-side version
-if ( typeof String.prototype.starts_with != 'function' ) {
-  String.prototype.starts_with = function( substr ) {
+// monkey-patch String with #startsWith
+if ( typeof String.prototype.startsWith != 'function' ) {
+  String.prototype.startsWith = function( substr ) {
     return this.indexOf(substr) === 0;
   }
 };
 
 // Memoized scrollbar width
-function scrollbar_width() {
+function scrollbarWidth() {
   if (this.value)
     return this.value;
 

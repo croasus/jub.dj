@@ -14,7 +14,7 @@ script.
   // Client chat message submission
   $('#chat').submit(function() {
     var msg = $('#chat-input').val();
-    var username = get_cookie('username');
+    var username = getCookie('username');
     if (username == '') {
       alert('You must be logged in to chat.')
     } else {

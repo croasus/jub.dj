@@ -26,8 +26,8 @@ div(class='panel panel-default', id='player-panel')
 
 script.
 
-  var player_ready = false;
-  var my_video_state = {};
+  var playerReady = false;
+  var myVideoState = {};
 
   var PLAYER_STATE = {
     //-1: 'unstarted',
@@ -40,51 +40,51 @@ script.
 
 
   // Start the specified video, starting at the correct time
-  function apply_video_state(state) {
-    if (!player_ready)
+  function applyVideoState(state) {
+    if (!playerReady)
       return;
     if (Object.keys(state) == 0)
       return;
     var id = state.id;
-    var start_time = state.start_time;
+    var startTime = state.startTime;
     var user = state.user;
-    if (my_video_state.id != id ||
-        my_video_state.start_time != start_time) {
-      my_video_state = {
+    if (myVideoState.id != id ||
+        myVideoState.startTime != startTime) {
+      myVideoState = {
         title: state.title,
         duration: state.duration,
-        user_color: state.user_color,
+        userColor: state.userColor,
         user: user,
         id: id,
-        start_time: start_time,
+        startTime: startTime,
       };
-      var video_progress = (state.server_time - start_time) / 1000;
-      console.log("apply video state", id, video_progress);
-      if ((typeof id == 'string') && (typeof video_progress == 'number')) {
+      var videoProgress = (state.serverTime - startTime) / 1000;
+      console.log("apply video state", id, videoProgress);
+      if ((typeof id == 'string') && (typeof videoProgress == 'number')) {
         console.log('loading video');
         player.loadVideoById({
           'videoId': id,
-          'startSeconds': video_progress,
+          'startSeconds': videoProgress,
           'suggestedQuality': 'large'
         });
       } else {
         player.stopVideo();
       }
-      update_time_left();
-      update_current_dj(state.user, state.user_color);
-      update_current_track(state.title);
-      update_opinions(state.opinions);
+      updateTimeLeft();
+      updateCurrentDj(state.user, state.userColor);
+      updateCurrentTrack(state.title);
+      updateOpinions(state.opinions);
     }
   }
 
   // Server tells us about video state changes
-  socket.on('video state', function(video_state) {
-    apply_video_state(video_state);
+  socket.on('video state', function(videoState) {
+    applyVideoState(videoState);
   });
 
-  function update_current_track(title) {
+  function updateCurrentTrack(title) {
     var track = $('#current-track');
-    track.text(my_video_state.title);
+    track.text(myVideoState.title);
     var width = $('#player-panel-heading').width() -
                 parseInt($('#player-panel-heading').css('padding-right'), 10) -
                 parseInt($('#player-panel-heading').css('padding-left'), 10) -
@@ -98,7 +98,7 @@ script.
     });
   }
 
-  function update_current_dj(user, color) {
+  function updateCurrentDj(user, color) {
     var dj = $('#current-dj-name');
     if (user) {
       dj.css({
@@ -119,7 +119,7 @@ script.
   }
 
   // Later, use this to make avatars dance
-  function update_opinions(opinions) {
+  function updateOpinions(opinions) {
     var likes = 0, dislikes = 0;
     if (opinions) {
       for (v of opinions) {
@@ -141,15 +141,15 @@ script.
     $('#num-dislikes').text(num);
   });
 
-  function update_time_left() {
+  function updateTimeLeft() {
     this.time = new Date(1970, 1, 1); // Unix epoch
-    var seconds_left,
+    var secondsLeft,
         hide = false,
         elem = $('#time-left');
-    if (player_ready) {
-      seconds_left = player.getDuration() - player.getCurrentTime();
+    if (playerReady) {
+      secondsLeft = player.getDuration() - player.getCurrentTime();
       if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
-        this.time.setSeconds(seconds_left);
+        this.time.setSeconds(secondsLeft);
       } else {
         this.time.setSeconds(0);
         hide = true;
@@ -157,7 +157,7 @@ script.
     } else {
       hide = false;
     }
-    var format = seconds_left >= 3600 ? '%k:%M:%S' : '%M:%S';
+    var format = secondsLeft >= 3600 ? '%k:%M:%S' : '%M:%S';
     elem.text(strftime(format, this.time));
     if (hide) {
       elem.css('visibility','hidden')
@@ -165,17 +165,17 @@ script.
       elem.css('visibility','visible')
     }
   }
-  setInterval(update_time_left, 1000);
+  setInterval(updateTimeLeft, 1000);
 
   // Like
   $('#like-btn').on('click', function(e) {
-    socket.emit('like', get_username());
+    socket.emit('like', getUsername());
     return false;
   });
 
   // Dislike
   $('#dislike-btn').on('click', function(e) {
-    socket.emit('dislike', get_username());
+    socket.emit('dislike', getUsername());
     return false;
   });
 
@@ -212,8 +212,8 @@ script.
 
   // The API will call this function when the video player is ready.
   function onPlayerReady(event) {
-    var is_muted = get_cookie('muted');
-    if(is_muted == 1) {
+    var isMuted = getCookie('muted');
+    if(isMuted == 1) {
       console.log('is muted');
       player.mute();
     }
@@ -221,9 +221,9 @@ script.
       console.log('is not muted');
       player.unMute();
     }
-    player_ready = true;
+    playerReady = true;
     socket.emit('video state');
-    refresh_sizes(true);
+    refreshSizes(true);
   }
 
   // The API calls this function when the player's state changes.
@@ -238,7 +238,7 @@ script.
     } else if (event.data == YT.PlayerState.ENDED) {
       player.clearVideo();
     } else if (event.data == YT.PlayerState.PLAYING) {
-      if (!my_video_state.id) {
+      if (!myVideoState.id) {
         player.stopVideo();
       }
     }

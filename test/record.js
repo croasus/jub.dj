@@ -10,16 +10,16 @@ var fs = require('fs');
 module.exports = function (name, options) {
   // options tell us where to store our fixtures
   options = options || {};
-  var fixtures_dir = options.fixtures_dir || path.join('test', 'fixtures');
-  var fixture_path = path.join(fixtures_dir, name + '.js');
+  var fixturesDir = options.fixturesDir || path.join('test', 'fixtures');
+  var fixturePath = path.join(fixturesDir, name + '.js');
 
   // NOCK_RECORD indicates that we should rerecord the fixtures.
   var record = !!process.env.NOCK_RECORD;
 
   return {
-    test: function (test_fn) {
+    test: function (testFn) {
       try {
-        var st = fs.statSync(fixture_path);
+        var st = fs.statSync(fixturePath);
       } catch (e) {
         if (e.code == 'ENOENT')
           record = true;
@@ -28,21 +28,21 @@ module.exports = function (name, options) {
       }
       if (record) {
         _nock.recorder.rec({
-          dont_print: true,
+          dontPrint: true,
         });
       } else {
-        require('../' + fixture_path);
+        require('../' + fixturePath);
       }
 
       // Run the test
-      test_fn(function() {
+      testFn(function() {
 
         // Save the recording if we're recording
         if (record) {
           var fixtures = _nock.recorder.play();
           var text = "var nock = require('nock');\n" + fixtures.join('\n');
-          shell.mkdir('-p', fixtures_dir);
-          fs.writeFile(fixture_path, text);
+          shell.mkdir('-p', fixturesDir);
+          fs.writeFile(fixturePath, text);
         }
       });
     }
