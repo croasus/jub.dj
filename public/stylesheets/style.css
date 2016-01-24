@@ -56,6 +56,10 @@ body {
   font-size: 13px;
 }
 
+.material-icons {
+  font-size: 20px;
+}
+
 /* jub-style lists */
 .jub-list {
   list-style-type: none;
