@@ -1,13 +1,15 @@
 ul(id="queue-navtabs", class="nav nav-tabs")
   li(id="queue-navtab-li", role="presentation")
     a(id="queue-navtab-a", href="#queue-tab", data-toggle='tab')
-      i(class="material-icons") queue_music
-  li(id="playlists-navtab-li", role="presentation")
+      i(class="material-icons", data-toggle="tooltip", title="Queue") queue_music
+  li(id="playlists-navtab-li", role="presentation",
+     data-toggle="tooltip", title="Playlists")
     a(id="playlists-navtab-a", href="#playlists-tab", data-toggle='tab')
-      i(class="material-icons") library_music
-  li(id="settings-navtab-li", role="presentation", class="active")
-    a(id="settings-navtab-a", href="#settings-tab", data-toggle='tab')
-      i(class="material-icons") settings
+      i(class="material-icons", data-toggle="tooltip", title="Playlists") library_music
+  li(id="queue-settings-navtab-li", role="presentation", class="active",
+     data-toggle="tooltip", title="Settings")
+    a(id="queue-settings-navtab-a", href="#queue-settings-tab", data-toggle='tab')
+      i(class="material-icons", data-toggle="tooltip", title="Settings") settings
 
 div(id="queue-tab-content", class="tab-content")
   div(class="tab-pane" id="queue-tab")
@@ -76,8 +78,8 @@ div(id="queue-tab-content", class="tab-content")
       div(class='panel-body')
         div(id='playlists', class='jub-list')
 
-  div(class="tab-pane active" id="settings-tab")
-    div(class='panel panel-default', id='settings-panel')
+  div(class="tab-pane active" id="queue-settings-tab")
+    div(class='panel panel-default', id='queue-settings-panel')
       div(class='panel-body')
         input(id='requeue-videos', type='checkbox')
         // TODO update programmatically
@@ -89,6 +91,15 @@ script.
   var myQueue = [];
   var myPlaylists = [];
   var prefsSelectedPlaylist = null;
+
+
+  $('[data-toggle="tab"]').tooltip({
+    trigger: 'hover',
+    //placement: 'top',
+    animate: true,
+    delay: 500,
+    container: 'body'
+  });
 
   function selectedPlaylistName() {
     return $('#playlists li input[name=playlist-radios]:checked').prop('value');
@@ -171,6 +182,7 @@ script.
     }
   })
 
+  // Server responds on 'preferences' channel, handled by global.js
   $('#requeue-videos').click(function (e) {
     var data = { requeueVideos: this.checked };
     socket.emit('update user preferences', getUsername(), data);
@@ -288,17 +300,6 @@ script.
     }
   };
 
-  socket.on('preferences', function(preferences) {
-    console.log('received prefs', preferences);
-    if (_.has(preferences, 'selectedPlaylist')) {
-      prefsSelectedPlaylist = preferences.selectedPlaylist;
-      $('#playlists').trigger('redraw');
-    }
-    if (_.has(preferences, 'requeueVideos')) {
-      $('#requeue-videos').prop('checked', !!(preferences.requeueVideos));
-    }
-  });
-
   // Server tells us our list of playlists, and our selected playlist
   socket.on('playlists', function(playlists, prefsSelected) {
     if (prefsSelected) { prefsSelectedPlaylist = prefsSelected; };
@@ -322,7 +323,6 @@ script.
     }
     return false;
   });
-
 
   // Select all
   $('#select-all').on('click', function(e) {

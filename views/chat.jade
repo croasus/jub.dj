@@ -1,16 +1,26 @@
 ul(id="chat-navtabs", class="nav nav-tabs")
   li(id="chat-navtab-li", role="presentation")
     a(id="chat-navtab-a", href="#chat-tab", data-toggle='tab')
-      i(id="chat-navtab-icon", class="material-icons") chat_bubble
+      i(id="chat-navtab-icon", class="material-icons",
+        data-toggle="tooltip", title="Chat") chat_bubble
   li(id="jubbin-list-navtab-li", role="presentation", class="active")
     a(id="jubbin-list-navtab-a", href="#jubbin-list-tab", data-toggle='tab')
-      i(class="material-icons") people
+      i(class="material-icons", data-toggle="tooltip", title="Who's Jubbin") people
       div(id="num-users", class="right", style="margin-left:3px;") (0)
+  li(id="chat-settings-navtab-li", role="presentation")
+    a(id="chat-settings-navtab-a", href="#chat-settings-tab", data-toggle='tab')
+      i(class="material-icons", data-toggle="tooltip", title="Who's Jubbin") settings
+
 div(id="chat-tab-content", class="tab-content")
   div(class="tab-pane active" id="chat-tab")
     ul(id="messages", class="jub-list")
   div(class="tab-pane active" id="jubbin-list-tab")
     ul(id="jubbin-list", class="jub-list")
+  div(class="tab-pane active" id="chat-settings-tab")
+    div(class='panel panel-default', id='chat-settings-panel')
+      div(class='panel-body')
+        input(id='show-chat-images', type='checkbox')
+        label(id='show-chat-images-label', for='show-chat-images') Show images from links in chat messages
 
 script.
   var scrolledUp = false;
@@ -21,10 +31,7 @@ script.
   var imageRegex = /[^\s]+(\.(jpeg|jpg|png|gif|bmp))$/i;
 
   function unreadMessagesAlert(areUnread) {
-    if (typeof areUnread === 'undefined') {
-      areUnread = true;
-    }
-    console.log('areUnread:', areUnread);
+    if (typeof areUnread === 'undefined') { areUnread = true; }
     if (areUnread) {
       $('#chat-navtab-icon').text('chat');
     } else {
@@ -117,7 +124,7 @@ script.
       var isLink = (urlRegex).test(word);
       if(isLink) {
         var isImage = (imageRegex).test( word );
-        if ( isImage && getCookie('hide-inline-images') != 1) {
+        if ( isImage && $('#show-chat-images').is(":checked") ) {
           transformedWord = makeImage( word );
         } else {
           transformedWord = makeLink( word );
@@ -230,11 +237,16 @@ script.
         chatLi.append(convertLineToElement(line));
       } );
     }
-    // Show a different icon when there are unread messages
     if ($('#chat-navtab-li').attr('class') !== 'active' || scrolledUp) {
       unreadMessagesAlert(true);
     }
     $('#messages').trigger('update_scroll');
+  });
+
+  // Server responds on 'preferences' channel, handled by global.js
+  $('#show-chat-images').click(function (e) {
+    var data = { showChatImages: this.checked };
+    socket.emit('update user preferences', getUsername(), data);
   });
 
   // The chat is the correct initially-active tab; we loaded the page with the

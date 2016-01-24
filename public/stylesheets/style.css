@@ -83,7 +83,8 @@ body {
 /* panel commonalities */
 #player-panel,
 #queue-panel,
-#settings-panel,
+#queue-settings-panel,
+#chat-settings-panel,
 #playlists-panel {
   border: 0;
   background-color: #111;
@@ -256,14 +257,17 @@ body {
 }
 
 /* settings panel */
-#settings-panel .panel-body {
+#queue-settings-panel .panel-body,
+#chat-settings-panel .panel-body {
   padding: 10px 5px 5px 5px;
 }
-#settings-panel .panel-body label {
+#queue-settings-panel .panel-body label,
+#chat-settings-panel .panel-body label {
   font-weight: normal;
   margin-bottom: 0px;
 }
-#settings-panel input[type=checkbox] {
+#queue-settings-panel input[type=checkbox],
+#chat-settings-panel input[type=checkbox] {
   margin: 2px 5px 5px 0px;
   float: left;
 }
@@ -308,6 +312,7 @@ body {
 .nav-tabs>li>a {
   border: 0px solid #111;
   color: #AAAABB;
+  padding: 8px 20px 4px 20px;
 }
 .nav-tabs>li.active>a,
 .nav-tabs>li.active>a:focus,
@@ -315,6 +320,8 @@ body {
 .nav-tabs>li.active>a:active {
   background-color: #3F2C52;
   border: 0px solid #111;
+  border-width: 0px 0px 3px 0px;
+  border-bottom-color: #654784;
   color: #FFF;
 }
 .nav-tabs>li>a:hover,

@@ -28,10 +28,6 @@ nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
                id='mute', data-toggle='tooltip',
                data-placement='bottom', title='Mute')
           span(id='mute-icon', class='glyphicon glyphicon-volume-up')
-        button(class='btn btn-default',type='button',
-               id='toggle-image', data-toggle='tooltip',
-               data-placement='bottom', title='Hide Inline Images')
-          span(id='toggle-image-icon', class='glyphicon glyphicon-eye-open')
 
   ul(class='nav navbar-nav navbar-right')
     // Username
@@ -52,12 +48,10 @@ script.
   var MAX_RESULTS = 7;
   var MAX_PRETTY_LEN = 60;
   var djing = false;
-  var imageCookieKey = 'hide-inline-images';
 
   //TODO: load the controls and player in a deliberate order so one can reflect the other's mute state
   $( document ).ready(function() {
     drawMuteState();
-    drawShowInlineImageState();
   });
 
   function drawMuteState() {
@@ -68,16 +62,6 @@ script.
     } else {
       $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
       $('#mute').attr('title', 'Mute');
-    }
-  }
-  function drawShowInlineImageState() {
-    var hideInlineImage = getCookie(imageCookieKey);
-    if (hideInlineImage == 1) {
-      $('#toggle-image-icon').attr('class', 'glyphicon glyphicon-eye-close');
-      $('#toggle-image').attr('title', 'Show Inline Images');
-    } else {
-      $('#toggle-image-icon').attr('class', 'glyphicon glyphicon-eye-open');
-      $('#toggle-image').attr('title', 'Hide Inline Images');
     }
   }
 
@@ -272,18 +256,6 @@ script.
       setCookie('muted', 1);
     }
     drawMuteState();
-    return false;
-  });
-
-  // Toggle button
-  $('#toggle-image').on('click', function(e) {
-    e.preventDefault();
-    if (getCookie(imageCookieKey) == 1) {
-      setCookie(imageCookieKey, 0);
-    } else {
-      setCookie(imageCookieKey, 1);
-    }
-    drawShowInlineImageState();
     return false;
   });
 
