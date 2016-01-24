@@ -6,8 +6,8 @@ div(class='panel panel-default', id='player-panel')
         th(id='current-track') No one is playing.
         th(id='time-left')
   div(class='panel-body')
-    div(id='player')
-    div(id='player-shield')
+    div(id='player', style="z-index: 1;")
+    div(id='player-shield', style="z-index: 2;")
       span(id='player-hidden-splash', class='glyphicon glyphicon-sunglasses')
   table(class='table', id='player-footer')
     tbody
@@ -93,19 +93,19 @@ script.
   }
 
   function drawHideVideoState() {
-    if (getPlayerVisible()) {
-      $('#hide-video-icon').attr('class', 'glyphicon glyphicon-eye-open');
-      $('#hide-video').attr('title', 'Hide video');
-    } else {
+    if (getPlayerShieldUp()) {
       $('#hide-video-icon').attr('class', 'glyphicon glyphicon-eye-close');
       $('#hide-video').attr('title', 'Show video');
+    } else {
+      $('#hide-video-icon').attr('class', 'glyphicon glyphicon-eye-open');
+      $('#hide-video').attr('title', 'Hide video');
     }
   }
 
   // Reads cookie and applies its setting
   function loadHideVideoState() {
     var hidden = (getCookie('hide-video') == 1);
-    setPlayerVisible(!hidden);
+    setPlayerVisible(!hidden, 0);
     drawHideVideoState();
   }
 
@@ -130,22 +130,25 @@ script.
     return false;
   });
 
-  function getPlayerVisible() {
-    return $('#player').css('z-index') > $('#player-shield').css('z-index');
+  function getPlayerShieldUp() {
+    return $('#player-shield').css('display') !== 'none';
   }
 
-  function setPlayerVisible(visible) {
+  function setPlayerVisible(visible, fadeDuration) {
     if (typeof visible === 'undefined') { visible = true; }
-    $('#player').css('z-index', visible ? 2 : 1);
-    $('#player-shield').css('z-index', visible ? 1 : 2);
+    if (visible) {
+      $('#player-shield').fadeOut(fadeDuration);
+    } else {
+      $('#player-shield').fadeIn(fadeDuration);
+    }
   }
 
   // Hide video button - toggle player visibility and save new setting
   $('#hide-video').on('click', function(e) {
     e.preventDefault();
-    var hide = getPlayerVisible(); // Toggle it
-    setPlayerVisible(!hide);
-    setCookie('hide-video', hide ? 1 : 0);
+    var newHideState = !getPlayerShieldUp(); // Toggle it
+    setPlayerVisible(!newHideState, 100);
+    setCookie('hide-video', newHideState ? 1 : 0);
     drawHideVideoState();
     return false;
   });
