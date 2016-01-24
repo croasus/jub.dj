@@ -7,6 +7,8 @@ div(class='panel panel-default', id='player-panel')
         th(id='time-left')
   div(class='panel-body')
     div(id='player')
+    div(id='player-shield')
+      span(id='player-hidden-splash', class='glyphicon glyphicon-sunglasses')
   table(class='table', id='player-footer')
     tbody
       tr
@@ -22,7 +24,20 @@ div(class='panel panel-default', id='player-panel')
               //       title='K.')
               //  span(id='dislike-icon', class='glyphicon glyphicon-thumbs-down')
               //  span(id='num-dislikes', style='margin-left: 4px;') 0
-
+            button(class='btn btn-default right',type='button',
+                   id='skip', data-toggle='tooltip',
+                   data-placement='bottom', title='Skip')
+              span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
+        th(id='player-buttons-th', class='right')
+          div(class='input-group input-group-md')
+            button(class='btn btn-default',type='button',
+                   id='mute', data-toggle='tooltip',
+                   data-placement='bottom', title='Mute')
+              span(id='mute-icon', class='glyphicon glyphicon-volume-up')
+            button(class='btn btn-default',type='button',
+                   id='hide-video', data-toggle='tooltip',
+                   data-placement='bottom', title='Hide video')
+              span(id='hide-video-icon', class='glyphicon glyphicon-eye-open')
 
 script.
 
@@ -38,65 +53,6 @@ script.
     5: 'video cued',
   }
 
-
-  // Start the specified video, starting at the correct time
-  function applyVideoState(state) {
-    if (!playerReady)
-      return;
-    if (Object.keys(state) == 0)
-      return;
-    var id = state.id;
-    var startTime = state.startTime;
-    var user = state.user;
-    if (myVideoState.id != id ||
-        myVideoState.startTime != startTime) {
-      myVideoState = {
-        title: state.title,
-        duration: state.duration,
-        userColor: state.userColor,
-        user: user,
-        id: id,
-        startTime: startTime,
-      };
-      var videoProgress = (state.serverTime - startTime) / 1000;
-      console.log("apply video state", id, videoProgress);
-      if ((typeof id == 'string') && (typeof videoProgress == 'number')) {
-        console.log('loading video');
-        player.loadVideoById({
-          'videoId': id,
-          'startSeconds': videoProgress,
-          'suggestedQuality': 'large'
-        });
-      } else {
-        player.stopVideo();
-      }
-      updateTimeLeft();
-      updateCurrentDj(state.user, state.userColor);
-      updateCurrentTrack(state.title);
-      updateOpinions(state.opinions);
-    }
-  }
-
-  // Server tells us about video state changes
-  socket.on('video state', function(videoState) {
-    applyVideoState(videoState);
-  });
-
-  function updateCurrentTrack(title) {
-    var track = $('#current-track');
-    track.text(myVideoState.title);
-    var width = $('#player-panel-heading').width() -
-                parseInt($('#player-panel-heading').css('padding-right'), 10) -
-                parseInt($('#player-panel-heading').css('padding-left'), 10) -
-                $('#current-dj-name').outerWidth() -
-                $('#time-left').outerWidth();
-    track.truncate({
-        width: 'auto',
-        token: '...',
-        side: 'right',
-        multiline: false
-    });
-  }
 
   function updateCurrentDj(user, color) {
     var dj = $('#current-dj-name');
@@ -117,6 +73,83 @@ script.
       });
     }
   }
+
+  // Skip
+  $('#skip').on('click', function(e) {
+    var user = getCookie('username');
+    socket.emit('video skip', user);
+    return false;
+  });
+
+  function drawMuteState() {
+    var isMuted = getCookie('muted');
+    if (isMuted == 1) {
+      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
+      $('#mute').attr('title', 'Unmute');
+    } else {
+      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
+      $('#mute').attr('title', 'Mute');
+    }
+  }
+
+  function drawHideVideoState() {
+    if (getPlayerVisible()) {
+      $('#hide-video-icon').attr('class', 'glyphicon glyphicon-eye-open');
+      $('#hide-video').attr('title', 'Hide video');
+    } else {
+      $('#hide-video-icon').attr('class', 'glyphicon glyphicon-eye-close');
+      $('#hide-video').attr('title', 'Show video');
+    }
+  }
+
+  // Reads cookie and applies its setting
+  function loadHideVideoState() {
+    var hidden = (getCookie('hide-video') == 1);
+    setPlayerVisible(!hidden);
+    drawHideVideoState();
+  }
+
+  //TODO: load the controls and player in a deliberate order so one
+  // can reflect the other's mute state
+  $( document ).ready(function() {
+    drawMuteState();
+    loadHideVideoState();
+  });
+
+  // Mute button
+  $('#mute').on('click', function(e) {
+    e.preventDefault();
+    if (player.isMuted()) {
+      player.unMute();
+      setCookie('muted', 0);
+    } else {
+      player.mute();
+      setCookie('muted', 1);
+    }
+    drawMuteState();
+    return false;
+  });
+
+  function getPlayerVisible() {
+    return $('#player').css('z-index') > $('#player-shield').css('z-index');
+  }
+
+  function setPlayerVisible(visible) {
+    if (typeof visible === 'undefined') { visible = true; }
+    $('#player').css('z-index', visible ? 2 : 1);
+    $('#player-shield').css('z-index', visible ? 1 : 2);
+  }
+
+  // Hide video button - toggle player visibility and save new setting
+  $('#hide-video').on('click', function(e) {
+    e.preventDefault();
+    var hide = getPlayerVisible(); // Toggle it
+    setPlayerVisible(!hide);
+    setCookie('hide-video', hide ? 1 : 0);
+    drawHideVideoState();
+    return false;
+  });
+
 
   // Later, use this to make avatars dance
   function updateOpinions(opinions) {
@@ -179,7 +212,68 @@ script.
     return false;
   });
 
-  /* Everything below here is boilerplate for the Google YT IFrame */
+  // Start the specified video, starting at the correct time
+  function applyVideoState(state) {
+    if (!playerReady)
+      return;
+    if (Object.keys(state) == 0)
+      return;
+    var id = state.id;
+    var startTime = state.startTime;
+    var user = state.user;
+    if (myVideoState.id != id ||
+        myVideoState.startTime != startTime) {
+      myVideoState = {
+        title: state.title,
+        duration: state.duration,
+        userColor: state.userColor,
+        user: user,
+        id: id,
+        startTime: startTime,
+      };
+      var videoProgress = (state.serverTime - startTime) / 1000;
+      console.log("apply video state", id, videoProgress);
+      if ((typeof id == 'string') && (typeof videoProgress == 'number')) {
+        console.log('loading video');
+        player.loadVideoById({
+          'videoId': id,
+          'startSeconds': videoProgress,
+          'suggestedQuality': 'large'
+        });
+      } else {
+        player.stopVideo();
+      }
+      updateTimeLeft();
+      updateCurrentDj(state.user, state.userColor);
+      updateCurrentTrack(state.title);
+      updateOpinions(state.opinions);
+    }
+  }
+
+  // Server tells us about video state changes
+  socket.on('video state', function(videoState) {
+    applyVideoState(videoState);
+  });
+
+  function updateCurrentTrack(title) {
+    var track = $('#current-track');
+    track.text(myVideoState.title);
+    var width = $('#player-panel-heading').width() -
+                parseInt($('#player-panel-heading').css('padding-right'), 10) -
+                parseInt($('#player-panel-heading').css('padding-left'), 10) -
+                $('#current-dj-name').outerWidth() -
+                $('#time-left').outerWidth();
+    track.truncate({
+        width: 'auto',
+        token: '...',
+        side: 'right',
+        multiline: false
+    });
+  }
+
+
+  // Everything below here is boilerplate for the Google YT IFrame
+  //
 
   // Load the IFrame Player API code, asynchronously
   var tag = document.createElement('script');
@@ -191,17 +285,18 @@ script.
   var player;
   function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-      height: '290',
-      width: '484',
+      height: 290,
+      width: 484,
       playerVars: {
-        'autoplay': 0,
-        'autohide': 1,
-        'controls': 0,
-        'rel': 0,
-        'disablekb': 1,
-        'modestbranding': 1,
+        autoplay: 0,
+        autohide: 1,
+        controls: 0,
+        rel: 0,
+        disablekb: 1,
+        modestbranding: 1,
+        wmode: 'opaque',
         // TODO add 'origin' param; set it to my domain
-        'iv_load_policy': 0
+        iv_load_policy: 0
       },
       events: {
         'onReady': onPlayerReady,
@@ -214,11 +309,9 @@ script.
   function onPlayerReady(event) {
     var isMuted = getCookie('muted');
     if(isMuted == 1) {
-      console.log('is muted');
       player.mute();
     }
     else {
-      console.log('is not muted');
       player.unMute();
     }
     playerReady = true;

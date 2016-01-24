@@ -11,23 +11,6 @@ nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
       input(class='form-control jub-nav-input jub-nav-top-item', id='omnibox',
             style='width:300px; margin-right:10px; margin-left:5px;',
             placeholder='Search / video or playlist ID / URL')
-      span(class='input-group-btn jub-nav-top-item')
-        button(class='btn btn-default', type='button', id='enqueue',
-               data-toggle="tooltip",
-               data-placement="bottom", title="Add to queue")
-          span(id='enqueue-icon', class='glyphicon glyphicon-import')
-        button(class='btn btn-default', type='button', id='dequeue',
-               data-toggle='tooltip',
-               data-placement='bottom', title='Remove last video')
-          span(id='dequeue-icon', class='glyphicon glyphicon-export')
-        button(class='btn btn-default',type='button',
-               id='skip', data-toggle='tooltip',
-               data-placement='bottom', title='Skip')
-          span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
-        button(class='btn btn-default',type='button',
-               id='mute', data-toggle='tooltip',
-               data-placement='bottom', title='Mute')
-          span(id='mute-icon', class='glyphicon glyphicon-volume-up')
 
   ul(class='nav navbar-nav navbar-right')
     // Username
@@ -48,22 +31,6 @@ script.
   var MAX_RESULTS = 7;
   var MAX_PRETTY_LEN = 60;
   var djing = false;
-
-  //TODO: load the controls and player in a deliberate order so one can reflect the other's mute state
-  $( document ).ready(function() {
-    drawMuteState();
-  });
-
-  function drawMuteState() {
-    var isMuted = getCookie('muted');
-    if (isMuted == 1) {
-      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
-      $('#mute').attr('title', 'Unmute');
-    } else {
-      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
-      $('#mute').attr('title', 'Mute');
-    }
-  }
 
   function drawDjState() {
     var elem = $('#join-dj');
@@ -217,45 +184,6 @@ script.
         }
       });
     }
-    return false;
-  });
-
-  // Enqueue
-  $('#enqueue').on('click', function(e) {
-    var user = getCookie('username');
-    console.log('sending enqueue for:', user);
-    var event = $.Event("submit");
-    event.videoId = $('#omnibox').val();
-    $('#load_video').trigger(event);
-    return false;
-  });
-
-  // Dequeue
-  $('#dequeue').on('click', function(e) {
-    var user = getCookie('username');
-    console.log('sending dequeue for:', user);
-    socket.emit('video dequeue', user, selectedPlaylistName());
-    return false;
-  });
-
-  // Skip
-  $('#skip').on('click', function(e) {
-    var user = getCookie('username');
-    socket.emit('video skip', user);
-    return false;
-  });
-
-  // Mute button
-  $('#mute').on('click', function(e) {
-    e.preventDefault();
-    if (player.isMuted()) {
-      player.unMute();
-      setCookie('muted', 0);
-    } else {
-      player.mute();
-      setCookie('muted', 1);
-    }
-    drawMuteState();
     return false;
   });
 

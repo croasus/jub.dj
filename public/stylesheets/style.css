@@ -124,11 +124,26 @@ body {
   border: 0;
   background-color: #111;
 }
-#player-panel {
+#player-panel,
+#player-shield {
   width: 484px; /* width of the player */
 }
-#player-panel .panel-body {
+#player-panel .panel-body,
+#player-shield {
   height: 290px;
+}
+#player-shield,
+#player {
+  position: absolute;
+}
+#player-shield {
+  text-align: center;
+}
+#player-shield span {
+  font-size: 100px;
+  position: relative;
+  top: 95px;           /* 290px (height of player) - 100px (font size) / 2 */
+  color: #1D1D1F;
 }
 #current-track {
   color: #DDDDEE;
