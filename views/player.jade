@@ -93,7 +93,8 @@ script.
   }
 
   function drawHideVideoState() {
-    if (getPlayerShieldUp()) {
+    // Use the cookie because when it transitions, it uses a fade effect
+    if (getCookie('hide-video') == 1) {
       $('#hide-video-icon').attr('class', 'glyphicon glyphicon-eye-close');
       $('#hide-video').attr('title', 'Show video');
     } else {
