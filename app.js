@@ -126,11 +126,12 @@ app.config = config;
 
 
 /* scratch */
+/*
 var token = app.auth.genToken(function(token) {
   console.log("generated token:", token);
   console.log("encoded token:", app.auth.encodeToken(token));
   app.db.storeAuth('123456abcdef', token, 1);
-});
+});*/
 /* scratch over */
 
 module.exports = app;
