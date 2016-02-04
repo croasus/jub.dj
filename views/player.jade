@@ -1,10 +1,5 @@
 div(class='panel panel-default', id='player-panel')
   table(class='table', id='player-banner')
-    tbody
-      tr
-        th(id='current-dj-name')
-        th(id='current-track') No one is playing.
-        th(id='time-left')
   div(class='panel-body')
     div(id='player', style="z-index: 1;")
     div(id='player-shield', style="z-index: 2;")
@@ -51,27 +46,6 @@ script.
     2: 'paused',
     3: 'buffering',
     5: 'video cued',
-  }
-
-
-  function updateCurrentDj(user, color) {
-    var dj = $('#current-dj-name');
-    if (user) {
-      dj.css({
-        'font-weight': 'bold',
-        'float': 'left'
-      });
-      if (color) {
-        dj.css({'color': color})
-      }
-      dj.text(user);
-      dj.truncate({
-        width: '100px',
-        token: '...',
-        side: 'right',
-        multiline: false
-      });
-    }
   }
 
   // Skip
@@ -154,7 +128,6 @@ script.
     return false;
   });
 
-
   // Later, use this to make avatars dance
   function updateOpinions(opinions) {
     var likes = 0, dislikes = 0;
@@ -177,32 +150,6 @@ script.
   socket.on('num dislikes', function(num) {
     $('#num-dislikes').text(num);
   });
-
-  function updateTimeLeft() {
-    this.time = new Date(1970, 1, 1); // Unix epoch
-    var secondsLeft,
-        hide = false,
-        elem = $('#time-left');
-    if (playerReady) {
-      secondsLeft = player.getDuration() - player.getCurrentTime();
-      if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
-        this.time.setSeconds(secondsLeft);
-      } else {
-        this.time.setSeconds(0);
-        hide = true;
-      }
-    } else {
-      hide = false;
-    }
-    var format = secondsLeft >= 3600 ? '%k:%M:%S' : '%M:%S';
-    elem.text(strftime(format, this.time));
-    if (hide) {
-      elem.css('visibility','hidden')
-    } else {
-      elem.css('visibility','visible')
-    }
-  }
-  setInterval(updateTimeLeft, 1000);
 
   // Like
   $('#like-btn').on('click', function(e) {
@@ -258,23 +205,6 @@ script.
   socket.on('video state', function(videoState) {
     applyVideoState(videoState);
   });
-
-  function updateCurrentTrack(title) {
-    var track = $('#current-track');
-    track.text(myVideoState.title);
-    var width = $('#player-panel-heading').width() -
-                parseInt($('#player-panel-heading').css('padding-right'), 10) -
-                parseInt($('#player-panel-heading').css('padding-left'), 10) -
-                $('#current-dj-name').outerWidth() -
-                $('#time-left').outerWidth();
-    track.truncate({
-        width: 'auto',
-        token: '...',
-        side: 'right',
-        multiline: false
-    });
-  }
-
 
   // Everything below here is boilerplate for the Google YT IFrame
   //

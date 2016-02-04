@@ -1,15 +1,59 @@
 nav(class='navbar navbar-inverse navbar-fixed-bottom'
-    id='bottom-nav')
-  ul(class='nav navbar-nav navbar-left')
-    li
-      a(class="a-link-to-the-past" href='https://github.com/aromatt/thejub.pub/issues',
-        target="_blank") Gitpub
+  id='bottom-nav')
+  div(class="container left", id="dj-container")
+    table(class='table', id='dj-banner', style='margin-bottom:0px;')
+      tbody
+        tr
+          // TODO is this cool? td(id='now-playing-label') Now Playing
+          td(id='current-dj-name')
+          td(id='time-left')
+          td(id='current-track')
+
   form(class='navbar-form navbar-right', id='chat', action='')
     div(class='input-group input-group-md')
       input(class='form-control jub-nav-input', id='chat-input', autocomplete='off',
             placeholder='Chat')
 
 script.
+
+  function updateTimeLeft() {
+    this.time = new Date(1970, 1, 1); // Unix epoch
+    var secondsLeft,
+        hide = true,
+        elem = $('#time-left');
+    if (playerReady) {
+      secondsLeft = player.getDuration() - player.getCurrentTime();
+      if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
+        hide = false;
+        this.time.setSeconds(secondsLeft);
+      } else {
+        this.time.setSeconds(0);
+      }
+    }
+    var format = secondsLeft >= 3600 ? '%k:%M:%S' : '%M:%S';
+    elem.text(strftime(format, this.time));
+    if (hide) {
+      elem.css('visibility','hidden')
+    } else {
+      elem.css('visibility','visible')
+    }
+  }
+  setInterval(updateTimeLeft, 1000);
+
+  function updateCurrentDj(user, color) {
+    var dj = $('#current-dj-name');
+    if (user) {
+      dj.text(user);
+      if (color) {
+        dj.css({'color': color})
+      }
+    }
+  }
+
+  function updateCurrentTrack(title) {
+    var track = $('#current-track');
+    track.text(myVideoState.title);
+  }
 
   // Client chat message submission
   $('#chat').submit(function() {
