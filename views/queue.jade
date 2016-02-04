@@ -209,6 +209,17 @@ script.
     return li;
   }
 
+  function emptyPlaylistBanner() {
+    var tr = $('<tr>');
+    var titleTd = $('<td>');
+    tr.append(titleTd);
+    titleTd.text(
+      "This playlist is empty. Use the search bar to find videos (or enter " +
+      "a video ID or playlist ID)"
+    );
+    return tr;
+  }
+
   function newQueueItem(videoObj) {
     var tr = $('<tr>').addClass('queue-item');
     tr.css({
@@ -254,9 +265,16 @@ script.
 
     var videos = pl['videos'];
     videos = _.sortBy(videos, 'position').reverse();
-    for (video of videos) {
-      var item = newQueueItem(video);
-      $("#video-queue-tbody").prepend(item);
+    if (videos.length === 0) {
+      var banner = emptyPlaylistBanner();
+      $("#queue-banner").hide();
+      $("#video-queue-tbody").prepend(banner);
+    } else {
+      for (video of videos) {
+        var item = newQueueItem(video);
+        $("#queue-banner").show();
+        $("#video-queue-tbody").prepend(item);
+      }
     }
 
     updateSelectAll();
