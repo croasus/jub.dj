@@ -32,16 +32,17 @@ TESTING
   - nock
     - can be used like VCR, but currently breaks when trying to record/playback requests
       that include query params with spaces in them
+  - INTEGRATION
+    - start a jub server (may require work to make a 'test mode' for the server)
   - MODULES
     - jub_util
     - gapi
       - nock
     - jub
+      - break out the business logic from the IO
       - fixtures with state
       - no sockets
-    - sockets + jub (functional)
-      - mock out db?
-      - http://liamkaufman.com/blog/2012/01/28/testing-socketio-with-mocha-should-and-socketio-client/
-      - chat
+    - chat
+      - isolated enough
     - db
-      - nock?
+      - mockgoose

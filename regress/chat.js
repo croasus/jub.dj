@@ -156,6 +156,12 @@ chat.newChatMessage({
   text: 'This test passes #blessed'
 });
 
+testCase('A client uses # but not in an isolated hashtag');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: 'not#ahashtag'
+});
+
 testCase('A client asks urban dictionary for a definition');
 chat.newChatMessage({
   user: TEST_USER,
