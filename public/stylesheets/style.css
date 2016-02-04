@@ -342,6 +342,8 @@ body {
 .nav-tabs>li>a:hover,
 .nav-tabs>li>a:focus {
   background-color: #2C1E39;
+  border-bottom-color: #39274a;
+  border-width: 0px 0px 3px 0px;
   color: #FFF;
 }
 
