@@ -1,24 +1,20 @@
 nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
   form(class='navbar-form form-group navbar-left',
-       id='load_video', action='')
+       id='load-video', action='')
 
     div(class='input-group input-group-md')
-      span(class='input-group-btn jub-nav-top-item')
-        button(class='btn btn-default', type='button', id='join-dj',
-               data-toggle='tooltip', data-placement='top',
-               title='Click to DJ')
-          span(id='join-dj-icon', class='glyphicon glyphicon-user')
-      input(class='form-control jub-nav-input jub-nav-top-item', id='omnibox',
-            style='width:300px; margin-right:10px; margin-left:5px;',
+      input(class='form-control jub-nav-input jub-nav-item', id='omnibox',
             placeholder='Search / video or playlist ID / URL')
 
+  div(class="container left", id="dj-container")
+    table(class='table', id='dj-banner', style='margin-bottom:0px;')
+      tbody
+        tr
+          //td(id='now-playing-label') Now Playing
+          td(id='current-dj-name')
+          td(id='current-track')
+          td(id='time-left')
   ul(class='nav navbar-nav navbar-right')
-    // Username
-    li(class='jub-nav-top-item')
-      form(class='navbar-form form-group', id='auth', action='')
-        input(class='form-control jub-nav-input jub-nav-top-item', id='username',
-              style='margin:0 50px 10px 0;',
-              placeholder='User name', autocomplete='off')
     // Title
     li
       p(class='navbar-text', id='title', style='font-size:36px;')= title
@@ -27,28 +23,11 @@ nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
         target="_blank", style="line-height:1.9; margin-right: 25px") Git
 
 
-include ./username.jade
-
 script.
 
   var MAX_RESULTS = 7;
   var MAX_PRETTY_LEN = 60;
   var djing = false;
-
-  function drawDjState() {
-    var elem = $('#join-dj');
-    if (djing) {
-      elem.css('background', '#2DB85A');
-      elem.css('color', '#000');
-      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-headphones');
-      $('#join-dj').attr('title', 'Stop DJing');
-    } else {
-      elem.css('background', '#3F2C52');
-      elem.css('color', '#FFFFFF');
-      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-user');
-      $('#join-dj').attr('title', 'Click to DJ');
-    }
-  }
 
   // e.g. "michelleheafy: Some cool video about someth..."
   function prettifyResult(result) {
@@ -89,7 +68,7 @@ script.
     select: function(event, ui) {
       var event = $.Event("submit");
       event.videoId = ui.item.value;
-      $('#load_video').trigger(event);
+      $('#load-video').trigger(event);
       return false;
     },
     minLength: 5,
@@ -97,7 +76,7 @@ script.
   });
 
   // Client text box for submitting a video
-  $('#load_video').submit(function(event) {
+  $('#load-video').submit(function(event) {
     // We might have been invoked straight from an autocomplete callback,
     // in which case the value of the search box is not the video id; the
     // video id was passed in with the event.
@@ -190,28 +169,44 @@ script.
     return false;
   });
 
-  // DJ button
-  $('#join-dj').on('click', function() {
-    if (!djing) {
-      socket.emit('add dj', getUsername());
-      console.log("add dj");
-      djing = true;
-    } else {
-      socket.emit('remove dj', getUsername());
-      console.log("remove dj");
-      djing = false;
+
+  function updateTimeLeft() {
+    this.time = new Date(1970, 1, 1); // Unix epoch
+    var secondsLeft,
+        hide = true,
+        elem = $('#time-left');
+    if (playerReady) {
+      secondsLeft = player.getDuration() - player.getCurrentTime();
+      if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
+        hide = false;
+        this.time.setSeconds(secondsLeft);
+      } else {
+        this.time.setSeconds(0);
+      }
     }
-    drawDjState();
-  });
+    var format = secondsLeft >= 3600 ? '%k:%M:%S' : '%M:%S';
+    elem.text(strftime(format, this.time));
+    if (hide) {
+      elem.css('visibility','hidden')
+    } else {
+      elem.css('visibility','visible')
+    }
+  }
+  setInterval(updateTimeLeft, 1000);
 
-  // Some other part of the page wants to set the DJ state
-  $('#join-dj').on('set-dj-state', function(e, newState) {
-    console.log('dj-state', newState);
-    djing = newState;
-    drawDjState();
-  });
+  function updateCurrentDj(user, color) {
+    var dj = $('#current-dj-name');
+    if (user) {
+      dj.text(user);
+      if (color) {
+        dj.css({'color': color})
+      }
+    }
+  }
 
-  // Server assigns 'djing' state
-  socket.on('user djing', function(state) {
-    $('#join-dj').trigger('set-dj-state', state);
-  });
+  function updateCurrentTrack(title) {
+    var track = $('#current-track');
+    track.text(myVideoState.title);
+  }
+
+

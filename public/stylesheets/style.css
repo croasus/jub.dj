@@ -34,21 +34,12 @@ body {
   height: 100%;
 }
 
-/* title */
-#title {
-  color: #DDDDEE;
-  padding-right: 0px;
-  margin-right: 5px;
-  margin-top: 0;
-  margin-bottom: 0px;
-}
-
-
 .form-control {
   border: 0px;
   background-color: #222222;
   color: #BBBBBB;
   font-size: 13px;
+  font-weight: normal;
 }
 
 .btn {
@@ -60,6 +51,15 @@ body {
 
 .material-icons {
   font-size: 20px;
+}
+
+/* title */
+#title {
+  color: #DDDDEE;
+  padding-right: 0px;
+  margin-right: 5px;
+  margin-top: 0;
+  margin-bottom: 0px;
 }
 
 /* jub-style lists */
@@ -261,7 +261,15 @@ body {
   /*display: none ;*/
 }
 
-/* settings panel */
+
+#join-dj {
+  margin-right: 10px;
+}
+#join-dj-icon {
+  padding-top: 2px;
+  padding-bottom: 5px;
+}
+/* chat settings panel */
 #queue-settings-panel .panel-body,
 #chat-settings-panel .panel-body {
   padding: 10px 5px 5px 5px;
@@ -273,18 +281,25 @@ body {
 }
 #queue-settings-panel input[type=checkbox],
 #chat-settings-panel input[type=checkbox] {
-  margin: 2px 5px 5px 0px;
+  margin: 2px 5px 5px 4px;
   float: left;
 }
+#username-input {
+  border: 1px;
+  border-color: #223;
+  width: 95%;
+  margin-left: 4px;
+  border-style: solid;
+}
 
-/* navbars */
 .a-link-to-the-past {
   color: #0097AA;
 }
 
-/* top navbar */
-.jub-nav-top-item {
-  top: 5px;
+/* navbar */
+.jub-nav-item {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .navbar-fixed-top {
   height: 60px;
@@ -337,6 +352,17 @@ body {
   color: #FFF;
 }
 
+
+/* TOP NAV BAR */
+#load-video {
+  padding-right: 5px;
+}
+
+#omnibox {
+  width: 220px;
+  padding-right: 0px
+}
+
 /* Current DJ and track */
 /* TODO is this label cool? */
 /*#now-playing-label {
@@ -364,22 +390,27 @@ body {
 #current-dj-name,
 #current-track,
 #time-left {
-  font-size: 18px;
-  line-height: 1.7;
+  font-size: 17px;
+  line-height: 2.0;
+}
+#now-playing-label {
+  text-align: right;
+  padding-top: 18px;
+  color: #777;
 }
 #current-track {
   color: #DDDDEE;
   font-weight: normal;
+  padding-left: 0px;
 }
 #current-dj-name {
   font-weight: bold;
-  width: 175px;
-  text-align: left;
+  text-align: right;
   padding-right: 20px;
-  padding-left: 22px;
+  padding-left: 0px;
 }
 #time-left {
-  color: #777;
+  color: #EEE;
   text-align: right;
   padding-right: 20px;
   width: 80px;
@@ -441,7 +472,4 @@ body {
   margin: -1px;
 }
 
-.form-control {
-  font-size: 13px;
-  font-weight: normal;
-}
+

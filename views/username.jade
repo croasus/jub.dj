@@ -15,11 +15,11 @@ script.
   }
 
   // Username input box
-  $('#auth').submit(function() {
-    var username = $('#username').val();
+  $('#username').submit(function() {
+    var username = $('#username-input').val();
     if (username && username.length > 0) {
       updateUsername(username);
-      $('#username').val('');
+      $('#username-input').val('');
     }
     return false;
   });

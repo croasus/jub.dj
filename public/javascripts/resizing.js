@@ -1,5 +1,8 @@
 // Monolothic resizing for the whole page
 function refreshSizes(playerLoaded) {
+  var parseCssInt = function(jqueryResult, cssProp) {
+    return parseInt(jqueryResult.css(cssProp), 10);
+  }
   this.playerLoaded = this.playerLoaded || playerLoaded;
   var mainRowTop = $('#jub-row-main').position().top;
   var mainRowHeight = $(window).height() - mainRowTop - 10;
@@ -9,21 +12,29 @@ function refreshSizes(playerLoaded) {
   // Chat input width
   $('#chat-input').outerWidth($('#chat-tab-content').width());
   $('#chat-input').css({
-    'margin-right': parseInt($('#jub-col-chat').css('padding-right'), 10) +
-                    parseInt($('#jub-container').css('padding-right'), 10)
-  })
+    'margin-right': parseCssInt($('#jub-col-chat'), 'padding-right') +
+                    parseCssInt($('#jub-container'), 'padding-right')
+  });
 
   // DJ banner widths
   var djBannerWidth =
     mainRowWidth
-    - $('#chat').outerWidth()
-    - parseInt($('#dj-container').css('padding-left'), 10)
-    - parseInt($('#dj-container').css('padding-right'), 10)
+    - $('#chat-input').outerWidth()
+    - $('#omnibox').outerWidth()
+    - parseCssInt($('#dj-container'), 'padding-left')
+    - parseCssInt($('#dj-container'), 'padding-right')
     - 20;
   $('#dj-container').innerWidth(djBannerWidth);
-  $('#current-dj-name').innerWidth(
+  $('#now-playing-label').innerWidth(
     $("#jub-col-queue").innerWidth()
-    - $("#time-left").outerWidth()
+    - parseCssInt($("#jub-col-queue"), 'padding-right')
+  );
+  // TODO can't decide if I want to keep now-playing-label
+  $('#current-dj-name').outerWidth(
+    $("#player-panel").offset().left
+    - $('#now-playing-label').outerWidth()
+    - $('#load-video').outerWidth()
+    - parseCssInt($('#dj-container'), 'padding-left')
   );
 
   // Chat messages and "who's jubbin" list
