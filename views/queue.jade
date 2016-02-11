@@ -179,6 +179,8 @@ script.
     $(this).tab('show');
     if (e.currentTarget.id == 'queue-navtab-a') {
       $('#video-queue').trigger('redraw');
+    } else if (e.currentTarget.id == 'playlists-navtab-a') {
+      $('#playlists').trigger('redraw');
     }
   })
 
@@ -305,6 +307,7 @@ script.
     }
     selected = selected || playlists[0];
     $(selected).prop('checked', true)
+    refreshSizes();
   });
 
   // playlists is an object keyed by playlist name
