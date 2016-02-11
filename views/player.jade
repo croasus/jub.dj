@@ -36,7 +36,6 @@ div(class='panel panel-default', id='player-panel')
 
 script.
 
-  var playerReady = false;
   var myVideoState = {};
 
   var PLAYER_STATE = {
@@ -169,11 +168,11 @@ script.
       return;
     if (Object.keys(state) == 0)
       return;
+
     var id = state.id;
     var startTime = state.startTime;
     var user = state.user;
-    if (myVideoState.id != id ||
-        myVideoState.startTime != startTime) {
+    if (myVideoState.id != id || myVideoState.startTime != startTime) {
       myVideoState = {
         title: state.title,
         duration: state.duration,
@@ -270,5 +269,3 @@ script.
       }
     }
   }
-
-

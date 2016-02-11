@@ -68,4 +68,6 @@ function scrollbarWidth() {
   return this.value;
 };
 
+// Some globals
 var socket = io();
+var playerReady = false;

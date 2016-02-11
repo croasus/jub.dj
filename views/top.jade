@@ -201,12 +201,18 @@ script.
       if (color) {
         dj.css({'color': color})
       }
+    } else {
+      dj.text('');
     }
   }
 
   function updateCurrentTrack(title) {
     var track = $('#current-track');
-    track.text(myVideoState.title);
+    if (myVideoState.title) {
+      track.text(myVideoState.title);
+    } else {
+      track.text("No one is playing.");
+    }
   }
 
 
