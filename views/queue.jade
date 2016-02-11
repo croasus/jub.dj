@@ -234,6 +234,7 @@ script.
       'text-overflow': 'ellipsis',
       'white-space': 'nowrap',
     });
+    titleTd.attr('title', video.title);
     var timeTd = $('<td>').addClass('duration');
     var chkTd = $('<td>').addClass('chk-td');
     var chk = $('<input>').attr('type', 'checkbox').addClass('queue-chk')
