@@ -22,7 +22,7 @@ function refreshSizes(playerLoaded) {
     - 20;
   $('#dj-container').innerWidth(djBannerWidth);
   $('#current-dj-name').innerWidth(
-    $("#queue-panel").innerWidth()
+    $("#jub-col-queue").innerWidth()
     - $("#time-left").outerWidth()
   );
 
