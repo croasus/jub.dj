@@ -23,12 +23,21 @@ div(class='panel panel-default', id='player-panel')
                    id='skip', data-toggle='tooltip',
                    data-placement='bottom', title='Skip')
               span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
-        td(id='player-buttons-td', class='right')
+        td(id='player-buttons-td', class='right', style="width: 67%")
           div(class='input-group input-group-md')
             button(class='btn btn-default',type='button',
-                   id='mute', data-toggle='tooltip',
-                   data-placement='bottom', title='Mute')
-              span(id='mute-icon', class='glyphicon glyphicon-volume-up')
+                  style="display: inline-block",
+                  id='mute', data-toggle='tooltip',
+                  data-placement='bottom', title='Mute')
+              span(id='mute-icon', class='glyphicon glyphicon-volume-off')
+            input(id='volume-slider' type="range",
+                  style="width: 100px; display: inline-block",
+                  min='0', step="1", max='100', value='50',
+                  onchange="onVolumeSliderChance(this.value)")
+            button(class='btn btn-default',type='button',
+                   id='full', data-toggle='tooltip',
+                   data-placement='bottom', title='Full Volume')
+              span(id='full-icon', class='glyphicon glyphicon-volume-up')
             button(class='btn btn-default',type='button',
                    id='hide-video', data-toggle='tooltip',
                    data-placement='bottom', title='Hide video')
@@ -44,7 +53,7 @@ script.
     1: 'playing',
     2: 'paused',
     3: 'buffering',
-    5: 'video cued',
+    5: 'video cued'
   }
 
   // Skip
@@ -54,15 +63,12 @@ script.
     return false;
   });
 
-  function drawMuteState() {
-    var isMuted = getCookie('muted');
-    if (isMuted == 1) {
-      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
-      $('#mute').attr('title', 'Unmute');
-    } else {
-      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
-      $('#mute').attr('title', 'Mute');
+  function drawVolumeState() {
+    var volume = Number(getCookie('volume'));
+    if (player) {
+      player.setVolume(volume);
     }
+    document.querySelector('#volume-slider').value = volume;
   }
 
   function drawHideVideoState() {
@@ -86,24 +92,29 @@ script.
   //TODO: load the controls and player in a deliberate order so one
   // can reflect the other's mute state
   $( document ).ready(function() {
-    drawMuteState();
+    drawVolumeState();
     loadHideVideoState();
   });
 
   // Mute button
   $('#mute').on('click', function(e) {
     e.preventDefault();
-    if (player.isMuted()) {
-      player.unMute();
-      setCookie('muted', 0);
-    } else {
-      player.mute();
-      setCookie('muted', 1);
-    }
-    drawMuteState();
+    setCookie('volume', 0);
+    drawVolumeState();
     return false;
   });
-
+  $('#full').on('click', function(e) {
+    e.preventDefault();
+    setCookie('volume', 100);
+    drawVolumeState();
+    return false;
+  });
+  //callback for range slider
+  window.onVolumeSliderChance = function(value) {
+    setCookie('volume', value);
+    drawVolumeState();
+    return false;
+  }
   function getPlayerShieldUp() {
     return $('#player-shield').css('display') !== 'none';
   }
