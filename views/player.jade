@@ -23,8 +23,8 @@ div(class='panel panel-default', id='player-panel')
                    id='skip', data-toggle='tooltip',
                    data-placement='bottom', title='Skip')
               span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
-        td(id='player-buttons-td', class='right', style="width: 74%")
-          div(class='input-group input-group-md')
+        td(id='player-buttons-td', style="width: 80%")
+          div(class='input-group input-group-md right', style="position:relative;")
             button(class='btn btn-default',type='button',
                   style="display: inline-block",
                   id='mute', data-toggle='tooltip',
@@ -32,7 +32,7 @@ div(class='panel panel-default', id='player-panel')
                   onclick="onMuteClick()")
               span(id='mute-icon', class='glyphicon glyphicon-volume-off')
             input(id='volume-slider' type="range",
-                  style="width: 100px; display: inline-block; margin-right: 37px",
+                  style="width: 100px; display: inline-block",
                   min='0', step="1", max='100', value='50',
                   oninput="onVolumeSliderChange(parseInt(this.value))"
                   onchange="saveVolume(parseInt(this.value))")
@@ -69,15 +69,27 @@ script.
   function setVolumeSlider(level) {
     var elem = document.querySelector('#volume-slider');
     elem.value = level;
-    elem.style.backgroundImage = [
-      '-webkit-gradient(',
-      'linear, ',
-      'left top, ',
-      'right top, ',
-      'color-stop(' + level / 100 + ', #654784), ',
-      'color-stop(' + level / 100 + ', #333)',
-      ')'
-    ].join('');
+    if (vendor().css.lowercase === 'moz') {
+      // TODO doesn't work
+      elem.style.backgroundImage = [
+        '-moz-linear-gradient(',
+        'left top, ',
+        'right top, ',
+        'color-stop(' + level / 100 + ', #654784), ',
+        'color-stop(' + level / 100 + ', #333)',
+        ')'
+      ].join('');
+    } else {
+      elem.style.backgroundImage = [
+        '-webkit-gradient(',
+        'linear, ',
+        'left top, ',
+        'right top, ',
+        'color-stop(' + level / 100 + ', #654784), ',
+        'color-stop(' + level / 100 + ', #333)',
+        ')'
+      ].join('');
+    }
   }
 
   // Does NOT update slider view.

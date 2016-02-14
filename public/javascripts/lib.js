@@ -68,6 +68,22 @@ function scrollbarWidth() {
   return this.value;
 };
 
+// Vendor prefix
+function vendor() {
+  if (this.obj) return this.obj;
+  var styles = window.getComputedStyle(document.documentElement, '');
+  var pre = Array.prototype.slice.call(styles).join('').match(/-(moz|ms|webkit)-/)[1] || 'o';
+  var dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
+  this.obj = {
+    dom: dom,
+    lowercase: pre,
+    css: '-' + pre + '-',
+    js: pre[0].toUpperCase() + pre.substr(1)
+  }
+  console.log(obj);
+  return obj;
+}
+
 // Some globals
 var socket = io();
 var playerReady = false;

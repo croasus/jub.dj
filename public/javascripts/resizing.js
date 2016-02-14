@@ -57,6 +57,11 @@ function refreshSizes(playerLoaded) {
   );
   $('#playlists-panel').innerHeight(msgsHeight - $('#playlists-banner').outerHeight());
   $('#playlists').innerHeight(msgsHeight - $('#playlists-banner').outerHeight());
+
+  // Vendor-specific hacks TODO can this be done with just CSS?
+  if (vendor().lowercase === 'moz') {
+    document.querySelector('#volume-slider').style.top = '2px';
+  }
 }
 
 // Wait until some short period of time has passed after the user stops
