@@ -173,3 +173,9 @@ chat.newChatMessage({
   user: TEST_USER,
   text: 'jubbot: urban aldkfj,,,'
 });
+
+testCase('A client asks for help');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: 'jubbot: help'
+});

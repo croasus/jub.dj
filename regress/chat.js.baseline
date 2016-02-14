@@ -192,3 +192,18 @@ broadcasting:
   isBot: true,
   color: '#888899' }
 has time? true
+
+=== A client asks for help ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: help',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: help
+broadcasting:
+ { text: 'Hi! I answer questions and keep you updated on what\'s         happening in the pub. Here are some examples of commands I understand:\n\n           jubbot: urban ___ \n           jubbot: show me ___ \n           jubbot: how neat/cute is that? \n\n         I also keep track of karma points. Give someone karma with \'++username\',         and check someone\'s karma with \'!karma username\'.',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
