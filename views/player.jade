@@ -23,8 +23,8 @@ div(class='panel panel-default', id='player-panel')
                    id='skip', data-toggle='tooltip',
                    data-placement='bottom', title='Skip')
               span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
-        td(id='player-buttons-td', class='right', style="width: 67%")
-          div(class='input-group input-group-md right')
+        td(id='player-buttons-td', class='right', style="width: 74%")
+          div(class='input-group input-group-md')
             button(class='btn btn-default',type='button',
                   style="display: inline-block",
                   id='mute', data-toggle='tooltip',
@@ -40,6 +40,10 @@ div(class='panel panel-default', id='player-panel')
                    id='hide-video', data-toggle='tooltip',
                    data-placement='bottom', title='Hide video')
               span(id='hide-video-icon', class='glyphicon glyphicon-eye-open')
+            button(class='btn btn-default',type='button',
+                   id='fullscreen', data-toggle='tooltip',
+                   data-placement='bottom', title='Fullscreen (Esc to exit)')
+              span(id='fullscreen-icon', class='glyphicon glyphicon-fullscreen')
 
 script.
 
@@ -55,13 +59,6 @@ script.
   }
 
   var DEFAULT_VOLUME = 75;
-
-  // Skip
-  $('#skip').on('click', function(e) {
-    var user = getCookie('username');
-    socket.emit('video skip', user);
-    return false;
-  });
 
   function saveVolume(value) {
     if (value > 0) {
@@ -189,6 +186,25 @@ script.
     }
   }
 
+  // Skip
+  $('#skip').on('click', function(e) {
+    var user = getCookie('username');
+    socket.emit('video skip', user);
+    return false;
+  });
+
+  // Fullscreen
+  $('#fullscreen').on('click', function(e) {
+    var iframe = document.querySelector('#player');
+    var requestFullScreen = iframe.requestFullScreen ||
+                            iframe.mozRequestFullScreen ||
+                            iframe.webkitRequestFullScreen;
+    if (requestFullScreen) {
+      requestFullScreen.bind(iframe)();
+    }
+    return false;
+  });
+
   // Hide video button - toggle player visibility and save new setting
   $('#hide-video').on('click', function(e) {
     e.preventDefault();
@@ -307,5 +323,3 @@ script.
       }
     });
   }
-
-
