@@ -86,4 +86,3 @@ function vendor() {
 
 // Some globals
 var socket = io();
-var playerReady = false;

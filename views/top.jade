@@ -175,7 +175,7 @@ script.
     var secondsLeft,
         hide = true,
         elem = $('#time-left');
-    if (playerReady) {
+    if (player) {
       secondsLeft = player.getDuration() - player.getCurrentTime();
       if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
         hide = false;
