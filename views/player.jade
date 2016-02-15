@@ -40,10 +40,10 @@ div(class='panel panel-default', id='player-panel')
                    id='hide-video', data-toggle='tooltip',
                    data-placement='bottom', title='Hide video')
               span(id='hide-video-icon', class='glyphicon glyphicon-eye-open')
-            button(class='btn btn-default',type='button',
-                   id='fullscreen', data-toggle='tooltip',
-                   data-placement='bottom', title='Fullscreen (Esc to exit)')
-              span(id='fullscreen-icon', class='glyphicon glyphicon-fullscreen')
+            //button(class='btn btn-default',type='button',
+            //       id='fullscreen', data-toggle='tooltip',
+            //       data-placement='bottom', title='Fullscreen (Esc to exit)')
+            //  span(id='fullscreen-icon', class='glyphicon glyphicon-fullscreen')
 
 script.
 
@@ -212,6 +212,7 @@ script.
                             iframe.mozRequestFullScreen ||
                             iframe.webkitRequestFullScreen;
     if (requestFullScreen) {
+      console.log("requesting fullscreen", requestFullScreen);
       requestFullScreen.bind(iframe)();
     }
     return false;
