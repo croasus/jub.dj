@@ -53,8 +53,8 @@ var testCases = _.map(files, function(file) {
   var hasBaseline = false;
   var baselinePath = file + '.baseline'
   try {
-    hasBaseline = true
     fs.statSync(baselinePath)
+    hasBaseline = true
   } catch (e) {
     if (e.code != 'ENOENT')
       throw e;
