@@ -29,7 +29,6 @@ function refreshSizes(playerLoaded) {
     $("#jub-col-queue").innerWidth()
     - parseCssInt($("#jub-col-queue"), 'padding-right')
   );
-  // TODO can't decide if I want to keep now-playing-label
   $('#current-dj-name').outerWidth(
     $("#player-panel").offset().left
     - $('#now-playing-label').outerWidth()
@@ -47,6 +46,16 @@ function refreshSizes(playerLoaded) {
   if ($('#jubbin-list-tab').hasClass('active')) {
     $('#jubbin-list').innerHeight(msgsHeight);
   }
+
+  // Next DJ banner
+  var nextDjBannerWidth =
+    $('#chat').position().left
+    - parseCssInt($('#chat'), 'margin-left');
+  $('#next-dj-container').outerWidth(nextDjBannerWidth);
+  $('#up-next-label').innerWidth(
+    $("#jub-col-queue").innerWidth()
+    - parseCssInt($("#jub-col-queue"), 'padding-right')
+  );
 
   // Set queue and playlists height
   $('#queue-panel').innerHeight(msgsHeight - $('#queue-banner').outerHeight());

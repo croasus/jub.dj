@@ -1,4 +1,11 @@
 nav(class='navbar navbar-inverse navbar-fixed-bottom' id='bottom-nav')
+  div(class="container left", id="next-dj-container")
+    table(class='table', id='next-dj-banner', style='margin-bottom:0px;')
+      tbody
+        tr
+          td(id='up-next-label') Up next:
+          td(id='next-dj-name')
+          td(id='next-track')
   form(class='navbar-form form-inline navbar-right', id='chat', action='')
     button(class='btn btn-default jub-nav-item', type='button', id='join-dj',
            data-toggle='tooltip', data-placement='top',
@@ -35,6 +42,28 @@ script.
     $('#join-dj').trigger('set-dj-state', state);
   });
 
+  // Server assigns 'djing' state
+  socket.on('up next', function(list) {
+    console.log("up next", list);
+    var nextDj = $('#next-dj-name');
+    var nextTrack = $('#next-track');
+    var label = $('#up-next-label');
+    if (list.length > 0) {
+      var first = list[0];
+      console.log("first", first);
+      nextDj.text(first.user);
+      nextDj.attr('title', first.user);
+      if (first.userColor) { nextDj.css({'color': first.userColor}) }
+      nextTrack.text(first.title);
+      nextTrack.attr('title', first.title);
+      label.show();
+    } else {
+      nextDj.text('');
+      nextTrack.text('');
+      label.hide();
+    }
+    refreshSizes();
+  });
 
   function drawDjState() {
     var elem = $('#join-dj');
