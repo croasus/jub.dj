@@ -10,6 +10,8 @@
  *
  */
 
+process.env.TEST = 1;
+
 var _ = require('lodash');
 var fs = require('fs');
 var path = require('path');
@@ -39,7 +41,9 @@ var options = {
 // Accept test case paths; default to regress/*.js
 var files;
 if (args.length > 0) {
-  files = sh.ls(args);
+  files = _.filter(sh.ls(args), function(f) {
+    return f.match(/.js$/);
+  });
 } else {
   files = sh.ls(path.join(REGRESS_DIR, '*.js'));
 }
@@ -76,7 +80,7 @@ _.each(testCases, function(tc) {
     fs.writeFileSync(tc.baselinePath, invoked.stdout.toString());
     process.stdout.write('BASELINED\n'.blue);
   } else {
-    var diff = jsdiff.diffLines(invoked.stdout.toString(), sh.cat(tc.baselinePath));
+    var diff = jsdiff.diffLines(sh.cat(tc.baselinePath), invoked.stdout.toString());
     var pass = true;
     diff = _.filter(diff, function(line) {
       return line.added || line.removed;

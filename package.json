@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "TEST=1 node test/baseline.js -v",
+    "test": "node test/baseline.js -v",
     "start": "node ./bin/www"
   },
   "engineStrict": true,

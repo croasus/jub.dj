@@ -29,19 +29,21 @@ Tests are slowly being added. To run the regression tests:
 $ npm test
 ```
 
-To add a new test, add a script to the `regress/` directory and run
+To add a new test, add a script to the `regress/` directory. It should be a node.js script, and should output something meaningful (i.e., if the feature you're testing broke, it would output something different).
+
+When developing your test, make sure to run your script with environment variable `TEST=1`.
+
+Once your test is producing the correct output, run the baseline tool to create its baseline file:
 
 ```
 # Unix-like
-$ TEST=1 ./test/baseline -b
+$ ./test/baseline -b YOUR_TEST
 
 # Windows or Unix-like
-$ TEST=1 node test/baseline.js -b
+$ node test/baseline.js -b YOUR_TEST
 ```
 
-Make sure no other tests' baselines changed -- if they did, verify that the
-new behavior is correct. Once you're confident your new test is working,
-commit the test script and its baseline.
+Next, run the baseline tool with no arguments to make sure the other tests still pass. If any of the tests fail, it means they are producing different output than before you made your changes. If in fact their new output is now correct, rewrite their baselines (using `-b` as above). Don't forget to commit your new test and its baseline.
 
 ## Known issues
 Internet Explorer is currently not supported.

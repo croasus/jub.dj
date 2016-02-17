@@ -8,6 +8,8 @@
 #
 #  TEST_CASES defaults to regress/*.js
 
+TEST=1
+
 regress_dir=$(dirname $0)/../regress
 
 if [[ $1 == '-b' ]]; then
@@ -17,7 +19,7 @@ fi
 if [[ $# -eq 0 ]]; then
   files=$regress_dir/*.js
 else
-  files=$@
+  files=$(find $@ | grep -E '.js$')
 fi
 
 exit_code=0
