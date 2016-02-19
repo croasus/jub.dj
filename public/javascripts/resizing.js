@@ -36,6 +36,16 @@ function refreshSizes(playerLoaded) {
     - parseCssInt($('#dj-container'), 'padding-left')
   );
 
+  // Next DJ banner
+  var nextDjBannerWidth =
+    $('#chat').position().left
+    - parseCssInt($('#chat'), 'margin-left');
+  $('#next-dj-container').outerWidth(nextDjBannerWidth);
+  $('#up-next-label').innerWidth(
+    $("#jub-col-queue").innerWidth()
+    - parseCssInt($("#jub-col-queue"), 'padding-right')
+  );
+
   // Chat messages and "who's jubbin" list
   var chatTabsBottom = $('#chat-navtabs').offset().top + $('#chat-navtabs').height();
   var msgsHeight = $('#bottom-nav').position().top - chatTabsBottom - 10;
@@ -46,16 +56,6 @@ function refreshSizes(playerLoaded) {
   if ($('#jubbin-list-tab').hasClass('active')) {
     $('#jubbin-list').innerHeight(msgsHeight);
   }
-
-  // Next DJ banner
-  var nextDjBannerWidth =
-    $('#chat').position().left
-    - parseCssInt($('#chat'), 'margin-left');
-  $('#next-dj-container').outerWidth(nextDjBannerWidth);
-  $('#up-next-label').innerWidth(
-    $("#jub-col-queue").innerWidth()
-    - parseCssInt($("#jub-col-queue"), 'padding-right')
-  );
 
   // Set queue and playlists height
   $('#queue-panel').innerHeight(msgsHeight - $('#queue-banner').outerHeight());
