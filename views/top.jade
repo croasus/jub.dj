@@ -1,26 +1,30 @@
 nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
-  form(class='navbar-form form-group navbar-left',
-       id='load-video', action='')
+  div(class='container-fluid')
+    div(class='row', id='jub-row-top')
+      div(class='col-md-3')
+        form(class='navbar-form form-group navbar-left',
+             id='load-video', action='')
 
-    div(class='input-group input-group-md')
-      input(class='form-control jub-nav-input jub-nav-item', id='omnibox',
-            placeholder='Search / video or playlist ID / URL')
+          div(class='input-group input-group-md')
+            input(class='form-control jub-nav-input jub-nav-item', id='omnibox',
+                  placeholder='Search / video or playlist ID / URL')
 
-  div(class="container left", id="dj-container")
-    table(class='table', id='dj-banner', style='margin-bottom:0px;')
-      tbody
-        tr
-          //td(id='now-playing-label') Now Playing
-          td(id='current-dj-name')
-          td(id='current-track')
-          td(id='time-left')
-  ul(class='nav navbar-nav navbar-right')
-    // Title
-    li
-      p(class='navbar-text', id='title', style='font-size:36px;')= title
-    li
-      a(class="a-link-to-the-past" href='https://github.com/aromatt/thejub.pub/issues',
-        target="_blank", style="line-height:1.9; margin-right: 25px") Git
+      div(class='col-md-6')
+        table(class='table', id='dj-banner', style='margin-bottom:0px;')
+          tbody
+            tr
+              //td(id='now-playing-label') Now Playing
+              td(id='current-dj-name')
+              td(id='current-track')
+              td(id='time-left')
+      div(class='col-md-3')
+        ul(class='nav navbar-nav navbar-right')
+          // Title
+          li
+            p(class='navbar-text', id='title', style='font-size:36px;')= title
+          li
+            a(class="a-link-to-the-past" href='https://github.com/aromatt/thejub.pub/issues',
+              target="_blank", style="line-height:1.9; margin-right: 25px") Git
 
 
 script.

@@ -1,33 +1,8 @@
-// Monolothic resizing for the whole page
-function refreshSizes(playerLoaded) {
+// Monolothic resizing for the whole page to account for crappy CSS
+function refreshSizes() {
   var parseCssInt = function(jqueryResult, cssProp) {
     return parseInt(jqueryResult.css(cssProp), 10);
   }
-  this.playerLoaded = this.playerLoaded || playerLoaded;
-  var mainRowTop = $('#jub-row-main').position().top;
-  var mainRowHeight = $(window).height() - mainRowTop - 10;
-  var mainRowWidth = $(window).width();
-  var playerPos = $('#player').offset();
-
-  // DJ banner widths
-  var djBannerWidth =
-    mainRowWidth
-    - $('#chat-navtabs').outerWidth()
-    - $('#omnibox').outerWidth()
-    - parseCssInt($('#dj-container'), 'padding-left')
-    - parseCssInt($('#dj-container'), 'padding-right')
-    - 20;
-  $('#dj-container').innerWidth(djBannerWidth);
-  $('#now-playing-label').innerWidth(
-    $("#jub-col-queue").innerWidth()
-    - parseCssInt($("#jub-col-queue"), 'padding-right')
-  );
-  $('#current-dj-name').outerWidth(
-    $("#player-panel").offset().left
-    - $('#now-playing-label').outerWidth()
-    - $('#load-video').outerWidth()
-    - parseCssInt($('#dj-container'), 'padding-left')
-  );
 
   // Chat messages and "who's jubbin" list
   var chatTabsBottom = $('#chat-navtabs').offset().top + $('#chat-navtabs').height();

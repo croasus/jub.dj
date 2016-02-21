@@ -428,6 +428,7 @@ footer {
   padding-left: 0px;
 }
 #current-dj-name {
+  width: 100px;
   font-weight: bold;
   text-align: right;
   padding-right: 20px;
