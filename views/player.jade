@@ -265,8 +265,11 @@ script.
 
   // Start the specified video, starting at the correct time
   function applyVideoState(state) {
-    if (!player) return;
-    if (Object.keys(state) == 0) return;
+    if (!player) { return; }
+    if (Object.keys(state) == 0) {
+      $('#current-track').text("No one is playing.");
+      return;
+    }
 
     var id = state.id;
     var startTime = state.startTime;

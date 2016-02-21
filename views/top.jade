@@ -179,7 +179,7 @@ script.
     var secondsLeft,
         hide = true,
         elem = $('#time-left');
-    if (player) {
+    if (player && player.getDuration) {
       secondsLeft = player.getDuration() - player.getCurrentTime();
       if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
         hide = false;
