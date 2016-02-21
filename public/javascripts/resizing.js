@@ -9,17 +9,10 @@ function refreshSizes(playerLoaded) {
   var mainRowWidth = $(window).width();
   var playerPos = $('#player').offset();
 
-  // Chat input width
-  $('#chat-input').outerWidth($('#chat-tab-content').width());
-  $('#chat-input').css({
-    'margin-right': parseCssInt($('#jub-col-chat'), 'padding-right') +
-                    parseCssInt($('#jub-container'), 'padding-right')
-  });
-
   // DJ banner widths
   var djBannerWidth =
     mainRowWidth
-    - $('#chat-input').outerWidth()
+    - $('#chat-navtabs').outerWidth()
     - $('#omnibox').outerWidth()
     - parseCssInt($('#dj-container'), 'padding-left')
     - parseCssInt($('#dj-container'), 'padding-right')
@@ -36,19 +29,9 @@ function refreshSizes(playerLoaded) {
     - parseCssInt($('#dj-container'), 'padding-left')
   );
 
-  // Next DJ banner
-  var nextDjBannerWidth =
-    $('#chat').position().left
-    - parseCssInt($('#chat'), 'margin-left');
-  $('#next-dj-container').outerWidth(nextDjBannerWidth);
-  $('#up-next-label').innerWidth(
-    $("#jub-col-queue").innerWidth()
-    - parseCssInt($("#jub-col-queue"), 'padding-right')
-  );
-
   // Chat messages and "who's jubbin" list
   var chatTabsBottom = $('#chat-navtabs').offset().top + $('#chat-navtabs').height();
-  var msgsHeight = $('#bottom-nav').position().top - chatTabsBottom - 10;
+  var msgsHeight = $('#footer').position().top - chatTabsBottom - 10;
 
   $('#messages').innerHeight(msgsHeight);
   $('#messages').trigger('update_scroll');

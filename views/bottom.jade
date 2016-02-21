@@ -1,18 +1,31 @@
-nav(class='navbar navbar-inverse navbar-fixed-bottom' id='bottom-nav')
-  div(class="container left", id="next-dj-container")
-    table(class='table', id='next-dj-banner', style='margin-bottom:0px;')
-      tbody
-        tr
-          td(id='up-next-label') Up next:
-          td(id='next-dj-name')
-          td(id='next-track')
-  form(class='navbar-form form-inline navbar-right', id='chat', action='')
-    button(class='btn btn-default jub-nav-item', type='button', id='join-dj',
-           data-toggle='tooltip', data-placement='top',
-           title='Click to DJ')
-      span(id='join-dj-icon', class='glyphicon glyphicon-user')
-    input(class='form-control jub-nav-input jub-nav-item', id='chat-input', autocomplete='off',
-          placeholder='Chat')
+footer(id='footer', style='position:fixed; bottom:0; left:0; height:56px; width:100%;')
+  div(class='container-fluid')
+    div(class='row', id='jub-row-bottom')
+      div(class='col-md-1', id='up-next-label', style='visibility:hidden;') Up next:
+      div(class='col-md-8', style='padding-right:0;')
+        table(class='table', id='next-dj-banner',
+              style='margin-bottom: 0px; margin-top: 6px;')
+          tbody
+            tr
+              td(id='next-track')
+              td(id='join-dj-td', rowspan=2)
+                button(class='btn btn-default', type='button', id='join-dj',
+                       data-toggle='tooltip', data-placement='top',
+                       style='margin-top: 11px; float: right; position: relative; top: -5px;'
+                       title='Click to DJ')
+                  span(id='join-dj-icon', class='glyphicon glyphicon-headphones')
+            tr
+              td(id='next-dj')
+                span(id='next-dj-by-span', visibility: 'hidden',
+                     style='color:#777;font-size:12px;margin-right:5px;') by
+                span(id='next-dj-name')
+
+      div(class='col-md-3')
+        form(id='chat', action='')
+          input(class='form-control jub-nav-input',
+                id='chat-input', autocomplete='off',
+                style='display:inline-block;',
+                placeholder='Chat')
 
 script.
 
@@ -47,20 +60,21 @@ script.
     console.log("up next", list);
     var nextDj = $('#next-dj-name');
     var nextTrack = $('#next-track');
-    var label = $('#up-next-label');
+    var labels = $('#up-next-label,#next-dj-by-span');
     if (list.length > 0) {
       var first = list[0];
-      console.log("first", first);
+
       nextDj.text(first.user);
-      nextDj.attr('title', first.user);
       if (first.userColor) { nextDj.css({'color': first.userColor}) }
+      nextDj.attr('title', first.user);
+
       nextTrack.text(first.title);
       nextTrack.attr('title', first.title);
-      label.show();
+      labels.css('visibility', 'visible');
     } else {
       nextDj.text('');
       nextTrack.text('');
-      label.hide();
+      labels.css('visibility', 'hidden');
     }
     refreshSizes();
   });
@@ -75,7 +89,7 @@ script.
     } else {
       elem.css('background', '#3F2C52');
       elem.css('color', '#FFFFFF');
-      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-user');
+      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-headphones');
       $('#join-dj').attr('title', 'Click to DJ');
     }
   }
