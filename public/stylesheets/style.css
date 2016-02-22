@@ -195,6 +195,7 @@ body {
   width: 63px;
   padding: 0px 5px 0px 5px;
   text-align: right;
+  color: #858585;
 }
 #playlist-name-banner tr {
   overflow: visible;
@@ -442,25 +443,41 @@ footer {
 }
 
 #next-track,
-#next-dj {
+#next-dj,
+#next-duration {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   border-width: 0px;
   font-size: 15px;
   padding: 0;
-  color: #AAB;
 }
 #up-next-label {
   border-width: 0px;
+  font-weight: bold;
   font-size: 12px;
   text-align: right;
-  padding-top: 18px;
+  padding-top: 10px;
+  padding-right: 0px;
+  padding-left: 0px;
+  color: #777;
+}
+#next-dj-by-span {
+  font-size: 12px;
+  margin-right: 6px;
   color: #777;
 }
 #next-track {
   font-weight: normal;
   padding-left: 0px;
+  width: 90%;
+}
+.next-duration {
+  font-weight: bold;
+  color: #777;
+  padding-top: 2px;
+  margin-left: 10px;
+  font-size: 13px;
 }
 #next-dj-name {
   font-weight: bold;

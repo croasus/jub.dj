@@ -173,23 +173,17 @@ script.
     return false;
   });
 
-
   function updateTimeLeft() {
-    this.time = new Date(1970, 1, 1); // Unix epoch
-    var secondsLeft,
+    var secondsLeft = 0,
         hide = true,
         elem = $('#time-left');
     if (player && player.getDuration) {
-      secondsLeft = player.getDuration() - player.getCurrentTime();
       if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
+        secondsLeft = player.getDuration() - player.getCurrentTime();
         hide = false;
-        this.time.setSeconds(secondsLeft);
-      } else {
-        this.time.setSeconds(0);
       }
     }
-    var format = secondsLeft >= 3600 ? '%k:%M:%S' : '%M:%S';
-    elem.text(strftime(format, this.time));
+    elem.text(formatTime(secondsLeft));
     if (hide) {
       elem.css('visibility','hidden')
     } else {

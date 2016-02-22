@@ -250,11 +250,7 @@ script.
     tr.append(titleTd);
     tr.append(timeTd);
 
-    var tformat = (video.duration / 1000) >= 3600 ? '%k:%M:%S' : '%M:%S';
-    time = new Date(1970, 1, 1); // Unix epoch
-    time.setSeconds(video.duration / 1000);
-    timeTd.text('(' + strftime(tformat, time).trim() + ')');
-
+    timeTd.text(formatTime(video.duration / 1000));
     titleTd.text(video.title);
 
     return tr;

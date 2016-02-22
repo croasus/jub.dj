@@ -30,6 +30,15 @@ function setCookie(name, value, expirationDate) {
                     'expires=' + expirationDate;
 }
 
+function formatTime(secs) {
+  var time = new Date(1970, 1, 1); // Unix epoch
+  var format = secs >= 3600 ? '%k:%M:%S' : '%M:%S';
+  time.setSeconds(secs);
+  var formatted = strftime(format, time);
+  return formatted.replace(/^0+/, '');
+
+}
+
 // monkey-patch String with #startsWith
 if ( typeof String.prototype.startsWith != 'function' ) {
   String.prototype.startsWith = function( substr ) {
