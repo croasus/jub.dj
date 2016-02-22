@@ -58,13 +58,6 @@ app.get('/test_path', function(req, res, next) {
   });
 });
 
-// favicon workaround for shitty DNS provider who won't forward arbitrary
-// paths and won't let me set an explicit rule for a path with '.' in it
-/*
-app.get('/favicon', function(req, res, next) {
-  res.redirect('/favicon.ico');
-});*/
-
 // Minimal message at '/' route
 app.get('/', function(req, res, next) {
   res.render('moved', { message: config.moved_message }, function(err, html) {
