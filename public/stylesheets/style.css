@@ -455,11 +455,9 @@ footer {
 #up-next-label {
   border-width: 0px;
   font-weight: bold;
-  font-size: 12px;
-  text-align: right;
-  padding-top: 10px;
-  padding-right: 0px;
-  padding-left: 0px;
+  font-size: 15px;
+  text-align: center;
+  padding: 0;
   color: #777;
 }
 #next-dj-by-span {
@@ -475,9 +473,9 @@ footer {
 .next-duration {
   font-weight: bold;
   color: #777;
-  padding-top: 2px;
+  padding-top: 0px;
   margin-left: 10px;
-  font-size: 13px;
+  font-size: 15px;
 }
 #next-dj-name {
   font-weight: bold;

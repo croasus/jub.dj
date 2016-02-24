@@ -1,14 +1,13 @@
 footer(id='footer', style='position:fixed; bottom:0; left:0; height:56px; width:100%;')
   div(class='container-fluid')
     div(class='row', id='jub-row-bottom')
-      div(class='col-md-1', id='up-next-label',
-          style='visibility:hidden; width: 3.3333333333%') Next:
-      div(class='col-md-8',
+      div(class='col-md-9',
           style='padding-right:0; padding-left: 8px; width: 71.666666667%')
         table(class='table', id='next-dj-banner',
               style='margin-bottom: 0px; margin-top: 6px; width: 100%;')
           tbody
             tr
+              td(id='up-next-label', style='visibility:hidden;', rowspan=2) Next:
               td(id='next-track')
               td(id='join-dj-td', rowspan=2)
                 button(class='btn btn-default', type='button', id='join-dj',
