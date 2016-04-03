@@ -28,6 +28,23 @@ app.use(express.static(
 
 config.private_route = config.private_route || '/foo';
 
+// Create app components
+app.auth = require('./lib/auth')(config);
+app.models = require('./lib/models')(config, app.auth);
+app.db = require('./lib/db')(config, app.models);
+app.gapi = require('./lib/gapi')(config);
+app.report = require('./lib/report')(app.db, app.gapi);
+app.twitter = require('./lib/twitter')(config);
+app.urban = require('./external_lib/urban');
+app.bot = require('./lib/bot')(config, app.gapi, app.twitter, app.urban);
+app.chat = require('./lib/chat')(config, app.bot);
+app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db);
+app.config = config;
+
+// Note: in ./bin/www -> socket-routing.js, the jub receives a callback
+// that allows it to *initiate* messages over the sockets
+
+
 /* Routes */
 
 // Main page
@@ -45,17 +62,20 @@ config.private_route = config.private_route || '/foo';
   });
 })();
 
-
-// dummy path for testing path forwarding
-app.get('/test_path', function(req, res, next) {
-  res.render('test_path', {}, function(err, html) {
-    if (err) {
-      console.error(err.message);
-      next.send(html);
-    } else {
-      res.send(html);
-    }
-  });
+// TODO this will need to be per room
+app.get('/report', function(req, res, next) {
+  app.report.getKarmaReport(function(report) {
+    var r =  JSON.stringify(report);
+    console.log(r);
+    res.render('report', { report: r }, function(err, html) {
+      if (err) {
+        console.error(err.message);
+        next.send(html);
+      } else {
+        res.send(html);
+      }
+    });
+  }, console.error);
 });
 
 // Minimal message at '/' route
@@ -101,21 +121,6 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-app.auth = require('./lib/auth')(config);
-app.models = require('./lib/models')(config, app.auth);
-app.db = require('./lib/db')(config, app.models);
-app.gapi = require('./lib/gapi')(config);
-app.twitter = require('./lib/twitter')(config);
-app.urban = require('./external_lib/urban');
-app.bot = require('./lib/bot')(config, app.gapi, app.twitter, app.urban);
-app.chat = require('./lib/chat')(config, app.bot);
-app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db);
-app.config = config;
-
-// Note: in ./bin/www -> socket-routing.js, the jub receives a callback
-// that allows it to *initiate* messages over the sockets
-
 
 /* scratch */
 /*
