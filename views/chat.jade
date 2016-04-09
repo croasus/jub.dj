@@ -15,7 +15,9 @@ div(id="chat-tab-content", class="tab-content")
   div(class="tab-pane active" id="chat-tab")
     ul(id="messages", class="jub-list")
   div(class="tab-pane active" id="jubbin-list-tab")
-    ul(id="jubbin-list", class="jub-list")
+    div(id="jubbin-list")
+      table
+        tbody(id='jubbin-list-tbody')
   div(class="tab-pane active" id="chat-settings-tab")
     div(class='panel panel-default', id='chat-settings-panel')
       div(class='panel-body')
@@ -45,12 +47,24 @@ script.
 
   function drawCurrentUsers() {
     $("#num-users").text('(' + currentUsers.length + ')');
-    $('#jubbin-list').empty();
+    $("#jubbin-list-tbody").empty();
     for (user of currentUsers) {
-      $('#jubbin-list').append(
-        $('<li>').text(user.name).css('color', user.color)
-      );
-    }
+      var tr = $('<tr>').addClass('jub');
+      tr.css({
+        'color': user.color,      
+      });
+      
+      var jubNameTd = $('<td>').addClass('jub-name');
+      jubNameTd.text(user.name);
+      
+      var jubKarmaTd = $('<td>').addClass('jub-karma');
+      jubKarmaTd.text("(" + user.karma + " karma)");
+      
+      tr.append(jubNameTd);
+      tr.append(jubKarmaTd);
+      
+      $("#jubbin-list-tbody").prepend(tr);
+    }        
   }
 
   $('#chat-navtabs a').click(function (e) {
