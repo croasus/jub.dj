@@ -337,8 +337,10 @@ body {
   text-align: right;
 }
 
-#jubbin-list-tbody
-tr:nth-child(odd) {background: #1C1C1C}
+#jubbin-list-tbody tr:nth-child(odd) {background: #1C1C1C}
+#jubbin-list-tbody td {
+  padding: 3px 8px 3px 8px;
+}
 
 #jubbin-list {
   margin: 0;
