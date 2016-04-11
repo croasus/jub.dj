@@ -51,20 +51,20 @@ script.
     for (user of currentUsers) {
       var tr = $('<tr>').addClass('jub');
       tr.css({
-        'color': user.color,      
+        'color': user.color,
       });
-      
+
       var jubNameTd = $('<td>').addClass('jub-name');
       jubNameTd.text(user.name);
-      
+
       var jubKarmaTd = $('<td>').addClass('jub-karma');
       jubKarmaTd.text("(" + user.karma + " karma)");
-      
+
       tr.append(jubNameTd);
       tr.append(jubKarmaTd);
-      
+
       $("#jubbin-list-tbody").prepend(tr);
-    }        
+    }
   }
 
   $('#chat-navtabs a').click(function (e) {
