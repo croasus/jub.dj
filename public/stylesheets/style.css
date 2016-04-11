@@ -325,6 +325,21 @@ body {
 }
 
 /* current users */
+.jub-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  width: 90%;
+}
+.jub-karma {
+  white-space: nowrap;
+  text-align: right;
+}
+
+#jubbin-list-tbody
+tr:nth-child(odd) {background: #1C1C1C}
+
 #jubbin-list {
   margin: 0;
   padding: 0;
