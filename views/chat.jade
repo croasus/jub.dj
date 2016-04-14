@@ -152,6 +152,10 @@ script.
         transformedWord = document.createTextNode( word + " ");
       }
 
+      if(line.indexOf(getUsername()) >= 0) {
+        elem.css('color', "#CC99CC");
+      }
+      
       return transformedWord;
     }).each(function(component){
       elem.append(component);
