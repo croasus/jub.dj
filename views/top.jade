@@ -1,47 +1,31 @@
 nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
-  form(class='navbar-form form-group navbar-left',
-       id='load_video', action='')
+  div(class='container-fluid')
+    div(class='row', id='jub-row-top')
+      div(class='col-md-3')
+        form(class='navbar-form form-group navbar-left',
+             id='load-video', action='')
 
-    div(class='input-group input-group-md')
-      span(class='input-group-btn jub-nav-top-item')
-        button(class='btn btn-default', type='button', id='join-dj',
-               data-toggle='tooltip', data-placement='top',
-               title='Click to DJ')
-          span(id='join-dj-icon', class='glyphicon glyphicon-user')
-      input(class='form-control jub-nav-input jub-nav-top-item', id='omnibox',
-            style='width:300px; margin-right:10px; margin-left:5px;',
-            placeholder='Search / video or playlist ID / URL')
-      span(class='input-group-btn jub-nav-top-item')
-        button(class='btn btn-default', type='button', id='enqueue',
-               data-toggle="tooltip",
-               data-placement="bottom", title="Add to queue")
-          span(id='enqueue-icon', class='glyphicon glyphicon-import')
-        button(class='btn btn-default', type='button', id='dequeue',
-               data-toggle='tooltip',
-               data-placement='bottom', title='Remove last video')
-          span(id='dequeue-icon', class='glyphicon glyphicon-export')
-        button(class='btn btn-default',type='button',
-               id='skip', data-toggle='tooltip',
-               data-placement='bottom', title='Skip')
-          span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
-        button(class='btn btn-default',type='button',
-               id='mute', data-toggle='tooltip',
-               data-placement='bottom', title='Skip')
-          span(id='mute-icon', class='glyphicon glyphicon-volume-up')
+          div(class='input-group input-group-md')
+            input(class='form-control jub-nav-input jub-nav-item', id='omnibox',
+                  placeholder='Search / video or playlist ID / URL')
 
-  ul(class='nav navbar-nav navbar-right')
-    // Username
-    li(class='jub-nav-top-item')
-      form(class='navbar-form form-group', id='auth', action='')
-        input(class='form-control jub-nav-input jub-nav-top-item', id='username',
-              style='margin:0 50px 10px 0;',
-              placeholder='User name', autocomplete='off')
-    // Title
-    li
-      p(class='navbar-text', id='title', style='font-size:36px;')= title
+      div(class='col-md-6')
+        table(class='table', id='dj-banner', style='margin-bottom:0px;')
+          tbody
+            tr
+              //td(id='now-playing-label') Now Playing
+              td(id='current-dj-name')
+              td(id='current-track')
+              td(id='time-left')
+      div(class='col-md-3')
+        ul(class='nav navbar-nav navbar-right')
+          // Title
+          li
+            p(class='navbar-text', id='title', style='font-size:36px;')= title
+          li
+            a(class="a-link-to-the-past" href='https://github.com/aromatt/thejub.pub/issues',
+              target="_blank", style="line-height:1.9; margin-right: 25px") Git
 
-
-include ./username.jade
 
 script.
 
@@ -49,39 +33,8 @@ script.
   var MAX_PRETTY_LEN = 60;
   var djing = false;
 
-  //TODO: load the controls and player in a deliberate order so one can reflect the other's mute state
-  $( document ).ready(function() {
-    draw_mute_state();
-  });
-
-  function draw_mute_state() {
-    var is_muted = get_cookie('muted');
-    if (is_muted == 1) {
-      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
-      $('#mute').attr('title', 'Unmute');
-    } else {
-      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
-      $('#mute').attr('title', 'Mute');
-    }
-  }
-
-  function draw_dj_state() {
-    var elem = $('#join-dj');
-    if (djing) {
-      elem.css('background', '#2DB85A');
-      elem.css('color', '#000');
-      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-headphones');
-      $('#join-dj').attr('title', 'Stop DJing');
-    } else {
-      elem.css('background', '#3F2C52');
-      elem.css('color', '#FFFFFF');
-      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-user');
-      $('#join-dj').attr('title', 'Click to DJ');
-    }
-  }
-
   // e.g. "michelleheafy: Some cool video about someth..."
-  function prettify_result(result) {
+  function prettifyResult(result) {
     var artist = result.snippet.channelTitle
     var pretty = artist + ": " + result.snippet.title;
     if (pretty.length > MAX_PRETTY_LEN) {
@@ -92,10 +45,10 @@ script.
 
   // Take in youtube search result items and turn them into an array of objects
   // that autocomplete can handle, truncating the list in the process
-  function transform_search_results(results) {
+  function transformSearchResults(results) {
     return results.slice(0, MAX_RESULTS).map(function(result) {
       return {
-        label: prettify_result(result),
+        label: prettifyResult(result),
         value: result.id.videoId
       }
     });
@@ -105,8 +58,8 @@ script.
     // Request a video search; once the results come back, update the UI
     source: function(request, response) {
       console.log('searching for', request.term);
-      youtube_video_search(request.term, function(items) {
-        response(transform_search_results(items));
+      youtubeVideoSearch(request.term, function(items) {
+        response(transformSearchResults(items));
       })
     },
 
@@ -118,8 +71,8 @@ script.
     // When a user chooses a suggestion (hits enter) start the video
     select: function(event, ui) {
       var event = $.Event("submit");
-      event.video_id = ui.item.value;
-      $('#load_video').trigger(event);
+      event.videoId = ui.item.value;
+      $('#load-video').trigger(event);
       return false;
     },
     minLength: 5,
@@ -127,20 +80,25 @@ script.
   });
 
   // Client text box for submitting a video
-  $('#load_video').submit(function(event) {
+  $('#load-video').submit(function(event) {
     // We might have been invoked straight from an autocomplete callback,
     // in which case the value of the search box is not the video id; the
     // video id was passed in with the event.
-    var id = event.video_id;
-    var channel = 'video enqueue';
-    var user = get_cookie('username');
+    var id = event.videoId;
+    var user = getCookie('username');
+    var plName = selectedPlaylistName();
+    if (!plName) {
+      console.error('no playlist selected (this should never happen)');
+      return;
+    }
+
     // We were invoked via a normal form submit
     if (id == undefined) {
       id = $('#omnibox').val();
     }
 
     // Accept video URLs
-    if (id.starts_with('https:\/\/www.youtube.com')) {
+    if (id.startsWith('https:\/\/www.youtube.com')) {
       console.log('user entered url');
       // TODO do we have regex?
       if (id.indexOf('youtube.com\/watch') > 0) {
@@ -155,24 +113,22 @@ script.
     // We've obtained the ID (either a playlist or video ID)
     if (id.length > 11) {
       var count = 0;
-      var videos_obj = { user: user }
       var done = false;
       $('#omnibox').val('');
-      var wait_for_playlist = function() {
+      var waitForPlaylist = function() {
         if (!done) {
           $('#omnibox').val($('#omnibox').val() + '.');
-          setTimeout(wait_for_playlist, 300);
+          setTimeout(waitForPlaylist, 300);
         }
       }
-      setTimeout(wait_for_playlist, 300);
-      youtube_playlist(id, function(video_list) {
+      setTimeout(waitForPlaylist, 300);
+      youtubePlaylist(id, function(videoList) {
         done = true;
-        for (video_obj of video_list) {
-          video_obj.user = user;
-          youtube_video_specs(video_obj, function(obj) {
-            if (obj.title && obj.duration && user) {
-              } else {
-              console.log('failed to find info for video', video_obj.id);
+        for (video of videoList) {
+          video.user = user;
+          youtubeVideoSpecs(video, function(obj) {
+            if (!(obj.title && obj.duration && user)) {
+              console.log('failed to find info for video', video.id);
             }
             count += 1;
           });
@@ -180,103 +136,82 @@ script.
 
         // Periodically see if we're done fetching info for all the videos.
         // Once we are, sort them and update the client's queue.
-        var wait_for_specs = function() {
-          if (count == video_list.length) {
+        var waitForSpecs = function() {
+          if (count == videoList.length) {
             console.log('yay! done fetching all video infos. sorting...');
 
             // Sort by 'position', in place
-            video_list.sort(function(a, b) {
+            videoList.sort(function(a, b) {
               if (a.position <= b.position) { return -1; } else { return 1; }
-                });
-            videos_obj.list = video_list;
+            });
             console.log('emitting to videos enqueue');
-            socket.emit('videos enqueue', videos_obj);
+            socket.emit('videos enqueue', user, plName, videoList);
             $('#omnibox').val('');
           } else {
             $('#omnibox').val($('#omnibox').val() + '.');
-            setTimeout(wait_for_specs, 300);
+            setTimeout(waitForSpecs, 300);
           }
         }
-        wait_for_specs();
+        waitForSpecs();
       });
     } else {
       // Not a playlist; it's a video. Submit it.
-      var video_obj = {
-        user: get_cookie('username'),
+      var videoObj = {
+        user: getCookie('username'),
         id: id
       }
-      youtube_video_specs(video_obj, function(result_obj) {
-        if (result_obj.title && result_obj.duration) {
-          console.log('submitting video', result_obj);
-          socket.emit(channel, result_obj);
+      youtubeVideoSpecs(videoObj, function(resultObj) {
+        if (resultObj.title && resultObj.duration) {
+          console.log('submitting video', resultObj);
+          socket.emit('video enqueue', user, plName, resultObj);
           $('#omnibox').val('');
         } else {
-          console.log('failed to find info for video', result_obj.id);
+          console.log('failed to find info for video', resultObj.id);
         }
       });
     }
     return false;
   });
 
-  // Enqueue
-  $('#enqueue').on('click', function(e) {
-    var user = get_cookie('username');
-    console.log('sending enqueue for:', user);
-    var event = $.Event("submit");
-    event.video_id = $('#omnibox').val();
-    $('#load_video').trigger(event);
-    return false;
-  });
-
-  // Dequeue
-  $('#dequeue').on('click', function(e) {
-    var user = get_cookie('username');
-    console.log('sending dequeue for:', user);
-    socket.emit('video dequeue', user);
-    return false;
-  });
-
-  // Skip
-  $('#skip').on('click', function(e) {
-    var user = get_cookie('username');
-    socket.emit('video skip', user);
-    return false;
-  });
-
-  // Mute button
-  $('#mute').on('click', function(e) {
-    e.preventDefault();
-    var expiration_date = new Date();
-    expiration_date.setFullYear(expiration_date.getFullYear() + 1);
-    if (player.isMuted()) {
-      player.unMute();
-      document.cookie = 'muted=0; ' + 'expires=' + expiration_date.toGMTString();
+  function updateTimeLeft() {
+    var secondsLeft = 0,
+        hide = true,
+        elem = $('#time-left');
+    if (player && player.getDuration) {
+      if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
+        secondsLeft = player.getDuration() - player.getCurrentTime();
+        hide = false;
+      }
     }
-    else {
-      player.mute();
-      document.cookie = 'muted=1; ' + 'expires=' + expiration_date.toGMTString();
-    }
-    draw_mute_state();
-    return false;
-  });
-
-  // DJ button
-  $('#join-dj').on('click', function() {
-    if (!djing) {
-      socket.emit('add dj', get_username());
-      console.log("add dj");
-      djing = true;
+    elem.text(formatTime(secondsLeft));
+    if (hide) {
+      elem.css('visibility','hidden')
     } else {
-      socket.emit('remove dj', get_username());
-      console.log("remove dj");
-      djing = false;
+      elem.css('visibility','visible')
     }
-    draw_dj_state();
-  });
+  }
+  setInterval(updateTimeLeft, 1000);
 
-  // Some other part of the page wants to set the DJ state
-  $('#join-dj').on('set-dj-state', function(e, new_state) {
-    console.log('dj-state', new_state);
-    djing = new_state;
-    draw_dj_state();
-  });
+  function updateCurrentDj(user, color) {
+    var dj = $('#current-dj-name');
+    if (user) {
+      dj.text(user);
+      if (color) {
+        dj.css({'color': color})
+      }
+    } else {
+      dj.text('');
+    }
+  }
+
+  function updateCurrentTrack(title) {
+    var track = $('#current-track');
+    if (myVideoState.title) {
+      track.text(myVideoState.title);
+      track.attr('title', myVideoState.title);
+    } else {
+      track.text("No one is playing.");
+    }
+  }
+
+

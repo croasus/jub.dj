@@ -2,3 +2,4 @@ node_modules/
 config.js
 public/jquery-ui/
 npm-debug.log
+chat_cache/

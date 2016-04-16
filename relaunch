@@ -1,6 +1,0 @@
-#!/bin/bash -e
-
-# to be run by cron (and let cronjob specify where to log)
-if ! pidof node >/dev/null; then
-  env PORT=9292 npm start
-fi;

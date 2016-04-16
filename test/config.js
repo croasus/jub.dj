@@ -1,19 +1,24 @@
 module.exports = {
-    title: 'thejub.pub',
-    mongodb_endpoint: 'mongodb://localhost',
-    mongodb_db: 'jub-dj-dev',
-    google_api_server_key: 'GOOGLE-SERVER-KEY-HERE', // get your own key
-    google_api_browser_key: 'GOOGLE-BROWSER-KEY-HERE', // get your own key
-    auth: {
-        token_len: '20'
-    },
-    latest_updates: {
-        date: '2015-11-6',
-        list: [
-            'A cool update',
-            'A lame update'
-        ]
-    },
-    private_route: '/foooooooooo', // I'm not telling
-    moved_message: "This is a message telling users how to find out what the private route is."
-};
+  title: 'thejub.pub',
+  mongodb_endpoint: 'mongodb://localhost',
+  mongodb_db: 'jub-dj-test',
+  google_api_server_key: 'AIzaSyAn4jI9fRs2i4A9Wvnfwx_XJ6m9rnUw4I0',
+  google_api_browser_key: 'AIzaSyAn4jI9fRs2i4A9Wvnfwx_XJ6m9rnUw4I0',
+  google_api_cx_id: '015617422038491686005:ibyzcnlnobg',
+  auth: {
+    token_len: '20'
+  },
+  latest_updates: {
+    date: '2015-01-01',
+    list: [
+      'Update 1',
+      'Update 2'
+    ]
+  },
+  private_route: '/test_private_route',
+  moved_message: "Ask for the new URL!",
+  chat: {
+    cache_dir: 'test/chat_cache',
+    cache_limit: 1000,
+  }
+}

@@ -1,16 +1,13 @@
 div(class='panel panel-default', id='player-panel')
   table(class='table', id='player-banner')
-    tbody
-      tr
-        th(id='current-dj-name')
-        th(id='current-track') No one is playing.
-        th(id='time-left')
   div(class='panel-body')
-    div(id='player')
+    div(id='player', style="z-index: 1;")
+    div(id='player-shield', style="z-index: 2;")
+      span(id='player-hidden-splash', class='glyphicon glyphicon-sunglasses')
   table(class='table', id='player-footer')
     tbody
       tr
-        th(id='like-dislike-th')
+        td(id='like-dislike-td')
           div(class='input-group input-group-md')
             button(class='btn btn-default', type='button', id='like-btn',
                    data-toggle='tooltip', data-placement='top',
@@ -22,89 +19,217 @@ div(class='panel panel-default', id='player-panel')
               //       title='K.')
               //  span(id='dislike-icon', class='glyphicon glyphicon-thumbs-down')
               //  span(id='num-dislikes', style='margin-left: 4px;') 0
-
+            button(class='btn btn-default right',type='button',
+                   id='skip', data-toggle='tooltip',
+                   data-placement='bottom', title='Skip')
+              span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
+        td(id='player-buttons-td', style="width: 80%")
+          div(class='input-group input-group-md right', style="position:relative;")
+            button(class='btn btn-default',type='button',
+                  style="display: inline-block",
+                  id='mute', data-toggle='tooltip',
+                  data-placement='bottom', title='Mute'
+                  onclick="onMuteClick()")
+              span(id='mute-icon', class='glyphicon glyphicon-volume-off')
+            input(id='volume-slider' type="range",
+                  style="width: 100px; display: inline-block",
+                  min='0', step="1", max='100', value='50',
+                  oninput="onVolumeSliderChange(parseInt(this.value))"
+                  onchange="saveVolume(parseInt(this.value))")
+            button(class='btn btn-default',type='button',
+                   id='hide-video', data-toggle='tooltip',
+                   data-placement='bottom', title='Hide video')
+              span(id='hide-video-icon', class='glyphicon glyphicon-eye-open')
+            //button(class='btn btn-default',type='button',
+            //       id='fullscreen', data-toggle='tooltip',
+            //       data-placement='bottom', title='Fullscreen (Esc to exit)')
+            //  span(id='fullscreen-icon', class='glyphicon glyphicon-fullscreen')
 
 script.
 
-  var player_ready = false;
-  var my_video_state = {};
+  var myVideoState = {};
 
-  // Start the specified video, starting at the correct time
-  function apply_video_state(state) {
-    if (!player_ready)
-      return;
-    if (Object.keys(state) == 0)
-      return;
-    var id = state.id;
-    var start_time = state.start_time;
-    var user = state.user;
-    if (my_video_state.id != id ||
-        my_video_state.start_time != start_time) {
-      my_video_state = {
-        title: state.title,
-        duration: state.duration,
-        user_color: state.user_color,
-        user: user,
-        id: id,
-        start_time: start_time,
-      };
-      var video_progress = (state.server_time - start_time) / 1000;
-      console.log("apply video state", id, video_progress);
-      player.loadVideoById({
-        'videoId': id,
-        'startSeconds': video_progress,
-        'suggestedQuality': 'large'
-      });
-      update_time_left();
-      update_current_dj(state.user, state.user_color);
-      update_current_track(state.title);
-      update_opinions(state.opinions);
+  var PLAYER_STATE = {
+    //-1: 'unstarted',
+    0: 'ended',
+    1: 'playing',
+    2: 'paused',
+    3: 'buffering',
+    5: 'video cued',
+  }
+
+  var DEFAULT_VOLUME = 75;
+
+  function saveVolume(value) {
+    if (value > 0) {
+      setCookie('volume', value);
     }
   }
 
-  // Server tells us about video state changes
-  socket.on('video state', function(video_state) {
-    apply_video_state(video_state);
+  function setVolumeSlider(level) {
+    var elem = document.querySelector('#volume-slider');
+    elem.value = level;
+    if (vendor().css.lowercase === 'moz') {
+      // TODO doesn't work
+      elem.style.backgroundImage = [
+        '-moz-linear-gradient(',
+        'left top, ',
+        'right top, ',
+        'color-stop(' + level / 100 + ', #654784), ',
+        'color-stop(' + level / 100 + ', #333)',
+        ')'
+      ].join('');
+    } else {
+      elem.style.backgroundImage = [
+        '-webkit-gradient(',
+        'linear, ',
+        'left top, ',
+        'right top, ',
+        'color-stop(' + level / 100 + ', #654784), ',
+        'color-stop(' + level / 100 + ', #333)',
+        ')'
+      ].join('');
+    }
+  }
+
+  // Does NOT update slider view.
+  // Note that player stores its own state for both mute and volume level, but
+  // we want the slider to show 0 when 'mute' is pressed, even though the
+  // player's value for volume is not 0.
+  function setVolume(level) {
+    if (player) {
+      player.setVolume(level);
+    }
+  }
+
+  function drawHideVideoState() {
+    // Use the cookie because when it transitions, it uses a fade effect
+    if (getCookie('hide-video') == 1) {
+      $('#hide-video-icon').attr('class', 'glyphicon glyphicon-eye-close');
+      $('#hide-video').attr('title', 'Show video');
+    } else {
+      $('#hide-video-icon').attr('class', 'glyphicon glyphicon-eye-open');
+      $('#hide-video').attr('title', 'Hide video');
+    }
+  }
+
+  // Reads cookie and applies its setting
+  function loadHideVideoState() {
+    var hidden = (getCookie('hide-video') == 1);
+    setPlayerVisible(!hidden, 0);
+    drawHideVideoState();
+  }
+
+  $( document ).ready(function() {
+    loadHideVideoState();
   });
 
-  function update_current_track(title) {
-    var track = $('#current-track');
-    track.text(my_video_state.title);
-    var width = $('#player-panel-heading').width() -
-                parseInt($('#player-panel-heading').css('padding-right'), 10) -
-                parseInt($('#player-panel-heading').css('padding-left'), 10) -
-                $('#current-dj-name').outerWidth() -
-                $('#time-left').outerWidth();
-    track.truncate({
-        width: 'auto',
-        token: '...',
-        side: 'right',
-        multiline: false
-    });
-  }
-
-  function update_current_dj(user, color) {
-    var dj = $('#current-dj-name');
-    if (user) {
-      dj.css({
-        'font-weight': 'bold',
-        'float': 'left'
-      });
-      if (color) {
-        dj.css({'color': color})
-      }
-      dj.text(user);
-      dj.truncate({
-        width: '100px',
-        token: '...',
-        side: 'right',
-        multiline: false
-      });
+  function drawMuteState(isMuted) {
+    if (isMuted) {
+      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
+      $('#mute').attr('title', 'Unmute');
+    } else {
+      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
+      $('#mute').attr('title', 'Mute');
     }
   }
 
+  function setMute(isMuted) {
+    if (isMuted) { player.mute(); } else { player.unMute(); }
+    setCookie('muted', isMuted ? 1 : 0);
+    drawMuteState(isMuted);
+  }
+
+  // Toggle mute state. Restore volume to last non-zero value.
+  function onMuteClick() {
+    if (!player) { return false; }
+    var newState = !player.isMuted();
+    var newVolume = newState ?  0 : getCookie('volume') || DEFAULT_VOLUME;
+    setMute(newState);
+    setVolumeSlider(newVolume);
+  }
+
+  // callback for volume range slider
+  function onVolumeSliderChange(value) {
+    setVolume(value);
+    setVolumeSlider(value);
+    setMute(value === 0);
+    return false;
+  };
+
+  // The API will call this function when the video player is ready.
+  function onPlayerReady(event) {
+    var isMuted = getCookie('muted') == 1;
+    var volume = getCookie('volume') || DEFAULT_VOLUME;
+    setMute(isMuted);
+    setVolume(volume);
+    setVolumeSlider(isMuted ? 0 : volume);
+
+    refreshSizes(true);
+    socket.emit('video state');
+  }
+
+  // The API calls this function when the player's state changes.
+  // The function indicates that when playing a video (state=1),
+  // the player should play for six seconds and then stop.
+  function onPlayerStateChange(event) {
+    console.log('player state change to', event.data, PLAYER_STATE[event.data]);
+    if (event.data == YT.PlayerState.PAUSED) {
+      // TODO does this violate the youtube ToS?
+      event.target.playVideo();
+    } else if (event.data == YT.PlayerState.ENDED) {
+      player.clearVideo();
+    } else if (event.data == YT.PlayerState.PLAYING) {
+      if (!myVideoState.id) {
+        player.stopVideo();
+      }
+    }
+  }
+  function getPlayerShieldUp() {
+    return $('#player-shield').css('display') !== 'none';
+  }
+
+  function setPlayerVisible(visible, fadeDuration) {
+    if (typeof visible === 'undefined') { visible = true; }
+    if (visible) {
+      $('#player-shield').fadeOut(fadeDuration);
+    } else {
+      $('#player-shield').fadeIn(fadeDuration);
+    }
+  }
+
+  // Skip
+  $('#skip').on('click', function(e) {
+    var user = getCookie('username');
+    socket.emit('video skip', user);
+    return false;
+  });
+
+  // Fullscreen
+  $('#fullscreen').on('click', function(e) {
+    var iframe = document.querySelector('#player');
+    var requestFullScreen = iframe.requestFullScreen ||
+                            iframe.mozRequestFullScreen ||
+                            iframe.webkitRequestFullScreen;
+    if (requestFullScreen) {
+      console.log("requesting fullscreen", requestFullScreen);
+      requestFullScreen.bind(iframe)();
+    }
+    return false;
+  });
+
+  // Hide video button - toggle player visibility and save new setting
+  $('#hide-video').on('click', function(e) {
+    e.preventDefault();
+    var newHideState = !getPlayerShieldUp(); // Toggle it
+    setPlayerVisible(!newHideState, 100);
+    setCookie('hide-video', newHideState ? 1 : 0);
+    drawHideVideoState();
+    return false;
+  });
+
   // Later, use this to make avatars dance
-  function update_opinions(opinions) {
+  function updateOpinions(opinions) {
     var likes = 0, dislikes = 0;
     if (opinions) {
       for (v of opinions) {
@@ -126,44 +251,64 @@ script.
     $('#num-dislikes').text(num);
   });
 
-  function update_time_left() {
-    this.time = new Date(1970, 1, 1); // Unix epoch
-    var elem = $('#time-left');
-    var hide = false;
-    var seconds_left = player.getDuration() - player.getCurrentTime();
-    if (player_ready) {
-      if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
-        this.time.setSeconds(seconds_left);
-      } else {
-        this.time.setSeconds(0);
-        hide = true;
-      }
-    } else {
-      hide = false;
-    }
-    var format = seconds_left >= 3600 ? '%k:%M:%S' : '%M:%S';
-    elem.text(strftime(format, this.time));
-    if (hide) {
-      elem.css('visibility','hidden')
-    } else {
-      elem.css('visibility','visible')
-    }
-  }
-  setInterval(update_time_left, 1000);
-
   // Like
   $('#like-btn').on('click', function(e) {
-    socket.emit('like', get_username());
+    socket.emit('like', getUsername());
     return false;
   });
 
   // Dislike
   $('#dislike-btn').on('click', function(e) {
-    socket.emit('dislike', get_username());
+    socket.emit('dislike', getUsername());
     return false;
   });
 
-  /* Everything below here is boilerplate for the Google YT IFrame */
+  // Start the specified video, starting at the correct time
+  function applyVideoState(state) {
+    if (!player) { return; }
+    if (Object.keys(state) == 0) {
+      $('#current-track').text("No one is playing.");
+      return;
+    }
+
+    var id = state.id;
+    var startTime = state.startTime;
+    var user = state.user;
+    if (myVideoState.id != id || myVideoState.startTime != startTime) {
+      myVideoState = {
+        title: state.title,
+        duration: state.duration,
+        userColor: state.userColor,
+        user: user,
+        id: id,
+        startTime: startTime,
+      };
+      var videoProgress = (state.serverTime - startTime) / 1000;
+      console.log("apply video state", id, videoProgress);
+      if ((typeof id == 'string') && (typeof videoProgress == 'number')) {
+        console.log('loading video');
+        player.loadVideoById({
+          'videoId': id,
+          'startSeconds': videoProgress,
+          'suggestedQuality': 'large'
+        });
+      } else {
+        player.stopVideo();
+      }
+      updateTimeLeft();
+      updateCurrentDj(state.user, state.userColor);
+      updateCurrentTrack(state.title);
+      updateOpinions(state.opinions);
+    }
+  }
+
+  // Server tells us about video state changes
+  socket.on('video state', function(videoState) {
+    applyVideoState(videoState);
+  });
+
+  // Everything below here is boilerplate for the Google YT IFrame
+  //
 
   // Load the IFrame Player API code, asynchronously
   var tag = document.createElement('script');
@@ -172,20 +317,21 @@ script.
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
   // Create an <iframe> (and YouTube player) after the API code downloads.
-  var player;
+  var player = null;
   function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-      height: '290',
-      width: '484',
+      height: 290,
+      width: 484,
       playerVars: {
-        'autoplay': 0,
-        'autohide': 1,
-        'controls': 0,
-        'rel': 0,
-        'disablekb': 1,
-        'modestbranding': 1,
+        autoplay: 0,
+        autohide: 1,
+        controls: 0,
+        rel: 0,
+        disablekb: 1,
+        modestbranding: 1,
+        wmode: 'opaque',
         // TODO add 'origin' param; set it to my domain
-        'iv_load_policy': 0
+        iv_load_policy: 0
       },
       events: {
         'onReady': onPlayerReady,
@@ -193,32 +339,3 @@ script.
       }
     });
   }
-
-  // The API will call this function when the video player is ready.
-  function onPlayerReady(event) {
-    var is_muted = get_cookie('muted');
-    if(is_muted == 1) {
-      console.log('is muted');
-      player.mute();
-    }
-    else {
-      console.log('is not muted');
-      player.unMute();
-    }
-    player_ready = true;
-    socket.emit('video state', 0);
-    refresh_sizes(true);
-  }
-
-  // The API calls this function when the player's state changes.
-  // The function indicates that when playing a video (state=1),
-  // the player should play for six seconds and then stop.
-  var done = false;
-  function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.PAUSED) {
-      // TODO does this violate the youtube ToS?
-      event.target.playVideo();
-    }
-  }
-
-

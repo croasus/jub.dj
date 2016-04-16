@@ -1,17 +1,17 @@
-var gapi_ready = false;
+var gapiReady = false;
 
 var OnGAPILoad = function() {
   socket.emit('gapi key', function(key) {
     console.log('setting key', key);
-    gapi_key = key;
+    gapiKey = key;
     gapi.client.setApiKey(key);
     gapi.client.load('youtube', 'v3').then(function() {
-      gapi_ready = true;
+      gapiReady = true;
     });
   });
 }
 
-var youtube_video_search = function(query, callback) {
+var youtubeVideoSearch = function(query, callback) {
   gapi.client.youtube.search.list({
       part: 'snippet',
       maxResults: 50,
@@ -24,7 +24,7 @@ var youtube_video_search = function(query, callback) {
 }
 
 // Adds title and duration to video object, and calls callback with it
-var youtube_video_specs = function(obj, callback) {
+var youtubeVideoSpecs = function(obj, callback) {
   if (obj.duration && obj.title) {
     callback(obj)
   } else {
@@ -49,21 +49,21 @@ var youtube_video_specs = function(obj, callback) {
 
 // Returns an array of result items with this structure:
 //   https://developers.google.com/youtube/v3/docs/search/list#response
-var youtube_playlist = function(id, callback, page_token, list_prefix) {
+var youtubePlaylist = function(id, callback, pageToken, listPrefix) {
   var params = {
     part: 'id,snippet',
     maxResults: 50,      // this is the maximum allowed
     playlistId: id,
-    auth: gapi_key
+    auth: gapiKey
   };
 
-  list_prefix = list_prefix || [];
-  if (page_token) { params.pageToken = page_token }
+  listPrefix = listPrefix || [];
+  if (pageToken) { params.pageToken = pageToken }
 
   gapi.client.youtube.playlistItems.list(params).then(function(resp) {
-    var next_page_token = resp.result.nextPageToken;
+    var nextPageToken = resp.result.nextPageToken;
     if (resp.result && resp.result.items && resp.result.items.length > 0) {
-      var video_list = resp.result.items.map(function(item) {
+      var videoList = resp.result.items.map(function(item) {
         return {
           title: item.snippet.title,
           id: item.snippet.resourceId.videoId,
@@ -73,12 +73,12 @@ var youtube_playlist = function(id, callback, page_token, list_prefix) {
 
       // If there's a next page, recursively call playlist() until there's
       // no next page. Then finally call the callback
-      if (next_page_token) {
-        console.log('fetching next page of playlist', next_page_token);
-        youtube_playlist(id, callback, next_page_token,
-          list_prefix.concat(video_list));
+      if (nextPageToken) {
+        console.log('fetching next page of playlist', nextPageToken);
+        youtubePlaylist(id, callback, nextPageToken,
+          listPrefix.concat(videoList));
       } else {
-        callback(list_prefix.concat(video_list));
+        callback(listPrefix.concat(videoList));
       }
     }
   }, function(reason) {

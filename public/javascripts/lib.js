@@ -11,8 +11,7 @@ function inspect(o, i) {
   }
 }
 
-// TODO put this somewhere else or load someone else's cookie fns
-function get_cookie(name) {
+function getCookie(name) {
   var value = "; " + document.cookie;
   var parts = value.split("; " + name + "=");
   if (parts.length == 2)
@@ -21,23 +20,34 @@ function get_cookie(name) {
     return null;
 }
 
-function set_cookie(name, value) {
-  var expiration_date = new Date();
-  expiration_date.setFullYear(expiration_date.getFullYear() + 1);
+function setCookie(name, value, expirationDate) {
+  if (arguments.length < 3) {
+    expirationDate = new Date();
+    expirationDate.setFullYear( expirationDate.getFullYear() + 1 );
+    expirationDate.toUTCString();
+  }
   document.cookie = name + '=' + value + '; ' +
-                    'expires=' + expiration_date.toGMTString();
+                    'expires=' + expirationDate;
 }
 
-// monkey-patch String with #starts_with
-// TODO don't duplicate this with the server-side version
-if ( typeof String.prototype.starts_with != 'function' ) {
-  String.prototype.starts_with = function( substr ) {
+function formatTime(secs) {
+  var time = new Date(1970, 1, 1); // Unix epoch
+  var format = secs >= 3600 ? '%k:%M:%S' : '%M:%S';
+  time.setSeconds(secs);
+  var formatted = strftime(format, time);
+  return formatted.replace(/^0+/, '');
+
+}
+
+// monkey-patch String with #startsWith
+if ( typeof String.prototype.startsWith != 'function' ) {
+  String.prototype.startsWith = function( substr ) {
     return this.indexOf(substr) === 0;
   }
 };
 
 // Memoized scrollbar width
-function scrollbar_width() {
+function scrollbarWidth() {
   if (this.value)
     return this.value;
 
@@ -67,4 +77,21 @@ function scrollbar_width() {
   return this.value;
 };
 
+// Vendor prefix
+function vendor() {
+  if (this.obj) return this.obj;
+  var styles = window.getComputedStyle(document.documentElement, '');
+  var pre = Array.prototype.slice.call(styles).join('').match(/-(moz|ms|webkit)-/)[1] || 'o';
+  var dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
+  this.obj = {
+    dom: dom,
+    lowercase: pre,
+    css: '-' + pre + '-',
+    js: pre[0].toUpperCase() + pre.substr(1)
+  }
+  console.log(obj);
+  return obj;
+}
+
+// Some globals
 var socket = io();

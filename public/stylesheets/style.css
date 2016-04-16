@@ -17,10 +17,14 @@
   height: 500px;
 }
 
+#jub-row-bottom {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
 #jub-col-chat {
   padding-right: 0;
 }
-
 #jub-col-queue {
   padding-left: 0;
 }
@@ -34,19 +38,16 @@ body {
   height: 100%;
 }
 
-/* title */
-#title {
-  color: #DDDDEE;
-  padding-right: 20px;
-  margin-top: 0;
+.table>tbody>tr>td {
+  border: 0;
 }
-
 
 .form-control {
   border: 0px;
   background-color: #222222;
   color: #BBBBBB;
   font-size: 13px;
+  font-weight: normal;
 }
 
 .btn {
@@ -54,6 +55,19 @@ body {
   border-color: #3F2C52;
   color: #fff;
   font-size: 13px;
+}
+
+.material-icons {
+  font-size: 20px;
+}
+
+/* title */
+#title {
+  color: #DDDDEE;
+  padding-right: 0px;
+  margin-right: 5px;
+  margin-top: 0;
+  margin-bottom: 0px;
 }
 
 /* jub-style lists */
@@ -70,9 +84,18 @@ body {
 }
 .jub-list li:nth-child(odd) { background: #1C1C1C; }
 
-/* player and queue panel commonalities */
+/* separator for sandbox playlist TODO */
+#playlists li:nth-child(0) {
+  border-bottom: 1px;
+  border-color: #111111;
+}
+
+/* panel commonalities */
 #player-panel,
-#queue-panel {
+#queue-panel,
+#queue-settings-panel,
+#chat-settings-panel,
+#playlists-panel {
   border: 0;
   background-color: #111;
   margin-left: auto;
@@ -80,55 +103,136 @@ body {
   margin-bottom: 0px;
 }
 #player-panel .panel-body,
-#queue-panel  .panel-body {
+#queue-panel  .panel-body,
+#playlists-panel .panel-body {
   border: 0;
   background-color: #161616;
   padding: 0 0 0 0;
 }
+
 #player-panel .panel-footer,
-#queue-panel  .panel-footer {
+#queue-panel  .panel-footer,
+#playlists-panel .panel-footer {
   font-size: 12px;
 }
-#player-panel th,
-#queue-panel  th {
+#player-panel td,
+#queue-panel  td {
+  border: 0;
   padding: 5px 5px 5px 5px;
 }
+#video-queue,
+#playlists-panel {
+  color: #BBBBCC; /* slightly darker text for queue items */
+}
+#queue-banner,
+#playlists-banner {
+  background: #111;
+}
+
 
 /* player panel */
 #player-panel * {
   border: 0;
   background-color: #111;
 }
-#player-panel {
+#player-panel,
+#player-shield {
   width: 484px; /* width of the player */
 }
-#player-panel .panel-body {
+#player-panel .panel-body,
+#player-shield {
   height: 290px;
 }
-#current-track {
+#player-shield,
+#player {
+  position: absolute;
+}
+#player-shield {
+  text-align: center;
+}
+#player-shield span {
+  font-size: 100px;
+  position: relative;
+  top: 95px;           /* 290px (height of player) - 100px (font size) / 2 */
+  color: #1D1D1F;
+}
+/* video queue, playlists */
+#queue-count {
   color: #DDDDEE;
   font-size: 13px;
 }
-#current-track {
-  font-weight: normal;
+#video-queue,
+#playlists {
+  overflow-y:auto;
 }
-#time-left {
-  min-width: 55px;
+#video-queue .queue-item *,
+#playlists .playlist-item * {
+  font-weight: normal;
+  padding: 0px 0px 0px 0px;
+}
+#playlists-panel table {
+  margin-bottom: 0px;
+}
+#playlists-panel table>tbody>tr>td {
+  padding: 5px 5px 5px 5px;
+  border: 0;
+}
+#video-queue li,
+#playlists li {
+  /* NOTE if you update these spacing values, update lib/queue.js:'redraw_items' */
+  padding: 3px 3px 3px 5px;
+}
+#playlists .playlist-item .playlist-name {
+  margin-right: 4px;
+}
+#video-queue .queue-item input {
+  margin-left: 5px;
+}
+#video-queue .queue-item .chk-td {
+  width: 24px;
+}
+#video-queue .queue-item .duration {
+  width: 63px;
+  padding: 0px 5px 0px 5px;
   text-align: right;
+  color: #858585;
+}
+#playlist-name-banner tr {
+  overflow: visible;
+  white-space: nowrap;
+}
+#playlist-name-banner td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* video queue */
-#video-queue {
-  color: #BBBBCC; /* slightly darker text for queue items */
+/*TODO*/
+#video-queue .queue-item .queue-chk,
+#playlists .playlist-item .playlist-radio {
+  margin-top: 3px;
+  margin-right: 4px;
+  float: left;
 }
-#queue-banner {
-  background: #111;
+#queue-panel table {
+  table-layout: fixed;
+  width: 100%;
 }
-#queue-label {
-  color: #DDDDEE;
-  font-size: 13px;
-  line-height: 2.4;
+#queue-context-menu {
+  position: absolute;
+  display: none;
 }
+#queue-context-menu .ul {
+  background-color: #000;
+}
+#select-all {
+  margin: 10px 3px 10px 0px;
+}
+#select-all-label {
+  position: relative;
+  top: -2px;
+}
+
 /* TODO create class for orange buttons */
 #queue-panel .btn:hover {
   background-color: #e6e6e6;
@@ -144,25 +248,68 @@ body {
 #delete-track {
   background-color: #8B0000 ;
   border-color: #8b0000 ;
-  float: right ;
   display: none ;
 }
 #send-to-top {
   background-color: #005D8B ;
   border-color: #005D8B ;
-  float: right ;
   display: none ;
 }
+#send-to-bottom {
+  background-color: #886600 ;
+  border-color: #886600 ;
+  display: none ;
+}
+#copy-playlist {
+  background-color: #248f24 ;
+  border-color: #248f24 ;
+  /*display: none ;*/
+}
+#delete-playlist {
+  background-color: #8B0000 ;
+  border-color: #8B0000 ;
+  /*display: none ;*/
+}
 
-/* navbars */
-#bottom-nav ul.navbar-nav>li>a,
-#messages li>a {
+#join-dj-td {
+  width: 48px;
+  padding: 0;
+}
+#join-dj-icon {
+  padding-top: 2px;
+  padding-bottom: 5px;
+}
+/* chat settings panel */
+#queue-settings-panel .panel-body,
+#chat-settings-panel .panel-body {
+  padding: 10px 5px 5px 5px;
+}
+#queue-settings-panel .panel-body label,
+#chat-settings-panel .panel-body label {
+  font-weight: normal;
+  margin-bottom: 0px;
+}
+#queue-settings-panel input[type=checkbox],
+#chat-settings-panel input[type=checkbox] {
+  margin: 2px 5px 5px 4px;
+  float: left;
+}
+#username-input {
+  border: 1px;
+  border-color: #223;
+  width: 95%;
+  margin-left: 4px;
+  border-style: solid;
+}
+
+.a-link-to-the-past {
   color: #0097AA;
 }
 
-/* top navbar */
-.jub-nav-top-item {
-  top: 5px;
+/* navbar */
+.jub-nav-item {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .navbar-fixed-top {
   height: 60px;
@@ -178,6 +325,23 @@ body {
 }
 
 /* current users */
+.jub-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  width: 90%;
+}
+.jub-karma {
+  white-space: nowrap;
+  text-align: right;
+}
+
+#jubbin-list-tbody tr:nth-child(odd) {background: #1C1C1C}
+#jubbin-list-tbody td {
+  padding: 3px 8px 3px 8px;
+}
+
 #jubbin-list {
   margin: 0;
   padding: 0;
@@ -187,37 +351,10 @@ body {
   overflow-y:auto;
 }
 
-#video-queue {
-  overflow-y:auto;
-}
-#video-queue .queue-item * {
-  font-weight: normal;
-  padding: 0px 0px 0px 0px;
+#chat-input {
+  margin-top: 11px;
 }
 
-/* NOTE if you update these spacing values, update redraw_queue_items */
-#video-queue li{
-  padding: 3px 3px 3px 3px;
-}
-#video-queue .queue-item .title {
-  margin-right: 4px;
-}
-#video-queue .queue-item .duration {
-  min-width: 55px;
-  text-align: right;
-  float: right;
-}
-/*TODO*/
-#video-queue .queue-item .queue-chk {
-  margin-right: 4px;
-}
-#queue-context-menu {
-  position: absolute;
-  display: none;
-}
-#queue-context-menu .ul {
-  background-color: #000;
-}
 
 /* nav tabs */
 .nav-tabs {
@@ -226,6 +363,7 @@ body {
 .nav-tabs>li>a {
   border: 0px solid #111;
   color: #AAAABB;
+  padding: 8px 20px 4px 20px;
 }
 .nav-tabs>li.active>a,
 .nav-tabs>li.active>a:focus,
@@ -233,14 +371,137 @@ body {
 .nav-tabs>li.active>a:active {
   background-color: #3F2C52;
   border: 0px solid #111;
+  border-width: 0px 0px 3px 0px;
+  border-bottom-color: #654784;
   color: #FFF;
 }
 .nav-tabs>li>a:hover,
 .nav-tabs>li>a:focus {
   background-color: #2C1E39;
+  border-bottom-color: #39274a;
+  border-width: 0px 0px 3px 0px;
   color: #FFF;
 }
 
+
+/* TOP NAV BAR */
+.navbar-fixed-top {
+  border: 0;
+}
+
+#load-video {
+  padding-right: 5px;
+}
+
+#omnibox {
+  width: 220px;
+  padding-right: 0px
+}
+
+/* Footer */
+footer {
+  background-color: #222;
+  border: 0;
+}
+
+/* Current DJ and track */
+/* TODO is this label cool? */
+/*#now-playing-label {
+  color: #778;
+  width: 70px;
+  text-align: right;
+  font-size: 10px;
+}*/
+#dj-banner,
+#next-dj-banner {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0px;
+}
+#dj-banner>tbody * {
+  border-top: 0px;
+}
+#current-dj-name,
+#current-track {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+}
+#current-dj-name,
+#current-track,
+#time-left {
+  font-size: 17px;
+  line-height: 2.18;
+}
+#now-playing-label {
+  text-align: right;
+  padding-top: 18px;
+  color: #777;
+}
+#current-track {
+  color: #DDDDEE;
+  font-weight: normal;
+  padding-left: 0px;
+}
+#current-dj-name {
+  width: 100px;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 20px;
+  padding-left: 0px;
+}
+#time-left {
+  color: #EEE;
+  text-align: right;
+  padding-right: 20px;
+  width: 80px;
+}
+
+#next-track,
+#next-dj,
+#next-duration {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-width: 0px;
+  font-size: 15px;
+  padding: 0;
+}
+#up-next-label {
+  border-width: 0px;
+  font-weight: bold;
+  font-size: 15px;
+  text-align: center;
+  padding: 0;
+  color: #777;
+}
+#next-dj-by-span {
+  font-size: 12px;
+  margin-right: 6px;
+  color: #777;
+}
+#next-track {
+  font-weight: normal;
+  padding-left: 0px;
+  width: 90%;
+}
+.next-duration {
+  font-weight: bold;
+  color: #777;
+  padding-top: 0px;
+  margin-left: 10px;
+  font-size: 15px;
+}
+#next-dj-name {
+  font-weight: bold;
+  text-align: left;
+  width: 150px;
+  max-width: 150px;
+  padding-right: 20px;
+  padding-left: 0px;
+}
 /*
  * Autocomplete
  */
@@ -297,6 +558,85 @@ body {
   margin: -1px;
 }
 
-.form-control {
-  font-size: 13px;
+/* volume slider */
+input[type=range] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  height: 3px;
+  margin: 4.8px 0;
+  cursor: pointer;
+  position: relative;
+  top: -4px; /* best for chrome; see public/javascripts/resizing.js for moz hack */
+  border: 0px solid rgba(0, 1, 1, 0);
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+  outline: none;
 }
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  height: 3px;
+  margin-top: 0px;
+}
+input[type=range]::-moz-range-track {
+  height: 3px;
+  background-color: #333;
+}
+input[type=range]:focus::-moz-range-track {
+  outline: none; /* apparently FF bug prevents this from working */
+}
+input[type=range]::-webkit-slider-thumb {
+  height: 13px;
+  width: 13px;
+  border-radius: 50px;
+  background: #fff;
+  -webkit-appearance: none;
+  margin-top: -4.8px;
+}
+input[type=range]::-moz-range-thumb {
+  height: 13px;
+  width: 13px;
+  border-radius: 50px;
+  -moz-appearance: none;
+  margin-top: -4.8px;
+}
+input[type=range]:focus::-moz-range-thumb {
+  outline: none;
+}
+/* TODO not sure which of this I need */
+input[type=range]::-ms-track {
+  position: relative;
+  top: -2px;
+  border-radius: 0px;
+  border: 0px solid rgba(0, 1, 1, 0);
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+  outline: none;
+}
+input[type=range]::-ms-fill-lower {
+  background: #fff;
+  border: 0px solid rgba(0, 1, 1, 0);
+  border-radius: 0px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+}
+input[type=range]::-ms-fill-upper {
+  background: #fff;
+  border: 0px solid rgba(0, 1, 1, 0);
+  border-radius: 0px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+}
+input[type=range]::-ms-thumb {
+  height: 13px;
+  width: 13px;
+  border-radius: 50px;
+  background: #fff;
+  -webkit-appearance: none;
+  margin-top: -4.8px;
+}*/
+/*
+input[type=range]:focus::-ms-fill-lower {
+  background: #fff;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #fff;
+}*/
