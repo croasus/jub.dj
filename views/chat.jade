@@ -135,33 +135,40 @@ script.
     return image;
   }
 
-  function convertLineToElement(line){
+  function convertLineToElement(line, isMention){
     var elem = $('<span>');
-    _.chain(line.split(' ')).map(function(word) {
-      var transformedWord;
-      var isLink = (urlRegex).test(word);
-      if(isLink) {
-        var isImage = (imageRegex).test( word );
-        if ( isImage && $('#show-chat-images').is(":checked") ) {
-          transformedWord = makeImage( word );
-        } else {
-          transformedWord = makeLink( word );
-        }
-        transformedWord.text( transformedWord.text() + " " );
-      } else {
-        transformedWord = document.createTextNode( word + " ");
-      }
+    _.chain(line.split(' '))
+     .map(function(word) {
+       var transformedWord;
+       var isLink = (urlRegex).test(word);
+       if(isLink) {
+         var isImage = (imageRegex).test( word );
+         if ( isImage && $('#show-chat-images').is(":checked") ) {
+           transformedWord = makeImage( word );
+         } else {
+           transformedWord = makeLink( word );
+         }
+         transformedWord.text(transformedWord.text() + " ");
+       } else {
+         transformedWord = document.createTextNode(word + " ");
+         if(isMention) {
+           elem.css({
+             'color': '#ad8aff',
+             'font-weight': 'bold'
+           });
+         }
+       }
 
-      if(line.indexOf(getUsername()) >= 0) {
-        elem.css('color', "#CC99CC");
-      }
-      
-      return transformedWord;
+       return transformedWord;
     }).each(function(component){
       elem.append(component);
     }).value();
     return elem;
   };
+
+  function latestMsgVisible() {
+    return $('#chat-navtab-li').attr('class') === 'active' && !scrolledUp;
+  }
 
   var newChatLi = function(msgObj) {
     var li = $('<li>');
@@ -211,11 +218,6 @@ script.
       // Append heading to chat message
       li.append(heading);
 
-      // Add each line of the message, with <br>'s in between
-      _.each(msgObj.text.split('\n'), function(line) {
-        li.append('<br>');
-        li.append(convertLineToElement(line));
-      } );
       if (msgObj.hasOwnProperty( 'customPanelBorder' )) {
         li.css('list-style-position', 'inside');
         li.css('border', '1px solid ' + msgObj.customPanelBorder);
@@ -235,6 +237,7 @@ script.
     // Detect mentions and notify in title bar
     if (msgObj.text.indexOf(getUsername()) >= 0) {
       if (!msgObj.isBot) {
+        msgObj.isMention = true;
         $.titleAlert(msgObj.user + ' says...', {
           requireBlur: true,
           duration: 0,
@@ -244,24 +247,24 @@ script.
     }
 
     var list = $('#messages');
-    var chatLi;
-    if(msgObj.user != this.lastUser || msgObj.isBot || msgObj.emote
-       || this.lastEmote || this.lastColor != msgObj.color) {
+    var makeNewLi = false;
+    if (msgObj.user != this.lastUser || msgObj.isBot || msgObj.emote ||
+        this.lastEmote || this.lastColor != msgObj.color) {
+      makeNewLi = true;
       this.lastEmote = msgObj.emote;
       this.lastUser = msgObj.user;
       this.lastColor = msgObj.color;
-      chatLi = newChatLi(msgObj);
-      list.append(chatLi);
-    } else {
-      chatLi = list.find('li').last()
-      _.each(msgObj.text.split('\n'), function(line) {
-        chatLi.append('<br>');
-        chatLi.append(convertLineToElement(line));
-      } );
     }
-    if ($('#chat-navtab-li').attr('class') !== 'active' || scrolledUp) {
-      unreadMessagesAlert(true);
-    }
+
+    // Either create a new chat box or append the text to the latest one
+    chatLi = makeNewLi ? newChatLi(msgObj) : list.find('li').last();
+    _.each(msgObj.text.split('\n'), function(line) {
+      chatLi.append('<br>');
+      chatLi.append(convertLineToElement(line, msgObj.isMention));
+    });
+    if (makeNewLi) { list.append(chatLi); }
+
+    unreadMessagesAlert(!latestMsgVisible());
     $('#messages').trigger('update_scroll');
   });
 
