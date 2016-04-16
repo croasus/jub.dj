@@ -38,6 +38,16 @@ var urban = function(query) {
 };
 
 var bot = require('../lib/bot')(config, gapi, twitter, urban);
+bot.get_latest_updates = function() {
+  return {
+    date: '2015-01-01',
+    list: [
+      'Update 1',
+      'Update 2'
+    ]
+  };
+}
+
 var chat = require('../lib/chat')(config, bot);
 
 chat.jub = (function() {
@@ -121,6 +131,13 @@ chat.welcome(TEST_USER, function(resp) {
 });
 
 testCase('Test "video started" event');
+chat.videoStarted({
+  title: 'Rocko\'s modern life S1 E1',
+  duration: 10000000,
+  user: TEST_USER
+});
+
+testCase('Test "video started" event with no duration');
 chat.videoStarted({
   title: 'Rocko\'s modern life S1 E1',
   user: TEST_USER

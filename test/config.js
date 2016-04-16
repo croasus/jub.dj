@@ -8,13 +8,6 @@ module.exports = {
   auth: {
     token_len: '20'
   },
-  latest_updates: {
-    date: '2015-01-01',
-    list: [
-      'Update 1',
-      'Update 2'
-    ]
-  },
   private_route: '/test_private_route',
   moved_message: "Ask for the new URL!",
   chat: {

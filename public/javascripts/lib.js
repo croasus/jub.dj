@@ -36,7 +36,6 @@ function formatTime(secs) {
   time.setSeconds(secs);
   var formatted = strftime(format, time);
   return formatted.replace(/^0+/, '');
-
 }
 
 // monkey-patch String with #startsWith
