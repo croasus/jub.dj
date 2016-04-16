@@ -16,6 +16,7 @@ if [ -z ${JUB_GIT_DIR} ]; then
 fi
 
 cd $JUB_GIT_DIR
+PATH=$JUB_GIT_DIR/bin:$PATH
 
 prod_branch="production"
 prod_latest=$(latest origin/${prod_branch})
