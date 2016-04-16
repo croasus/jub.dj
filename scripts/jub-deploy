@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+today=$(date -u +"%Y%m%d")
+log() {
+  echo "$1 deploy: $today: $2" >&2
+}
+trap "log ERROR 'execution failed'" ERR
+
+latest() {
+  git log $1 --oneline | cut -d' ' -f1 | head -1
+}
+
+if [ -z ${JUB_GIT_DIR} ]; then
+  log ERROR "JUB_GIT_DIR not set"
+  exit -1
+fi
+
+cd $JUB_GIT_DIR
+
+prod_branch="production"
+prod_latest=$(latest origin/${prod_branch})
+head_latest=$(latest HEAD)
+head_branch=$(git branch | grep '*' | cut -d' ' -f2)
+
+git fetch origin $prod_branch >&/dev/null
+
+if [ "$prod_branch" != "$head_branch" ]; then
+  log INFO "Checking out branch '$prod_branch'"
+  git checkout $prod_branch >/dev/null
+fi
+
+if [ "$prod_latest" != "$head_latest" ]; then
+  git pull origin $prod_branch >/dev/null
+  jub-launch
+fi

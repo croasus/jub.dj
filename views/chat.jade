@@ -1,21 +1,71 @@
 ul(id="chat-navtabs", class="nav nav-tabs")
   li(id="chat-navtab-li", role="presentation")
-    a(id="chat-navtab-a", href="#chat-tab", data-toggle='tab') Chat
+    a(id="chat-navtab-a", href="#chat-tab", data-toggle='tab')
+      i(id="chat-navtab-icon", class="material-icons",
+        data-toggle="tooltip", title="Chat") chat_bubble
   li(id="jubbin-list-navtab-li", role="presentation", class="active")
-    a(id="jubbin-list-navtab-a", href="#jubbin-list-tab", data-toggle='tab') Who's jubbin'
+    a(id="jubbin-list-navtab-a", href="#jubbin-list-tab", data-toggle='tab')
+      i(class="material-icons", data-toggle="tooltip", title="Who's jubbin") people
+      div(id="num-users", class="right", style="margin-left:3px;") (0)
+  li(id="chat-settings-navtab-li", role="presentation")
+    a(id="chat-settings-navtab-a", href="#chat-settings-tab", data-toggle='tab')
+      i(class="material-icons", data-toggle="tooltip", title="Chat settings") settings
+
 div(id="chat-tab-content", class="tab-content")
   div(class="tab-pane active" id="chat-tab")
     ul(id="messages", class="jub-list")
   div(class="tab-pane active" id="jubbin-list-tab")
-    ul(id="jubbin-list", class="jub-list")
+    div(id="jubbin-list")
+      table
+        tbody(id='jubbin-list-tbody')
+  div(class="tab-pane active" id="chat-settings-tab")
+    div(class='panel panel-default', id='chat-settings-panel')
+      div(class='panel-body')
+        form(class='form-group', id='username', action='')
+          input(class='form-control', id='username-input', placeholder='Username', autocomplete='off')
+        input(id='show-chat-images', type='checkbox', action='')
+        label(id='show-chat-images-label', for='show-chat-images') Show images from links in chat messages
+
+include ./username.jade
 
 script.
-
-  var scrolled_up = false;
-  var current_users = {};
+  var scrolledUp = false;
+  var currentUsers = {};
 
   // Basic regex that accepts a line that consists only of a URL
-  var urlRegex = /^(http\:\/\/|https\:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*[^\s]*$/i;
+  var urlRegex = /^(http:\/\/|https:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*[^\s]*$/i;
+  var imageRegex = /[^\s]+(\.(jpeg|jpg|png|gif|bmp))$/i;
+
+  function unreadMessagesAlert(areUnread) {
+    if (typeof areUnread === 'undefined') { areUnread = true; }
+    if (areUnread) {
+      $('#chat-navtab-icon').text('chat');
+    } else {
+      $('#chat-navtab-icon').text('chat_bubble');
+    }
+  }
+
+  function drawCurrentUsers() {
+    $("#num-users").text('(' + currentUsers.length + ')');
+    $("#jubbin-list-tbody").empty();
+    for (user of currentUsers) {
+      var tr = $('<tr>').addClass('jub');
+      tr.css({
+        'color': user.color,
+      });
+
+      var jubNameTd = $('<td>').addClass('jub-name');
+      jubNameTd.text(user.name);
+
+      var jubKarmaTd = $('<td>').addClass('jub-karma');
+      jubKarmaTd.text(user.karma + " karma");
+
+      tr.append(jubNameTd);
+      tr.append(jubKarmaTd);
+
+      $("#jubbin-list-tbody").prepend(tr);
+    }
+  }
 
   $('#chat-navtabs a').click(function (e) {
     // Show it now so that we can do some polishing on the revealed element
@@ -24,25 +74,22 @@ script.
 
     // Depending on which tab we're opening, update certain UI elements
     if (e.currentTarget.id == 'jubbin-list-navtab-a') {
-      $('#jubbin-list').empty();
-      for (user of current_users) {
-        $('#jubbin-list').append(
-          $('<li>').text(user.name).css('color', user.color)
-        );
-      }
+      drawCurrentUsers();
     } else {
       $('#messages').trigger('update_scroll');
+      unreadMessagesAlert(false);
     }
   })
 
   // Message from server saying who's connected
   socket.on('current users', function(users) {
-    current_users = users;
+    currentUsers = users;
+    drawCurrentUsers();
   });
 
   // Scroll chat to bottom if needed
   $('#messages').bind('update_scroll', function() {
-    if (!scrolled_up) {
+    if (!scrolledUp) {
       this.scrollTop = this.scrollHeight;
     }
   });
@@ -51,17 +98,20 @@ script.
   // TODO put this on the same, slower timing as other resize functions
   $('#messages').scroll(function() {
     var elem = $( this );
-    var max_height = parseInt(elem.css('max-height'), 10);
-    scrolled_up = (Math.abs(this.scrollHeight - this.scrollTop - elem.height()) > 10);
+    var maxHeight = parseInt(elem.css('max-height'), 10);
+    scrolledUp = (Math.abs(this.scrollHeight - this.scrollTop - elem.height()) > 10);
+    if (!scrolledUp) {
+      unreadMessagesAlert(false);
+    }
   });
 
-  // TODO allow links interweaved with other text
   var makeLink = function(line) {
     var adjusted = line;
     if(line.indexOf('http') !== 0) {
       adjusted = 'http://' + line;
     }
     var a = $( '<a>' ).attr({
+      'class': 'a-link-to-the-past',
       'href': adjusted,
       'target': '_blank'
     });
@@ -69,16 +119,67 @@ script.
     return a;
   }
 
-  var new_chat_li = function(msg_obj) {
+  var makeImage = function(line) {
+    var adjusted = line;
+    if(line.indexOf('http') !== 0) {
+      adjusted = 'http://' + line;
+    }
+    var image = $( '<img>' ).attr({
+      'src': adjusted
+    });
+    _.defer(function() {
+      var elemMaxWidth = $('#messages > li');
+      $( this ).css( 'width', (0.9 * elemMaxWidth.width()) + 'px' );
+      $( this ).css( 'height', 'auto' );
+    }.bind(image))
+    return image;
+  }
+
+  function convertLineToElement(line, isMention){
+    var elem = $('<span>');
+    _.chain(line.split(' '))
+     .map(function(word) {
+       var transformedWord;
+       var isLink = (urlRegex).test(word);
+       if(isLink) {
+         var isImage = (imageRegex).test( word );
+         if ( isImage && $('#show-chat-images').is(":checked") ) {
+           transformedWord = makeImage( word );
+         } else {
+           transformedWord = makeLink( word );
+         }
+         transformedWord.text(transformedWord.text() + " ");
+       } else {
+         transformedWord = document.createTextNode(word + " ");
+         if(isMention) {
+           elem.css({
+             'color': '#ad8aff',
+             'font-weight': 'bold'
+           });
+         }
+       }
+
+       return transformedWord;
+    }).each(function(component){
+      elem.append(component);
+    }).value();
+    return elem;
+  };
+
+  function latestMsgVisible() {
+    return $('#chat-navtab-li').attr('class') === 'active' && !scrolledUp;
+  }
+
+  var newChatLi = function(msgObj) {
     var li = $('<li>');
 
     // Emoting?
-    if (msg_obj.emote) {
-      var full_text = msg_obj.user + ' ' + msg_obj.text;
-      li.append(li.append(document.createTextNode(full_text)));
+    if (msgObj.emote) {
+      var fullText = msgObj.user + ' ' + msgObj.text;
+      li.append(li.append(document.createTextNode(fullText)));
       li.css({
         'font-style': 'italic',
-        'color': msg_obj.color
+        'color': msgObj.color
       });
     } else {
 
@@ -92,10 +193,10 @@ script.
       var user = $('<span>');
       user.css({
         'font-weight': 'bold',
-        'color': msg_obj.color,
+        'color': msgObj.color,
         'float': 'left'
         });
-      user.append(document.createTextNode(msg_obj.user));
+      user.append(document.createTextNode(msgObj.user));
       heading.append(user);
 
       // Now add a timestamp TODO configurable format
@@ -104,32 +205,22 @@ script.
         'float': 'right',
         'color': '#666666'
       });
-      var time_format = '%I:%M:%S %p'
-      var msg_time = '';
-      if (msg_obj.hasOwnProperty('time')) {
-        msg_time = strftime(time_format, new Date(msg_obj.time));
+      var timeFormat = '%I:%M:%S %p'
+      var msgTime = '';
+      if (msgObj.hasOwnProperty('time')) {
+        msgTime = strftime(timeFormat, new Date(msgObj.time));
       } else {
-        msg_time = strftime(time_format);
+        msgTime = strftime(timeFormat);
       }
-      time.append(document.createTextNode(msg_time));
+      time.append(document.createTextNode(msgTime));
       heading.append(time);
 
       // Append heading to chat message
       li.append(heading);
 
-      // Add each line of the message, with <br>'s in between
-      for (line of msg_obj.text.split('\n')) {
-        li.append('<br>');
-        var isLink = (urlRegex).test(line);
-        if(isLink) {
-          li.append( makeLink(line) );
-        } else {
-          li.append( document.createTextNode( line ) );
-        }
-      }
-      if (msg_obj.hasOwnProperty( 'customPanelBorder' )) {
+      if (msgObj.hasOwnProperty( 'customPanelBorder' )) {
         li.css('list-style-position', 'inside');
-        li.css('border', '3px solid ' + msg_obj.customPanelBorder);
+        li.css('border', '1px solid ' + msgObj.customPanelBorder);
         time.css('color', '#888899');
       }
     }
@@ -137,16 +228,17 @@ script.
   }
 
   // Chat message received from server
-  socket.on('chat message', function(msg_obj) {
-    this.last_user = this.last_user || "";
-    this.last_emote = this.last_emote || false;
-    if (msg_obj.text == undefined) return;
-    msg_obj.user = msg_obj.user || '???';
+  socket.on('chat message', function(msgObj) {
+    this.lastUser = this.lastUser || "";
+    this.lastEmote = this.lastEmote || false;
+    if (msgObj.text == undefined) return;
+    msgObj.user = msgObj.user || '???';
 
     // Detect mentions and notify in title bar
-    if (msg_obj.text.indexOf(get_username()) >= 0) {
-      if (!msg_obj.is_bot) {
-        $.titleAlert(msg_obj.user + ' says...', {
+    if (msgObj.text.indexOf(getUsername()) >= 0) {
+      if (!msgObj.isBot) {
+        msgObj.isMention = true;
+        $.titleAlert(msgObj.user + ' says...', {
           requireBlur: true,
           duration: 0,
           interval: 700
@@ -155,27 +247,31 @@ script.
     }
 
     var list = $('#messages');
-    var chat_li;
-    if(msg_obj.user != this.last_user || msg_obj.is_bot || msg_obj.emote
-       || this.last_emote || this.last_color != msg_obj.color) {
-      this.last_emote = msg_obj.emote;
-      this.last_user = msg_obj.user;
-      this.last_color = msg_obj.color;
-      chat_li = new_chat_li(msg_obj);
-      list.append(chat_li);
-    } else {
-      chat_li = list.find('li').last()
-      for (line of msg_obj.text.split('\n')) {
-        chat_li.append('<br>');
-        var isLink = (urlRegex).test(line);
-        if(isLink) {
-          chat_li.append( makeLink( line ) );
-        } else {
-          chat_li.append( document.createTextNode( line ) );
-        }
-      }
+    var makeNewLi = false;
+    if (msgObj.user != this.lastUser || msgObj.isBot || msgObj.emote ||
+        this.lastEmote || this.lastColor != msgObj.color) {
+      makeNewLi = true;
+      this.lastEmote = msgObj.emote;
+      this.lastUser = msgObj.user;
+      this.lastColor = msgObj.color;
     }
+
+    // Either create a new chat box or append the text to the latest one
+    chatLi = makeNewLi ? newChatLi(msgObj) : list.find('li').last();
+    _.each(msgObj.text.split('\n'), function(line) {
+      chatLi.append('<br>');
+      chatLi.append(convertLineToElement(line, msgObj.isMention));
+    });
+    if (makeNewLi) { list.append(chatLi); }
+
+    unreadMessagesAlert(!latestMsgVisible());
     $('#messages').trigger('update_scroll');
+  });
+
+  // Server responds on 'preferences' channel, handled by global.js
+  $('#show-chat-images').click(function (e) {
+    var data = { showChatImages: this.checked };
+    socket.emit('update user preferences', getUsername(), data);
   });
 
   // The chat is the correct initially-active tab; we loaded the page with the

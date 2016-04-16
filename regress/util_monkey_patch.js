@@ -1,5 +1,5 @@
 var ju = require('../lib/jub_util.js');
-ju.monkey_patch();
+ju.monkeyPatch();
 
 
 console.log('partition')
