@@ -30,6 +30,8 @@ if [ "$prod_branch" != "$head_branch" ]; then
 fi
 
 if [ "$prod_latest" != "$head_latest" ]; then
+  log INFO "Pulling from production"
   git pull origin $prod_branch >/dev/null
+  log INFO "Restarting"
   jub-launch
 fi

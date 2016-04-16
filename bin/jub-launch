@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-${JUB_GIT_DIR:-$(readlink -m $(dirname $0)/..)}
+: ${JUB_GIT_DIR:=$(readlink -m $(dirname $0)/..)}
 cd $JUB_GIT_DIR
 
 # Install dependencies
