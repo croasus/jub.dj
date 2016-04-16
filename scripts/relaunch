@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
-# to be run by cron (and let cronjob specify where to log)
+# To be run by cron (and let cronjob specify where to log).
+# Only to be used for automatic restarts due to crashes and hardware failures.
 if ! pidof node >/dev/null; then
   env PORT=9292 npm start
 fi;
