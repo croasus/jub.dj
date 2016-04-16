@@ -1,18 +1,18 @@
 #!/bin/bash -e
 
-top_dir=$(readlink -m $(dirname $0)/..)
-cd $top_dir
+${JUB_GIT_DIR:-$(readlink -m $(dirname $0)/..)}
+cd $JUB_GIT_DIR
 
 # Install dependencies
 npm set progress=false && npm install
 
 # Run tests
-TEST=1 node $top_dir/test/baseline.js -v
+TEST=1 node $JUB_GIT_DIR/test/baseline.js -v
 if [[ $? -ne 0 ]]; then
   echo "Tests failed, not starting server."
 fi
 
 # Kill running node process and restart
 if pidof node; then kill `pidof node`; fi;
-nohup env PORT=9292 npm start >> /var/log/jub/jub.log 2>&1 &
+nohup env PORT=9292 npm start >> /var/log/jub/thejub.pub.log 2>&1 &
 cd - >&/dev/null
