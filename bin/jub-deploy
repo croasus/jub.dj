@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+prod_branch="production"
+
 today=$(date -u +"%Y%m%d")
 log() {
   echo "$1 deploy: $today: $2" >&2
@@ -18,12 +20,11 @@ fi
 cd $JUB_GIT_DIR
 PATH=$JUB_GIT_DIR/bin:$PATH
 
-prod_branch="production"
+git fetch origin $prod_branch >&/dev/null
+
 prod_latest=$(latest origin/${prod_branch})
 head_latest=$(latest HEAD)
 head_branch=$(git branch | grep '*' | cut -d' ' -f2)
-
-git fetch origin $prod_branch >&/dev/null
 
 if [ "$prod_branch" != "$head_branch" ]; then
   log INFO "Checking out branch '$prod_branch'"
