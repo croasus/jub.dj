@@ -325,6 +325,10 @@ body {
 }
 
 /* current users */
+.jub-mute {
+  width: 5%;
+}
+
 .jub-name {
   overflow: hidden;
   text-overflow: ellipsis;
