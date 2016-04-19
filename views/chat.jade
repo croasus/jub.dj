@@ -25,6 +25,10 @@ div(id="chat-tab-content", class="tab-content")
           input(class='form-control', id='username-input', placeholder='Username', autocomplete='off')
         input(id='show-chat-images', type='checkbox', action='')
         label(id='show-chat-images-label', for='show-chat-images') Show images from links in chat messages
+        br
+        br
+        input(id='enable-mute-updates', type='checkbox', action='')
+        label(id='enable-mute-updates-label', for='enable-mute-updates') Allow other jubs to see your mute status
 
 include ./username.jade
 
@@ -54,19 +58,40 @@ script.
         'color': user.color,
       });
 
+      var jubMuteTd = $('<td>').addClass('jub-mute');
+      var muteIcon = $('<span>').addClass('user-mute-icon');
+      muteIcon.attr({
+          class: 'glyphicon glyphicon-volume-off',          
+        });
+      if(user.isMuted) 
+        muteIcon.css('visibility', 'visible');
+      else 
+        muteIcon.css('visibility', 'hidden');
+      jubMuteTd.append(muteIcon);
+      
       var jubNameTd = $('<td>').addClass('jub-name');
       jubNameTd.text(user.name);
 
       var jubKarmaTd = $('<td>').addClass('jub-karma');
       jubKarmaTd.text(user.karma + " karma");
 
+      tr.append(jubMuteTd);
       tr.append(jubNameTd);
       tr.append(jubKarmaTd);
 
       $("#jubbin-list-tbody").prepend(tr);
     }
   }
-
+  
+  $('#enable-mute-updates').on('change', function(e) {
+    var data = { allowMuteStatus: this.checked };
+    if(!this.checked)
+      socket.emit('mute update', getUsername(), false);
+    else
+      socket.emit('mute update', getUsername(), player.isMuted());
+    socket.emit('update user preferences', getUsername(), data);
+  })
+  
   $('#chat-navtabs a').click(function (e) {
     // Show it now so that we can do some polishing on the revealed element
     e.preventDefault();

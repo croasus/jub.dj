@@ -147,6 +147,8 @@ script.
     var newVolume = newState ?  0 : getCookie('volume') || DEFAULT_VOLUME;
     setMute(newState);
     setVolumeSlider(newVolume);
+    if($('#enable-mute-updates').is(":checked"))
+      socket.emit('mute update', getUsername(), newState);
   }
 
   // callback for volume range slider
@@ -167,6 +169,8 @@ script.
 
     refreshSizes(true);
     socket.emit('video state');
+    if($('#enable-mute-updates').is(":checked"))
+      socket.emit('mute update', getUsername(), isMuted);
   }
 
   // The API calls this function when the player's state changes.
