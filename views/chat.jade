@@ -160,7 +160,7 @@ script.
     return image;
   }
 
-  function convertLineToElement(line, isMention){
+  var convertLineToElement = function(line, isMention){
     var elem = $('<span>');
     _.chain(line.split(' '))
      .map(function(word) {
@@ -183,15 +183,15 @@ script.
            });
          }
        }
-
        return transformedWord;
-    }).each(function(component){
+     })
+    .each(function(component){
       elem.append(component);
     }).value();
     return elem;
   };
 
-  function latestMsgVisible() {
+  var latestMsgVisible = function() {
     return $('#chat-navtab-li').attr('class') === 'active' && !scrolledUp;
   }
 
@@ -199,15 +199,7 @@ script.
     var li = $('<li>');
 
     // Emoting?
-    if (msgObj.emote) {
-      var fullText = msgObj.user + ' ' + msgObj.text;
-      li.append(li.append(document.createTextNode(fullText)));
-      li.css({
-        'font-style': 'italic',
-        'color': msgObj.color
-      });
-    } else {
-
+    if (!msgObj.emote) {
       // TODO move all styling into stylesheets
       var heading = $('<p>');
       heading.css({
@@ -252,6 +244,22 @@ script.
     return li;
   }
 
+  var appendMsgToLi = function(msgObj, li) {
+    if (msgObj.emote) {
+      var fullText = msgObj.user + ' ' + msgObj.text;
+      li.append(li.append(document.createTextNode(fullText)));
+      li.css({
+        'font-style': 'italic',
+        'color': msgObj.color
+      });
+    } else {
+      _.each(msgObj.text.split('\n'), function(line) {
+        li.append('<br>');
+        li.append(convertLineToElement(line, msgObj.isMention));
+      });
+    }
+  }
+
   // Chat message received from server
   socket.on('chat message', function(msgObj) {
     this.lastUser = this.lastUser || "";
@@ -283,10 +291,8 @@ script.
 
     // Either create a new chat box or append the text to the latest one
     chatLi = makeNewLi ? newChatLi(msgObj) : list.find('li').last();
-    _.each(msgObj.text.split('\n'), function(line) {
-      chatLi.append('<br>');
-      chatLi.append(convertLineToElement(line, msgObj.isMention));
-    });
+    appendMsgToLi(msgObj, chatLi);
+
     if (makeNewLi) { list.append(chatLi); }
 
     unreadMessagesAlert(!latestMsgVisible());
