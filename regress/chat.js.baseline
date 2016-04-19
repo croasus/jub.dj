@@ -210,7 +210,7 @@ broadcasting:
 has time? true
 bot received new message: help
 broadcasting:
- { text: 'Hi! I answer questions and keep you updated on what\'s happening in the pub. Here are some examples of commands I understand:\n\n   jubbot: urban ___ \n   jubbot: show me ___ \n   jubbot: how neat/cute is that? \n\n I also keep track of karma points. Give someone karma with \'++username\', and check someone\'s karma with \'!karma username\' (karma is also displayed in the "Who\'s jubbin\'" list.\n\n More tips:\n - Change your color by typing \'/color COLOR\' into chat, where COLOR can be   a hex code like #123456 or a name like \'blue\'.',
+ { text: 'Hi! I answer questions and keep you updated on what\'s happening in the pub. Here are some examples of commands I understand:\n\n   jubbot: urban ___ \n   jubbot: show me ___ \n   jubbot: how neat/cute is that? \n\n I also keep track of karma points. Give someone karma with \'++username\', and check someone\'s karma with \'!karma username\' (karma is also displayed in the "Who\'s jubbin\'" list).\n\n More tips:\n - Change your color by typing \'/color COLOR\' into chat, where COLOR can be   a hex code like #123456 or a name like \'blue\'.',
   user: 'jubbot',
   isBot: true,
   color: '#888899' }
