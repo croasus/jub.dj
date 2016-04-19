@@ -1,6 +1,7 @@
 module.exports = {
-  date: '2015-4-16',
+  date: '2015-4-18',
   list: [
-    "When someone mentions you in chat, the text is bold and colored.",
+    "Users' mute statuses are displayed in the Who's Jubbin' list.",
+    "You can keep your own mute status private via the chat settings.",
   ],
 }
