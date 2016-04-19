@@ -25,6 +25,10 @@ div(id="chat-tab-content", class="tab-content")
           input(class='form-control', id='username-input', placeholder='Username', autocomplete='off')
         input(id='show-chat-images', type='checkbox', action='')
         label(id='show-chat-images-label', for='show-chat-images') Show images from links in chat messages
+        br
+        br
+        input(id='enable-mute-updates', type='checkbox', action='')
+        label(id='enable-mute-updates-label', for='enable-mute-updates') Allow other jubs to see your mute status
 
 include ./username.jade
 
@@ -54,19 +58,40 @@ script.
         'color': user.color,
       });
 
+      var jubMuteTd = $('<td>').addClass('jub-mute');
+      var muteIcon = $('<span>').addClass('user-mute-icon');
+      muteIcon.attr({
+          class: 'glyphicon glyphicon-volume-off',          
+        });
+      if(user.isMuted) 
+        muteIcon.css('visibility', 'visible');
+      else 
+        muteIcon.css('visibility', 'hidden');
+      jubMuteTd.append(muteIcon);
+      
       var jubNameTd = $('<td>').addClass('jub-name');
       jubNameTd.text(user.name);
 
       var jubKarmaTd = $('<td>').addClass('jub-karma');
       jubKarmaTd.text(user.karma + " karma");
 
+      tr.append(jubMuteTd);
       tr.append(jubNameTd);
       tr.append(jubKarmaTd);
 
       $("#jubbin-list-tbody").prepend(tr);
     }
   }
-
+  
+  $('#enable-mute-updates').on('change', function(e) {
+    var data = { allowMuteStatus: this.checked };
+    if(!this.checked)
+      socket.emit('mute update', getUsername(), false);
+    else
+      socket.emit('mute update', getUsername(), player.isMuted());
+    socket.emit('update user preferences', getUsername(), data);
+  })
+  
   $('#chat-navtabs a').click(function (e) {
     // Show it now so that we can do some polishing on the revealed element
     e.preventDefault();
@@ -135,7 +160,7 @@ script.
     return image;
   }
 
-  function convertLineToElement(line, isMention){
+  var convertLineToElement = function(line, isMention){
     var elem = $('<span>');
     _.chain(line.split(' '))
      .map(function(word) {
@@ -158,15 +183,15 @@ script.
            });
          }
        }
-
        return transformedWord;
-    }).each(function(component){
+     })
+    .each(function(component){
       elem.append(component);
     }).value();
     return elem;
   };
 
-  function latestMsgVisible() {
+  var latestMsgVisible = function() {
     return $('#chat-navtab-li').attr('class') === 'active' && !scrolledUp;
   }
 
@@ -174,15 +199,7 @@ script.
     var li = $('<li>');
 
     // Emoting?
-    if (msgObj.emote) {
-      var fullText = msgObj.user + ' ' + msgObj.text;
-      li.append(li.append(document.createTextNode(fullText)));
-      li.css({
-        'font-style': 'italic',
-        'color': msgObj.color
-      });
-    } else {
-
+    if (!msgObj.emote) {
       // TODO move all styling into stylesheets
       var heading = $('<p>');
       heading.css({
@@ -227,6 +244,22 @@ script.
     return li;
   }
 
+  var appendMsgToLi = function(msgObj, li) {
+    if (msgObj.emote) {
+      var fullText = msgObj.user + ' ' + msgObj.text;
+      li.append(li.append(document.createTextNode(fullText)));
+      li.css({
+        'font-style': 'italic',
+        'color': msgObj.color
+      });
+    } else {
+      _.each(msgObj.text.split('\n'), function(line) {
+        li.append('<br>');
+        li.append(convertLineToElement(line, msgObj.isMention));
+      });
+    }
+  }
+
   // Chat message received from server
   socket.on('chat message', function(msgObj) {
     this.lastUser = this.lastUser || "";
@@ -258,10 +291,8 @@ script.
 
     // Either create a new chat box or append the text to the latest one
     chatLi = makeNewLi ? newChatLi(msgObj) : list.find('li').last();
-    _.each(msgObj.text.split('\n'), function(line) {
-      chatLi.append('<br>');
-      chatLi.append(convertLineToElement(line, msgObj.isMention));
-    });
+    appendMsgToLi(msgObj, chatLi);
+
     if (makeNewLi) { list.append(chatLi); }
 
     unreadMessagesAlert(!latestMsgVisible());
