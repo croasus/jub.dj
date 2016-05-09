@@ -21,7 +21,7 @@ var models = require('../lib/models')(config, auth);
 var socket = (function() {
   return {
     emit: function(channel, msg) {
-      console.log('Socket emitting', channel, msg);
+      console.log('Fake socket emitting', channel, msg);
     }
   }
 })();
@@ -36,11 +36,8 @@ async.series([
     bot = require('../lib/bot')(config, gapi);
     chat = require('../lib/chat')(config, bot);
     jub = require('../lib/jub')(config, gapi, chat, db);
-    jub.addUser('aromatt', socket, function(obj) {
-      console.log('addUser callback')
-      console.log(obj);
-      done()
-    });
+    console.log("adding user aromatt");
+    jub.addUser('aromatt', socket, x => { done(); });
   },
   function(done) {
     jub.addDj('aromatt');
