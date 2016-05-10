@@ -1,9 +1,0 @@
-value: 1
-I will release.
-Done queueing calls
-value: 2
-I will release.
-value: 3
-I will release.
-value: 4
-I will not release; I will time out

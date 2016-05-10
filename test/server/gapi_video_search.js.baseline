@@ -1,0 +1,12 @@
+Results: 21
+First result: { kind: 'youtube#searchResult',
+  etag: '"mPrpS7Nrk6Ggi_P7VJ8-KsEOiIw/flM0TBGPW4iXJxEkirhorDQJDAI"',
+  id: { kind: 'youtube#video', videoId: 'jFW_zaXFzcs' },
+  snippet: 
+   { publishedAt: '2014-03-20T19:41:51.000Z',
+     channelId: 'UC2CpIPU__olRzRlt7NKmSlw',
+     title: 'The Epic Final Fantasy VIII Medley【PART 1】',
+     description: 'MP3 & WAVE available on Loudr : http://www.loudr.fm/release/the-epic-final-fantasy-viii-medley-part-1/RMGS3 ▻ Itunes ...',
+     thumbnails: { default: [Object], medium: [Object], high: [Object] },
+     channelTitle: 'Marcpapeghin',
+     liveBroadcastContent: 'none' } }
