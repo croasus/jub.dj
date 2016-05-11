@@ -7,7 +7,9 @@ cd $JUB_GIT_DIR
 npm set progress=false && npm install
 
 # Run tests
-TEST=1 node $JUB_GIT_DIR/test/baseline.js -v
+export DISPLAY=:99
+pidof Xvfb || Xvfb :99 &
+npm test
 if [[ $? -ne 0 ]]; then
   echo "Tests failed, not starting server."
 fi
