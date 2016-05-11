@@ -1,0 +1,29 @@
+#!/bin/bash
+
+top_dir=$(cd $(dirname $0)/../.. && pwd)
+bin="$top_dir/bin"
+test="$top_dir/test"
+test_bin="$test/bin"
+test_artifacts="$test/artifacts"
+tests="$test/ui"
+nightwatch="$top_dir/node_modules/nightwatch/bin/nightwatch"
+
+cd $top_dir
+
+echo "=== Running UI tests"
+echo
+
+[ -d $test_artifacts ] && rm -r $test_artifacts
+mkdir -p $test_artifacts
+
+echo "Starting jub pub server..."
+export TEST=1
+export PORT=3001
+export JUB_CONFIG=$test/config.js
+(node bin/www >& $test_artifacts/server.out)&
+server_pid=$!
+sleep 5
+
+$nightwatch -c $test/nightwatch.json
+
+kill $server_pid

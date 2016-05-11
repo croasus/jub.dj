@@ -3,7 +3,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var config = require('./config') || {
+var config_path = process.env.JUB_CONFIG || './config'
+var config = require(config_path) || {
   private_route: '/foo',
   moved_message: 'Ask around for the new URL!'
 };

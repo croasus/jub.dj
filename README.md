@@ -23,27 +23,32 @@ $ TEST=1 npm start
 Then visit `http://localhost:3000/ROUTE` in your browser, where `ROUTE` is the value of `"private_route"` in `config.js`. You can specify a different port number using the `PORT` environment variable.
 
 ## Testing
-Tests are slowly being added. To run the regression tests:
+Tests are slowly being added. To run them:
 
 ```
 $ npm test
 ```
+There are two sets of tests: server tests and UI (integration) tests.
 
-To add a new test, add a script to the `regress/` directory. It should be a node.js script, and should output something meaningful (i.e., if the feature you're testing broke, it would output something different).
+### Adding a server test
+To add a new server test, add a script to the `test/server/` directory. It should be a node.js script, and should output something meaningful (i.e., so that if the feature you're testing broke, it would output something different).
 
-When developing your test, make sure to run your script with environment variable `TEST=1`.
+While developing your test, make sure to run your script with environment variable `TEST=1`.
 
 Once your test is producing the correct output, run the baseline tool to create its baseline file:
 
 ```
 # Unix-like
-$ ./test/baseline -b YOUR_TEST
+$ ./test/bin/baseline -b YOUR_TEST
 
 # Windows or Unix-like
-$ node test/baseline.js -b YOUR_TEST
+$ node test/bin/baseline.js -b YOUR_TEST
 ```
 
 Next, run the baseline tool with no arguments to make sure the other tests still pass. If any of the tests fail, it means they are producing different output than before you made your changes. If in fact their new output is now correct, rewrite their baselines (using `-b` as above). Don't forget to commit your new test and its baseline.
+
+### Adding a UI test
+Currently UI tests are assertion-based and use Nightwatch. See the tests in `test/ui/`.
 
 ## Known issues
 Internet Explorer is currently not supported.

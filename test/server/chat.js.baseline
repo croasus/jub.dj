@@ -1,0 +1,217 @@
+bot initialized with name jubbot
+
+=== A client sends a message ===
+broadcasting:
+ { user: 'test_user',
+  text: 'hey!',
+  isBot: false,
+  color: '#1f8e0a' }
+
+=== A no-name client sends a message ===
+
+=== A client emotes ===
+broadcasting:
+ { user: 'test_user',
+  text: ' sees the world spinning round',
+  emote: true,
+  isBot: false,
+  color: '#1f8e0a' }
+
+=== A client impersonates the bot ===
+broadcasting:
+ { user: 'jubbot',
+  text: 'Someone just tried to impersonate me!',
+  isBot: true,
+  color: '#888899' }
+
+=== A client flusters the bot ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: what is the meaning of the universe?',
+  isBot: false,
+  color: '#1f8e0a' }
+bot received new message: what is the meaning of the universe?
+broadcasting:
+ { text: 'I dunno.',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+
+=== A client asks the bot a valid question ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: how neat is that?',
+  isBot: false,
+  color: '#1f8e0a' }
+bot received new message: how neat is that?
+broadcasting:
+ { text: 'spurty neat',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+
+=== A client rephrases the question ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: how neat is that monkey',
+  isBot: false,
+  color: '#1f8e0a' }
+bot received new message: how neat is that monkey
+broadcasting:
+ { text: 'spurty neat',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+
+=== A client insults brice ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: brice sucks',
+  isBot: false,
+  color: '#1f8e0a' }
+bot received new message: brice sucks
+broadcasting:
+ { text: 'BRICE SUUUUUX. But Whit kind of does too.',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+
+=== A client changes its color ===
+test_user set color to limegreen
+updating preference for test_user { color: 'limegreen' }
+
+=== Test welcome message ===
+To send directly back to socket:
+ { text: 'Welcome, test_user!\nLatest updates (2015-01-01):\n* Update 1\n* Update 2',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+
+=== Test "video started" event ===
+broadcasting:
+ { text: 'test_user started "Rocko\'s modern life S1 E1" (2:46:40)',
+  user: 'jubbot',
+  customPanelBorder: '#32cd32',
+  isBot: true,
+  color: '#888899' }
+
+=== Test "video started" event with no duration ===
+broadcasting:
+ { text: 'test_user started "Rocko\'s modern life S1 E1"',
+  user: 'jubbot',
+  customPanelBorder: '#32cd32',
+  isBot: true,
+  color: '#888899' }
+
+=== Test "video skipped" event ===
+broadcasting:
+ { text: 'test_user decided to skip.',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+
+=== A client uses "show me" ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: show me pickles',
+  isBot: false,
+  color: 'limegreen' }
+bot received new message: show me pickles
+gapi image search: pickles
+shorten url: [ { link: 'http://pretend.image' } ]
+broadcasting:
+ { text: 'http://pretend.shortened',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+
+=== A client uses "show me" and brice sucks ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: show me brice sucks',
+  isBot: false,
+  color: 'limegreen' }
+bot received new message: show me brice sucks
+gapi image search: brice sucks
+shorten url: [ { link: 'http://pretend.image' } ]
+broadcasting:
+ { text: 'http://pretend.shortened',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+
+=== Verify that saved chat objects include the time ===
+broadcasting:
+ { user: 'test_user',
+  text: 'foo',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+
+=== A client uses a hashtag in a message ===
+broadcasting:
+ { user: 'test_user',
+  text: 'This test passes #blessed',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+twitter search: #blessed
+broadcasting:
+ { text: 'A twitter search result',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
+=== A client uses # but not in an isolated hashtag ===
+broadcasting:
+ { user: 'test_user',
+  text: 'not#ahashtag',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+
+=== A client asks urban dictionary for a definition ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: urban defined-word',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: urban defined-word
+broadcasting:
+ { text: 'defined-word: The definition',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
+=== A client asks urban dictionary for a definition that doesn't exist ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: urban aldkfj,,,',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: urban aldkfj,,,
+broadcasting:
+ { text: '"aldkfj,,,"? I dunno.',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
+=== A client asks for help ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: help',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: help
+broadcasting:
+ { text: 'Hi! I answer questions and keep you updated on what\'s happening in the pub. Here are some examples of commands I understand:\n\n   jubbot: urban ___ \n   jubbot: show me ___ \n   jubbot: how neat/cute is that? \n\n I also keep track of karma points. Give someone karma with \'++username\', and check someone\'s karma with \'!karma username\' (karma is also displayed in the "Who\'s jubbin\'" list).\n\n More tips:\n - Change your color by typing \'/color COLOR\' into chat, where COLOR can be   a hex code like #123456 or a name like \'blue\'.',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
