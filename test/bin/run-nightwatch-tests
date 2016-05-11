@@ -17,7 +17,10 @@ echo
 mkdir -p $test_artifacts
 
 echo "Starting jub pub server..."
-(TEST=1 PORT=3001 node bin/www >& $test_artifacts/server.out)&
+export TEST=1
+export PORT=3001
+export JUB_CONFIG=$test/config.js
+(node bin/www >& $test_artifacts/server.out)&
 server_pid=$!
 sleep 5
 
