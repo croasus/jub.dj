@@ -6,14 +6,6 @@ cd $JUB_GIT_DIR
 # Install dependencies
 npm set progress=false && npm install
 
-# Run tests
-export DISPLAY=:99
-pidof Xvfb || Xvfb :99 &
-npm test
-if [[ $? -ne 0 ]]; then
-  echo "Tests failed, not starting server."
-fi
-
 # Kill running node process and restart
 if pidof node; then kill `pidof node`; fi;
 nohup env PORT=9292 npm start >> /var/log/jub/thejub.pub.log 2>&1 &
