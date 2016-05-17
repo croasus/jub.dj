@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "node test/bin/baseline.js -v && test/bin/run-nightwatch-tests",
+    "test": "./test/bin/run-all-tests",
     "start": "node ./bin/www"
   },
   "engineStrict": true,
@@ -23,7 +23,6 @@
     "jade": "~1.11.0",
     "jquery": "^2.1.4",
     "lodash": "4.3.0",
-    "mockgoose": "^5.2.2",
     "moment": "^2.10.6",
     "moment-timezone": "^0.4.1",
     "mongoose": "^4.1.8",

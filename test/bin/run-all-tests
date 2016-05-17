@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+top_dir=$(cd $(dirname $0)/../.. && pwd)
+test="$top_dir/test"
+test_bin="$test/bin"
+
+export TEST=1
+export JUB_CONFIG=$test/config.js
+
+# Server tests
+node $test/bin/baseline.js -v
+
+# UI tests
+for tc in $test/ui/*; do
+  $test/bin/run-ui-test $tc
+done
