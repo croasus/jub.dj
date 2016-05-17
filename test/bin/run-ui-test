@@ -29,7 +29,7 @@ node $test/bin/drop_db.js
 echo "Starting jub pub server"
 (node bin/www >> $test_artifacts/server.out 2>&1)&
 server_pid=$!
-sleep 2
+sleep 5
 
 $nightwatch -c $test/nightwatch.json -t $1
 
