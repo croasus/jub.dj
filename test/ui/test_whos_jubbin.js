@@ -16,8 +16,9 @@ module.exports = {
       .assert.containsText('#jubbin-list-tbody', 'test_user')
       .assert.containsText('#jubbin-list-tbody', 'jubbot')
       .end();
-  },
+  },*/
 
+  /*
   'Who\'s Jubbin\' username form' : function (browser) {
     browser
       .url('http://localhost:3001/test_private_route')
@@ -35,6 +36,7 @@ module.exports = {
   'Who\'s Jubbin\' karma' : function (browser) {
     browser
       .url('http://localhost:3001/test_private_route')
+      .waitForElementVisible('body', DEFAULT_WAIT)
       .waitForElementVisible('#chat-input', DEFAULT_WAIT)
       .setValue('#chat-input', '++jubbot')
       .submitForm('#chat')

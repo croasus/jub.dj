@@ -14,7 +14,7 @@ nightwatch="$top_dir/node_modules/nightwatch/bin/nightwatch"
 
 cd $top_dir
 
-echo "=== Running UI test" $(basename $1)
+echo "=== Running UI test case" $(basename $1)
 echo
 
 [ -f $test/chat_cache ] && rm $test/chat_cache
