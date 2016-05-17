@@ -2,7 +2,8 @@ language: node_js
 node_js:
   - "5.0"
   - "4.2"
+services:
+  - mongodb
 before_script:
-  - "apt-get install -y mongodb"
   - "sh -e /etc/init.d/xvfb start"
   - "export DISPLAY=:99.0"
