@@ -31,8 +31,7 @@ module.exports = {
       .waitForElementVisible('#jubbin-list', DEFAULT_WAIT)
       .assert.containsText('#jubbin-list-tbody', 'test_user')
       .end();
-  },*/
-
+  },
   'Who\'s Jubbin\' karma' : function (browser) {
     browser
       .url('http://localhost:3001/test_private_route')
@@ -48,5 +47,5 @@ module.exports = {
         '1 karma'
       )
       .end();
-  },
+  },*/
 };
