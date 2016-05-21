@@ -1,6 +1,5 @@
 var DEFAULT_WAIT = 5000;
 module.exports = {
-  /*
   'Who\'s Jubbin\' username cookie' : function (browser) {
     browser
       .url('http://localhost:3001/test_private_route')
@@ -16,9 +15,8 @@ module.exports = {
       .assert.containsText('#jubbin-list-tbody', 'test_user')
       .assert.containsText('#jubbin-list-tbody', 'jubbot')
       .end();
-  },*/
+  },
 
-  /*
   'Who\'s Jubbin\' username form' : function (browser) {
     browser
       .url('http://localhost:3001/test_private_route')
@@ -32,6 +30,7 @@ module.exports = {
       .assert.containsText('#jubbin-list-tbody', 'test_user')
       .end();
   },
+
   'Who\'s Jubbin\' karma' : function (browser) {
     browser
       .url('http://localhost:3001/test_private_route')
@@ -47,5 +46,5 @@ module.exports = {
         '1 karma'
       )
       .end();
-  },*/
+  },
 };
