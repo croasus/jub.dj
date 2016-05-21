@@ -7,12 +7,11 @@
   "globals_path" : "",
 
   "selenium" : {
-    "start_process" : true,
-    "server_path" : "test/bin/selenium-server-standalone-2.53.0.jar",
-    "log_path" : "test/artifacts",
-    "host" : "127.0.0.1",
-    "port" : 4444,
+    "start_process" : false,
     "cli_args" : {
+      "webdriver.chrome.driver": "/usr/bin/chromedriver",
+      "webdriver.log.file": "test/artifacts/browser.log",
+      "webdriver.chrome.logfile": "test/artifacts/chrome.log"
     }
   },
 
@@ -23,13 +22,16 @@
       "selenium_host"  : "localhost",
       "silent": true,
       "screenshots" : {
-        "enabled" : false,
+        "enabled" : true,
         "path" : ""
       },
       "desiredCapabilities": {
-        "browserName": "firefox",
+        "browserName": "chrome",
         "javascriptEnabled": true,
-        "acceptSslCerts": true
+        "acceptSslCerts": true,
+        "loggingPrefs": {
+          "browser": "ALL"
+        }
       }
     }
   }

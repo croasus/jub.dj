@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+top_dir=$(cd $(dirname $0)/../.. && pwd)
+test="$top_dir/test"
+
+mkdir -p $test/artifacts
+
+java -jar $test/bin/selenium-server-standalone-2.53.0.jar \
+  -Dwebdriver.chrome.logfile=$test/artifacts/chrome.log
+
+# This option exists; it increases the verbosity considerably though
+#-Dwebdriver.chrome.verboseLogging=true \

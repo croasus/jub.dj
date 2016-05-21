@@ -12,25 +12,32 @@ test_bin="$test/bin"
 test_artifacts="$test/artifacts"
 nightwatch="$top_dir/node_modules/nightwatch/bin/nightwatch"
 
-cd $top_dir
-
-echo "=== Running UI test case" $(basename $1)
+echo "=== Running UI test case" $tcname
 echo
-
-[ -f $test/chat_cache ] && rm $test/chat_cache
-[ -d $test_artifacts ] && rm -r $test_artifacts
-mkdir -p $test_artifacts
-
+cd $top_dir
+tcname=$(basename $1)
 export TEST=1
 export PORT=3001
 export JUB_CONFIG=$test/config.js
+export JUB_TEST_ARTIFACT_DIR=$test_artifacts
+[ -d $test/chat_cache ] && rm -r $test/chat_cache
+mkdir -p $test_artifacts
 
 node $test/bin/drop_db.js
+
 echo "Starting jub pub server"
-(node bin/www >> $test_artifacts/server.out 2>&1)&
+(node bin/www >> $test_artifacts/$tcname.serverlog 2>&1)&
 server_pid=$!
 sleep 5
 
+finish() {
+  if [ ! -z ${JUB_TEST_CAPTURE_PAGE+x} ]; then
+    curl -s http://localhost:3001/test_private_route > $test/artifacts/curl.capture
+  fi
+  kill $1
+}
+trap "finish $server_pid" ERR
+
 $nightwatch -c $test/nightwatch.json -t $1
 
-kill $server_pid
+finish $server_pid

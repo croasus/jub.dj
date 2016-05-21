@@ -2,15 +2,26 @@
 
 top_dir=$(cd $(dirname $0)/../.. && pwd)
 test="$top_dir/test"
-test_bin="$test/bin"
 
 export TEST=1
 export JUB_CONFIG=$test/config.js
+
+[ -d $test/artifacts ] && rm -r $test/artifacts
+mkdir -p $test/artifacts
 
 # Server tests
 node $test/bin/baseline.js -v
 
 # UI tests
+($test/bin/start-selenium >> $test/artifacts/selenium.log 2>&1)&
+selenium_pid=$!
+finish() {
+  kill $1
+}
+trap "finish $selenium_pid" ERR
+
 for tc in $test/ui/*; do
   $test/bin/run-ui-test $tc
 done
+
+finish $selenium_pid
