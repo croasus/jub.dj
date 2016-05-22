@@ -12,16 +12,19 @@ test_bin="$test/bin"
 test_artifacts="$test/artifacts"
 nightwatch="$top_dir/node_modules/nightwatch/bin/nightwatch"
 
-echo "=== Running UI test case" $tcname
-echo
 cd $top_dir
 tcname=$(basename $1)
+
 export TEST=1
 export PORT=3001
 export JUB_CONFIG=$test/config.js
 export JUB_TEST_ARTIFACT_DIR=$test_artifacts
+
 [ -d $test/chat_cache ] && rm -r $test/chat_cache
 mkdir -p $test_artifacts
+
+echo "=== Running UI test case" $tcname
+echo
 
 node $test/bin/drop_db.js
 

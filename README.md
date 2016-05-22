@@ -18,7 +18,7 @@ chat + shared video
 ## Running the server
 The server can be started with the following command:
 ```
-$ TEST=1 npm start
+$ TEST=1 JUB_CONFIG=test/config.js npm start
 ```
 Then visit `http://localhost:3000/ROUTE` in your browser, where `ROUTE` is the value of `"private_route"` in `config.js`. You can specify a different port number using the `PORT` environment variable.
 
@@ -31,7 +31,7 @@ $ npm test
 There are two sets of tests: server tests and UI (integration) tests.
 
 ### Adding a server test
-To add a new server test, add a script to the `test/server/` directory. It should be a node.js script, and should output something meaningful (i.e., so that if the feature you're testing broke, it would output something different).
+To add a new server test, add a script to the `test/server/` directory. It should be a node.js script, and should output something meaningful (i.e., so that if the relevant feature broke, your test's output would change).
 
 While developing your test, make sure to run your script with environment variable `TEST=1`.
 
@@ -45,10 +45,10 @@ $ ./test/bin/baseline -b YOUR_TEST
 $ node test/bin/baseline.js -b YOUR_TEST
 ```
 
-Next, run the baseline tool with no arguments to make sure the other tests still pass. If any of the tests fail, it means they are producing different output than before you made your changes. If in fact their new output is now correct, rewrite their baselines (using `-b` as above). Don't forget to commit your new test and its baseline.
+Next, run the baseline tool with no arguments to make sure the other server tests still pass. If any of the tests fail, it means their output has changed. If in fact their new output is now correct, then rewrite their baselines (using `-b` as above). Don't forget to commit your new test and its baseline.
 
 ### Adding a UI test
-Currently UI tests are assertion-based and use Nightwatch. See the tests in `test/ui/`.
+Currently UI tests are assertion-based and use Selenium via Nightwatch. See the tests in `test/ui/`. Unlike server tests, there are no baseline files for UI tests. Simply add a new file to `test/ui/`.
 
 ## Known issues
 Internet Explorer is currently not supported.

@@ -13,8 +13,10 @@ mkdir -p $test/artifacts
 node $test/bin/baseline.js -v
 
 # UI tests
+echo "Starting selenium server..."
 ($test/bin/start-selenium >> $test/artifacts/selenium.log 2>&1)&
 selenium_pid=$!
+sleep 3
 finish() {
   kill $1
 }
