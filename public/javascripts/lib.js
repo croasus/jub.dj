@@ -92,5 +92,11 @@ function vendor() {
   return obj;
 }
 
+function areVideoClipSettingsValid(videoObj) {
+  return videoObj.hasOwnProperty('clipStartTime') 
+      && videoObj.hasOwnProperty('clipEndTime')
+      && ((videoObj.clipEndTime - videoObj.clipStartTime) < videoObj.duration );
+}
+
 // Some globals
 var socket = io();

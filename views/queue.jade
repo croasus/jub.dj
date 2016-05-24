@@ -26,6 +26,29 @@ div(id="queue-tab-content", class="tab-content")
                        title='Shuffle')
                   span(id='shuffle-icon', class='glyphicon glyphicon-random')
 
+      table(class='table', id='clip-table')
+        tbody
+          tr(id='clip-settings')
+            td
+            td
+              form(id='clip-start-form', action='')
+                input(class='form-control jub-nav-input jub-nav-item clip-input', 
+                  id='clip-start-value', placeholder='start', data-toggle='tooltip', 
+                  data-placement='top', title='Start Clip Time', oninput='updateClipButton()')
+            td
+              form(id='clip-end-form', action='')
+                input(class='form-control jub-nav-input jub-nav-item clip-input', 
+                id='clip-end-value', placeholder='stop', data-toggle='tooltip', 
+                data-placement='top', title='End Clip Time', oninput='updateClipButton()')
+            td(class='right')
+              div(class='input-group input-group-md')
+                button(class='material-icons btn btn-default clip-btn', type='button', id='confirm-clip',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Confirm Track Clip') check
+                button(class='material-icons btn btn-default clip-btn', type='button', id='reset-clip',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Reset Track Clip') restore
+      
       table(class='table', id='queue-banner')
         tbody
           tr
@@ -37,6 +60,10 @@ div(id="queue-tab-content", class="tab-content")
                     id='select-all-label') Select all
             td(class='right', id='queue-buttons')
               div(class='input-group input-group-md')
+                button(class='btn btn-default left', type='button', id='show-clip-settings',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Clip Selected Track')
+                  span(id='show-clip-settings-icon', class='glyphicon glyphicon-scissors')
                 button(class='btn btn-default right', type='button', id='delete-track',
                        data-toggle='tooltip', data-placement='top',
                        title='Delete')
@@ -101,6 +128,63 @@ script.
     container: 'body'
   });
 
+  function getClipSettings() {
+    var startValue = parseInt(formatTimeToSeconds($('#clip-start-value').val()));
+    var endValue = parseInt(formatTimeToSeconds($('#clip-end-value').val()));
+    var indices = selectedTracks() || {};
+    var pl = selectedPlaylist() || {};
+    var clipSettings = {startValue:0, endValue:-1, fullDuration:0};
+    if((indices.length != {}) && (pl.length != {})) {
+      var videos = pl['videos'];
+      videos = _.sortBy(videos, 'position');
+      var fullDuration = parseInt(videos[indices[0]].duration) / 1000;
+      clipSettings.startValue = startValue;
+      clipSettings.endValue = endValue;
+      clipSettings.fullDuration = fullDuration;
+    }
+    return clipSettings;
+  }
+  
+  function areValidClipValues(clipSettings) {
+      if(    (clipSettings.startValue <= clipSettings.fullDuration)
+          && (clipSettings.endValue <= clipSettings.fullDuration)
+          && (clipSettings.startValue <= clipSettings.endValue))
+        return true;
+      else
+        return false;
+  }
+  
+  function submitClipSettings() {
+    var clipSettings = getClipSettings();
+    if(areValidClipValues(clipSettings)) {
+      console.log("Submitting valid clip!");
+      socket.emit('clip track', getUsername(), selectedPlaylistName(), 
+                selectedTracks()[0], 
+                clipSettings.startValue,
+                clipSettings.endValue);
+    }
+  }
+  
+  $('#clip-start-form').submit(function(e) {
+    e.preventDefault();
+    submitClipSettings();
+  });
+  
+  $('#clip-end-form').submit(function(e) {
+    e.preventDefault();
+    submitClipSettings();
+  });
+
+  function updateClipButton() {
+    var clipSettings = getClipSettings();
+    if(areValidClipValues(clipSettings)) {
+      revealElement('#confirm-clip', 100);
+    }
+    else {
+      hideElement('#confirm-clip', 100);
+    }
+  }
+
   function selectedPlaylistName() {
     return $('#playlists li input[name=playlist-radios]:checked').prop('value');
   }
@@ -121,19 +205,117 @@ script.
     $('#big-playlist-name').text(selectedPlaylistDisplayName());
   }
 
+  function isSelectedVideoClipped() {
+    var indices = selectedTracks() || {};
+    if(indices.length > 0) {
+      var pl = selectedPlaylist() || {};
+      var videos = pl['videos'];
+      videos = _.sortBy(videos, 'position');
+      if(videos.length > 0) {
+        var fullDuration = parseInt(videos[indices[0]].duration);
+        console.log("Start time: " + videos[indices[0]].clipStartTime + " and type is: " + typeof(videos[indices[0]].clipStartTime));
+        console.log("End time: " + videos[indices[0]].clipEndTime + " and type is: " + typeof(videos[indices[0]].clipEndTime));
+        console.log("Full Duration: " + fullDuration + " and type is: " + typeof(fullDuration));
+        if( (videos[indices[0]].clipStartTime != 0) ||
+            (videos[indices[0]].clipEndTime != fullDuration)) {
+          console.log("selected video is clipped");
+          return true;
+            }
+        else {
+          console.log("selected video is not clipped");
+          return false;
+        }
+      }
+      else {
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+    return false;
+  }
+
+  function revealElement(elementName, fadeDuration) {
+    $(elementName).fadeTo(fadeDuration, 1);
+    $(elementName).css('visibility', 'visible');
+  }
+  
+  function hideElement(elementName, fadeDuration) {
+    $(elementName).fadeTo(fadeDuration, 0);
+    $(elementName).css('display', 'none');
+  }
+
+  function areClipValuesChanged(startTime, endTime) {
+    var indices = selectedTracks() || {};
+    var pl = selectedPlaylist() || {};
+    if((indices.length != {}) && (pl.length != {})) {
+      var videos = pl['videos'];
+      videos = _.sortBy(videos, 'position');
+      if( (startTime != videos[selectedIndices[0]].clipStartTime)
+          || (endTime != videos[selectedIndices[0]].clipEndTime)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function updateQueueButtons() {
     var dur = 100;
     if ($('#video-queue-tbody tr td input:checkbox:checked').length > 0) {
-      $('#delete-track').fadeIn(dur);
-      $('#send-to-top').fadeIn(dur);
-      $('#send-to-bottom').fadeIn(dur);
+      revealElement('#show-clip-settings', dur);
+      revealElement('#delete-track', dur);
+      revealElement('#send-to-top', dur);
+      revealElement('#send-to-bottom', dur);
+      if ($('#video-queue-tbody tr td input:checkbox:checked').length > 1) {
+        document.getElementById("clip-start-value").disabled = true;
+        document.getElementById("clip-end-value").disabled = true;
+        document.getElementById("reset-clip").disabled = true;
+        document.getElementById("confirm-clip").disabled = true;
+        document.getElementById("show-clip-settings").disabled = true;
+      }
+      else {
+        document.getElementById("clip-start-value").disabled = false;
+        document.getElementById("clip-end-value").disabled = false;
+        document.getElementById("reset-clip").disabled = false;
+        document.getElementById("confirm-clip").disabled = false;
+        document.getElementById("show-clip-settings").disabled = false;
+      }
     } else {
-      $('#delete-track').fadeOut(dur);
-      $('#send-to-top').fadeOut(dur);
-      $('#send-to-bottom').fadeOut(dur);
+      hideElement('#show-clip-settings', dur);
+      hideElement('#delete-track', dur);
+      hideElement('#send-to-top', dur);
+      hideElement('#send-to-bottom', dur);
+      hideElement('#reset-clip', dur);
+      hideElement('#confirm-clip', dur);
+      hideElement('#clip-start-value', dur);
+      hideElement('#clip-end-value', dur);
     }
   }
 
+  function formatTimeToSeconds(time) {
+    return _.reduce(time.split(':'), function(secs, t) { return secs * 60 + parseInt(t); });
+  }
+  
+  //Sets the clip times for the first selected track in the playlist
+  function loadClipTimes() {
+    var selectedIndices = selectedTracks();
+    var playlistTracks = selectedPlaylist();
+    var pl = selectedPlaylist() || {};
+    var videos = pl['videos'];
+    videos = _.sortBy(videos, 'position');
+    var videoObj = videos[selectedIndices[0]];
+    
+    if(areVideoClipSettingsValid(videoObj)){
+      $('#clip-start-value').val(formatTime(videoObj.clipStartTime / 1000));
+      $('#clip-end-value').val(formatTime(videoObj.clipEndTime / 1000));
+    }
+    else {
+      $('#clip-start-value').val(formatTime(0).trim());
+      $('#clip-end-value').val(formatTime(videoObj.duration / 1000).trim());
+    }
+  }
+  
   function updateSelectAll() {
     if ($('#video-queue-tbody tr td input:checkbox').length > 0) {
       $('#select-all').css('visibility', 'visible');
@@ -245,12 +427,26 @@ script.
 
     // The 'delete' and 'send to top' buttons only appear if a track is selected
     chk.change(updateQueueButtons);
-
-    tr.append(chkTd)
+    
+    var clipTd = $('<td>').addClass('clip-td');
+    var clip = $('<span>').addClass('clip-icon')    
+    clip.addClass('glyphicon glyphicon-scissors');
+    
+    tr.append(chkTd);
     tr.append(titleTd);
+    if(areVideoClipSettingsValid(videoObj)) {
+      clip.tooltip({title : formatTime(videoObj.clipStartTime / 1000) 
+                          + ' - ' + formatTime(videoObj.clipEndTime / 1000)});
+      clipTd.append(clip);
+      tr.append(clipTd);
+      timeTd.text(formatTime((videoObj.clipEndTime - videoObj.clipStartTime) / 1000));
+    }
+    else {
+      timeTd.text(formatTime(video.duration / 1000));
+    }
+    tr.append(clipTd);
     tr.append(timeTd);
 
-    timeTd.text(formatTime(video.duration / 1000));
     titleTd.text(video.title);
 
     return tr;
@@ -373,6 +569,38 @@ script.
   // Send track(s) to bottom
   $('#send-to-bottom').on('click', function(e) {
     socket.emit('send to bottom', getUsername(), selectedPlaylistName(), selectedTracks());
+    return false;
+  });
+
+  $('#show-clip-settings').on('click', function(e) {
+    var dur = 100;
+    revealElement('#clip-start-value', dur);
+    revealElement('#clip-end-value', dur);
+    if(isSelectedVideoClipped()) {
+      revealElement('#reset-clip', dur);
+    }
+    loadClipTimes();
+    $('#clip-end-value').focus();
+  });
+  
+  // Confirm track clip
+  $('#confirm-clip').on('click', function(e) {
+    submitClipSettings();
+    return false;
+  });
+
+  // Reset track clip
+  $('#reset-clip').on('click', function(e) {
+    var indices = selectedTracks() || {};
+    var pl = selectedPlaylist() || {};
+    if((indices.length != {}) && (pl.length != {})) {
+      var videos = pl['videos'];
+      videos = _.sortBy(videos, 'position');
+      var fullDuration = parseInt(videos[indices[0]].duration);
+      $('#clip-start-value').val(formatTime(0));
+      $('#clip-end-value').val(formatTime(fullDuration / 1000));
+      submitClipSettings();
+    }
     return false;
   });
 
