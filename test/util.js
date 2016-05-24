@@ -13,7 +13,7 @@ module.exports = {
       if (!test_path) { throw "No test_path given"; }
         writePath = path.join(artifact_dir,
                               path.basename(test_path, '.js') + '.browserlog');
-        fs.unlink(writePath);
+        if (fs.existsSync(writePath)) { fs.unlink(writePath); }
       _.each(entries, function(log) {
         data = '[' + log.level + ']' + log.timestamp + ' : ' + log.message + '\n';
         fs.appendFileSync(writePath, data);
