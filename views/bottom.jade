@@ -65,8 +65,13 @@ script.
     var labels = $('#up-next-label,#next-dj-by-span');
     if (list.length > 0) {
       var first = list[0];
-      var durFormatted = formatTime(first.duration / 1000);
-
+      var durFormatted = "";
+      if(areVideoClipSettingsValid(first)) { 
+        durFormatted = formatTime((first.clipEndTime - first.clipStartTime) / 1000);
+      }
+      else {
+        durFormatted = formatTime(first.duration / 1000);
+      }
       nextDj.text(first.user);
       if (first.userColor) { nextDj.css({'color': first.userColor}) }
       nextDj.attr('title', first.user);

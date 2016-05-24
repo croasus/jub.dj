@@ -61,6 +61,16 @@ body {
   font-size: 20px;
 }
 
+.clip-btn {
+  font-size: 13px;
+  height: 32px;
+  margin-top: 5px;
+}
+
+button[type="button"]:disabled {
+  background: #333;
+}
+
 /* title */
 #title {
   color: #DDDDEE;
@@ -197,6 +207,12 @@ body {
   text-align: right;
   color: #858585;
 }
+#video-queue .queue-item .clip-td {
+  width: 5px;
+  color: #444;
+  padding: 0px 5px 0px 5px;
+}
+
 #playlist-name-banner tr {
   overflow: visible;
   white-space: nowrap;
@@ -228,6 +244,12 @@ body {
 #select-all {
   margin: 10px 3px 10px 0px;
 }
+.clip-input{
+  text-align: center;
+  width: 75px;
+  display: none;
+}
+
 #select-all-label {
   position: relative;
   top: -2px;
@@ -264,6 +286,14 @@ body {
   background-color: #248f24 ;
   border-color: #248f24 ;
   /*display: none ;*/
+}
+#reset-clip {
+  background-color: #555;
+  border-color: #555;
+}
+#confirm-clip {
+  background-color: #2db85a;
+  border-color: #2db85a;
 }
 #delete-playlist {
   background-color: #8B0000 ;

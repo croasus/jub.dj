@@ -179,7 +179,12 @@ script.
         elem = $('#time-left');
     if (player && player.getDuration) {
       if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
-        secondsLeft = player.getDuration() - player.getCurrentTime();
+        if(areVideoClipSettingsValid(myVideoState)) {
+          secondsLeft = (myVideoState.clipEndTime / 1000) - player.getCurrentTime();
+        }
+        else {
+          secondsLeft = player.getDuration() - player.getCurrentTime();
+        }
         hide = false;
       }
     }
