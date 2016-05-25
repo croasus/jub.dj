@@ -129,22 +129,35 @@ script.
   });
 
   function getClipSettings() {
-    var startValue = parseInt(formatTimeToSeconds($('#clip-start-value').val()));
-    var endValue = parseInt(formatTimeToSeconds($('#clip-end-value').val()));
-    var indices = selectedTracks() || {};
-    var pl = selectedPlaylist() || {};
-    var clipSettings = {startValue:0, endValue:-1, fullDuration:0};
-    if((indices.length != {}) && (pl.length != {})) {
-      var videos = pl['videos'];
-      videos = _.sortBy(videos, 'position');
-      var fullDuration = parseInt(videos[indices[0]].duration) / 1000;
-      clipSettings.startValue = startValue;
-      clipSettings.endValue = endValue;
-      clipSettings.fullDuration = fullDuration;
-    }
+    var clipSettings = {startValue:0, endValue:-1};
+    clipSettings.startValue = parseInt(formatTimeToSeconds($('#clip-start-value').val()));
+    clipSettings.endValue = parseInt(formatTimeToSeconds($('#clip-end-value').val()));
     return clipSettings;
   }
   
+  function getVideoDuration(selectedVideoIndex) {
+    var fullDuration = 0;
+    var indices = selectedTracks() || [];
+    var pl = selectedPlaylist() || {};    
+    if((indices.length > 0) && (Object.keys(pl).length > 0)) {
+      var videos = pl['videos'];
+      videos = _.sortBy(videos, 'position');
+      fullDuration = parseInt(videos[indices[selectedVideoIndex]].duration) / 1000;
+    }
+    return fullDuration;
+  }
+
+  function updateClipButton() {
+    var clipSettings = getClipSettings();
+    clipSettings.fullDuration = getVideoDuration(0);
+    if(areValidClipValues(clipSettings)) {
+      revealElement('#confirm-clip', 100);
+    }
+    else {
+      hideElement('#confirm-clip', 100);
+    }
+  }
+
   function areValidClipValues(clipSettings) {
       if(    (clipSettings.startValue <= clipSettings.fullDuration)
           && (clipSettings.endValue <= clipSettings.fullDuration)
@@ -153,36 +166,93 @@ script.
       else
         return false;
   }
-  
-  function submitClipSettings() {
+
+  function submitClipSettings(videoIndex) {
     var clipSettings = getClipSettings();
+    clipSettings.fullDuration = getVideoDuration(0);
+    console.log("clip settings:");
+    console.log(clipSettings);
     if(areValidClipValues(clipSettings)) {
       console.log("Submitting valid clip!");
       socket.emit('clip track', getUsername(), selectedPlaylistName(), 
-                selectedTracks()[0], 
+                videoIndex, 
                 clipSettings.startValue,
                 clipSettings.endValue);
     }
   }
-  
+
   $('#clip-start-form').submit(function(e) {
     e.preventDefault();
-    submitClipSettings();
-  });
-  
-  $('#clip-end-form').submit(function(e) {
-    e.preventDefault();
-    submitClipSettings();
+    submitClipSettings(selectedTracks()[0]);
   });
 
-  function updateClipButton() {
-    var clipSettings = getClipSettings();
-    if(areValidClipValues(clipSettings)) {
-      revealElement('#confirm-clip', 100);
+  $('#clip-end-form').submit(function(e) {
+    e.preventDefault();
+    submitClipSettings(selectedTracks()[0]);
+  });
+
+  function revealElement(elementName, fadeDuration) {
+    $(elementName).fadeTo(fadeDuration, 1);
+    $(elementName).css('visibility', 'visible');
+  }
+
+  function hideElement(elementName, fadeDuration) {
+    $(elementName).fadeTo(fadeDuration, 0);
+    $(elementName).css('display', 'none');
+  }
+
+  function formatTimeToSeconds(time) {
+    return _.reduce(time.split(':'), function(secs, t) { return secs * 60 + parseInt(t); });
+  }
+
+  //Sets the clip times for the first selected track in the playlist
+  function loadClipTimes() {
+    var selectedIndices = selectedTracks() || [];
+    var pl = selectedPlaylist() || {};
+    if((selectedIndices.length > 0) && (Object.keys(pl).length > 0)) {
+      var videos = pl['videos'];
+      videos = _.sortBy(videos, 'position');
+      var videoObj = videos[selectedIndices[0]];
+      
+      if(areVideoClipSettingsValid(videoObj)){
+        $('#clip-start-value').val(formatTime(videoObj.clipStartTime / 1000));
+        $('#clip-end-value').val(formatTime(videoObj.clipEndTime / 1000));
+      }
+      else {
+        $('#clip-start-value').val(formatTime(0).trim());
+        $('#clip-end-value').val(formatTime(videoObj.duration / 1000).trim());
+      }
+    }
+  }
+
+  function isASelectedVideoClipped() {
+    var indices = selectedTracks() || [];
+    if(indices.length > 0) {
+      var pl = selectedPlaylist() || {};
+      var videos = pl['videos'];
+      videos = _.sortBy(videos, 'position');
+      if(videos.length > 0) {
+        console.log("indices length:" + indices.length);
+        for(i = 0; i < indices.length; i++) {
+          var fullDuration = parseInt(videos[indices[i]].duration);
+          console.log(videos[indices[i]]);
+          if( (videos[indices[i]].clipStartTime != 0) ||
+              (videos[indices[i]].clipEndTime != fullDuration)) {
+            console.log("a selected video is clipped");
+            return true;
+          }
+        }
+        console.log("no selected video is clipped");
+        return false;
+      }
+      else {
+        return false;
+      }
     }
     else {
-      hideElement('#confirm-clip', 100);
+      return false;
     }
+    return false;
   }
 
   function selectedPlaylistName() {
@@ -205,61 +275,6 @@ script.
     $('#big-playlist-name').text(selectedPlaylistDisplayName());
   }
 
-  function isSelectedVideoClipped() {
-    var indices = selectedTracks() || {};
-    if(indices.length > 0) {
-      var pl = selectedPlaylist() || {};
-      var videos = pl['videos'];
-      videos = _.sortBy(videos, 'position');
-      if(videos.length > 0) {
-        var fullDuration = parseInt(videos[indices[0]].duration);
-        console.log("Start time: " + videos[indices[0]].clipStartTime + " and type is: " + typeof(videos[indices[0]].clipStartTime));
-        console.log("End time: " + videos[indices[0]].clipEndTime + " and type is: " + typeof(videos[indices[0]].clipEndTime));
-        console.log("Full Duration: " + fullDuration + " and type is: " + typeof(fullDuration));
-        if( (videos[indices[0]].clipStartTime != 0) ||
-            (videos[indices[0]].clipEndTime != fullDuration)) {
-          console.log("selected video is clipped");
-          return true;
-            }
-        else {
-          console.log("selected video is not clipped");
-          return false;
-        }
-      }
-      else {
-        return false;
-      }
-    }
-    else {
-      return false;
-    }
-    return false;
-  }
-
-  function revealElement(elementName, fadeDuration) {
-    $(elementName).fadeTo(fadeDuration, 1);
-    $(elementName).css('visibility', 'visible');
-  }
-  
-  function hideElement(elementName, fadeDuration) {
-    $(elementName).fadeTo(fadeDuration, 0);
-    $(elementName).css('display', 'none');
-  }
-
-  function areClipValuesChanged(startTime, endTime) {
-    var indices = selectedTracks() || {};
-    var pl = selectedPlaylist() || {};
-    if((indices.length != {}) && (pl.length != {})) {
-      var videos = pl['videos'];
-      videos = _.sortBy(videos, 'position');
-      if( (startTime != videos[selectedIndices[0]].clipStartTime)
-          || (endTime != videos[selectedIndices[0]].clipEndTime)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   function updateQueueButtons() {
     var dur = 100;
     if ($('#video-queue-tbody tr td input:checkbox:checked').length > 0) {
@@ -270,16 +285,15 @@ script.
       if ($('#video-queue-tbody tr td input:checkbox:checked').length > 1) {
         document.getElementById("clip-start-value").disabled = true;
         document.getElementById("clip-end-value").disabled = true;
-        document.getElementById("reset-clip").disabled = true;
-        document.getElementById("confirm-clip").disabled = true;
-        document.getElementById("show-clip-settings").disabled = true;
+        hideElement('#confirm-clip', dur);
       }
       else {
         document.getElementById("clip-start-value").disabled = false;
         document.getElementById("clip-end-value").disabled = false;
-        document.getElementById("reset-clip").disabled = false;
-        document.getElementById("confirm-clip").disabled = false;
-        document.getElementById("show-clip-settings").disabled = false;
+        loadClipTimes();
+      }
+      if(document.getElementById("clip-start-value").style.display != "none") {
+        revealElement('#reset-clip');
       }
     } else {
       hideElement('#show-clip-settings', dur);
@@ -293,29 +307,6 @@ script.
     }
   }
 
-  function formatTimeToSeconds(time) {
-    return _.reduce(time.split(':'), function(secs, t) { return secs * 60 + parseInt(t); });
-  }
-  
-  //Sets the clip times for the first selected track in the playlist
-  function loadClipTimes() {
-    var selectedIndices = selectedTracks();
-    var playlistTracks = selectedPlaylist();
-    var pl = selectedPlaylist() || {};
-    var videos = pl['videos'];
-    videos = _.sortBy(videos, 'position');
-    var videoObj = videos[selectedIndices[0]];
-    
-    if(areVideoClipSettingsValid(videoObj)){
-      $('#clip-start-value').val(formatTime(videoObj.clipStartTime / 1000));
-      $('#clip-end-value').val(formatTime(videoObj.clipEndTime / 1000));
-    }
-    else {
-      $('#clip-start-value').val(formatTime(0).trim());
-      $('#clip-end-value').val(formatTime(videoObj.duration / 1000).trim());
-    }
-  }
-  
   function updateSelectAll() {
     if ($('#video-queue-tbody tr td input:checkbox').length > 0) {
       $('#select-all').css('visibility', 'visible');
@@ -576,7 +567,7 @@ script.
     var dur = 100;
     revealElement('#clip-start-value', dur);
     revealElement('#clip-end-value', dur);
-    if(isSelectedVideoClipped()) {
+    if(isASelectedVideoClipped()) {
       revealElement('#reset-clip', dur);
     }
     loadClipTimes();
@@ -585,21 +576,25 @@ script.
   
   // Confirm track clip
   $('#confirm-clip').on('click', function(e) {
-    submitClipSettings();
+    submitClipSettings(selectedTracks()[0]);
     return false;
   });
 
   // Reset track clip
   $('#reset-clip').on('click', function(e) {
-    var indices = selectedTracks() || {};
+    var indices = selectedTracks() || [];
     var pl = selectedPlaylist() || {};
-    if((indices.length != {}) && (pl.length != {})) {
+    if((indices.length > 0) && (Object.keys(pl).length > 0)) {
       var videos = pl['videos'];
       videos = _.sortBy(videos, 'position');
-      var fullDuration = parseInt(videos[indices[0]].duration);
-      $('#clip-start-value').val(formatTime(0));
-      $('#clip-end-value').val(formatTime(fullDuration / 1000));
-      submitClipSettings();
+      for(i = 0; i < indices.length; i++) {
+        var fullDuration = parseInt(videos[indices[i]].duration);
+        $('#clip-start-value').val(formatTime(0));
+        $('#clip-end-value').val(formatTime(fullDuration / 1000));
+        console.log("resetting video:" + $('#clip-start-value').val() + ", " + $('#clip-end-value').val());
+        console.log(videos[indices[i]]);
+        submitClipSettings(indices[i]);
+      }
     }
     return false;
   });
