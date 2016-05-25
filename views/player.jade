@@ -272,22 +272,28 @@ script.
     if (!player) { return; }
     if (Object.keys(state) == 0) {
       $('#current-track').text("No one is playing.");
+      player.stopVideo(); //probably someone hit skip with nobody next
       return;
     }
 
     var id = state.id;
     var startTime = state.startTime;
+    var clipStartTime = 0;
+    if(state.clipStartTime && ((state.serverTime - startTime + state.clipStartTime) < state.duration))
+      clipStartTime = state.clipStartTime;
     var user = state.user;
     if (myVideoState.id != id || myVideoState.startTime != startTime) {
       myVideoState = {
         title: state.title,
         duration: state.duration,
         userColor: state.userColor,
+        clipStartTime: state.clipStartTime,
+        clipEndTime: state.clipEndTime,
         user: user,
         id: id,
         startTime: startTime,
       };
-      var videoProgress = (state.serverTime - startTime) / 1000;
+      var videoProgress = (state.serverTime - startTime + clipStartTime) / 1000;
       console.log("apply video state", id, videoProgress);
       if ((typeof id == 'string') && (typeof videoProgress == 'number')) {
         console.log('loading video');
