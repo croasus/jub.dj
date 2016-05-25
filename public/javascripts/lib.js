@@ -1,14 +1,16 @@
 /* Utility functions for the client */
 
+// credit to http://stackoverflow.com/questions/5357442/how-to-inspect-javascript-objects
 function inspect(o, i) {
-  if (typeof i=='undefined')i='';
-  if (i.length>50) return '[MAX ITERATIONS]';
+  if (typeof i === 'undefined') { i = ''; }
+  if (i.length > 50) return '[MAX ITERATIONS]';
   var r = [];
   for(var p in o) {
     var t = typeof o[p];
     r.push(i + p + ' (' + t + '): ' +
-           (t == 'object' ? 'object:' + xinspect(o[p], i + '  ') : o[p] + ''));
+           (t == 'object' ? 'object:' + inspect(o[p], i + '  ') : o[p] + ''));
   }
+  return r.join(i + '\n');
 }
 
 function getCookie(name) {

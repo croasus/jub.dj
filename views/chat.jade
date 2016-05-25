@@ -61,14 +61,14 @@ script.
       var jubMuteTd = $('<td>').addClass('jub-mute');
       var muteIcon = $('<span>').addClass('user-mute-icon');
       muteIcon.attr({
-          class: 'glyphicon glyphicon-volume-off',          
+          class: 'glyphicon glyphicon-volume-off',
         });
-      if(user.isMuted) 
+      if(user.isMuted)
         muteIcon.css('visibility', 'visible');
-      else 
+      else
         muteIcon.css('visibility', 'hidden');
       jubMuteTd.append(muteIcon);
-      
+
       var jubNameTd = $('<td>').addClass('jub-name');
       jubNameTd.text(user.name);
 
@@ -82,7 +82,7 @@ script.
       $("#jubbin-list-tbody").prepend(tr);
     }
   }
-  
+
   $('#enable-mute-updates').on('change', function(e) {
     var data = { allowMuteStatus: this.checked };
     if(!this.checked)
@@ -91,7 +91,7 @@ script.
       socket.emit('mute update', getUsername(), player.isMuted());
     socket.emit('update user preferences', getUsername(), data);
   })
-  
+
   $('#chat-navtabs a').click(function (e) {
     // Show it now so that we can do some polishing on the revealed element
     e.preventDefault();

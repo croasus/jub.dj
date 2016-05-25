@@ -3,16 +3,19 @@ module.exports = {
   'Update preferences (basic)' : function (browser) {
     browser.resizeWindow(1920, 1080)
       .url('http://localhost:3001/test_private_route')
-      .waitForElementVisible('body', util.DEFAULT_WAIT)
       .waitForElementVisible('#chat-settings-navtab-a', util.DEFAULT_WAIT)
+      .expect.element('#show-chat-images').to.not.have.attribute('checked');
+    browser
       .click('#chat-settings-navtab-a')
       .waitForElementVisible('#chat-settings-panel', util.DEFAULT_WAIT)
-      .click('#show-chat-images')
+      .click('input[id="show-chat-images"]')
+      .verify.attributeEquals('#show-chat-images', 'checked', 'true')
+      .pause(500);
+    browser
       .refresh()
-      .waitForElementVisible('body', util.DEFAULT_WAIT)
       .waitForElementVisible('#chat-settings-navtab-a', util.DEFAULT_WAIT)
-      .click('#chat-settings-navtab-a')
-      .getLog('browser', util.writeLogs)
+      .verify.attributeEquals('#show-chat-images', 'checked', 'true')
+      .getLog('browser', util.logWriter(__filename))
       .end();
   },
 };

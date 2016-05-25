@@ -16,7 +16,7 @@ module.exports = {
       .waitForElementVisible('#jubbin-list', util.DEFAULT_WAIT)
       .assert.containsText('#jubbin-list-tbody', 'test_user')
       .assert.containsText('#jubbin-list-tbody', 'jubbot')
-      .getLog('browser', writeLogs)
+      .getLog('browser', util.logWriter(__filename))
       .end();
   },*/
   'Who\'s Jubbin\' username form' : function (browser) {
@@ -32,7 +32,7 @@ module.exports = {
       .click('#jubbin-list-navtab-a')
       .waitForElementVisible('#jubbin-list', util.DEFAULT_WAIT)
       .assert.containsText('#jubbin-list-tbody', 'test_user')
-      .getLog('browser', util.writeLogs)
+      .getLog('browser', util.logWriter(__filename))
       .end();
   },
 
@@ -50,7 +50,7 @@ module.exports = {
         "//td[@class='jub-name'][contains(., 'jubbot')]/../td[@class='jub-karma']",
         '1 karma'
       )
-      .getLog('browser', util.writeLogs)
+      .getLog('browser', util.logWriter(__filename))
       .end();
   },
 };

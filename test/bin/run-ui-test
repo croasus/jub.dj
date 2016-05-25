@@ -13,7 +13,7 @@ test_artifacts="$test/artifacts"
 nightwatch="$top_dir/node_modules/nightwatch/bin/nightwatch"
 
 cd $top_dir
-tcname=$(basename $1)
+tcname=$(basename -s '.js' $1)
 
 export TEST=1
 export PORT=3001
@@ -29,18 +29,16 @@ echo
 node $test/bin/drop_db.js
 
 echo "Starting jub pub server"
-(node bin/www >> $test_artifacts/$tcname.serverlog 2>&1)&
+(node bin/www > $test_artifacts/$tcname.serverlog 2>&1)&
 server_pid=$!
 sleep 5
 
-finish() {
+finally() {
   if [ ! -z ${JUB_TEST_CAPTURE_PAGE+x} ]; then
     curl -s http://localhost:3001/test_private_route > $test/artifacts/curl.capture
   fi
   kill $1
 }
-trap "finish $server_pid" ERR
+trap "finally $server_pid" ERR INT TERM EXIT
 
 $nightwatch -c $test/nightwatch.json -t $1
-
-finish $server_pid
