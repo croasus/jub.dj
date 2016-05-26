@@ -223,29 +223,15 @@ script.
   }
 
   function isASelectedVideoClipped() {
-    var indices = selectedTracks() || [];
-    if(indices.length > 0) {
-      var pl = selectedPlaylist() || {};
-      var videos = pl['videos'];
-      videos = _.sortBy(videos, 'position');
-      if(videos.length > 0) {
-        for(i = 0; i < indices.length; i++) {
-          var fullDuration = parseInt(videos[indices[i]].duration);
-          if( (videos[indices[i]].clipStartTime != 0) ||
-              (videos[indices[i]].clipEndTime != fullDuration)) {
-            return true;
-          }
-        }
-        return false;
-      }
-      else {
-        return false;
-      }
-    }
-    else {
-      return false;
-    }
-    return false;
+    var pl = selectedPlaylist() || {};
+    var videos = _.sortBy(pl['videos'], 'position');
+    var indices = selectedTracks();
+    return _.some(indices, function(i) {
+      var video = videos[i]
+      var fullDur = parseInt(video.duration);
+      return (video.clipStartTime !== undefined && video.clipStartTime !== 0) ||
+             (video.clipEndTime !== undefined && video.clipEndTime !== fullDur);
+    });
   }
 
   function selectedPlaylistName() {
