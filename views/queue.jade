@@ -146,12 +146,16 @@ script.
     return duration;
   }
 
+  function clipMenuShown() {
+    return (document.getElementById("clip-start-value").style.display != "none");
+  }
+
   function updateClipButton() {
-    var clipState = getClipState(selectedTracks()[0]);
-    if (isClipStateValid(clipState)) {
+    var selected = selectedTracks();
+    var clipState = getClipState(selected[0]);
+    if (clipMenuShown() && selected.length === 1 && isClipStateValid(clipState)) {
       revealElement('#confirm-clip', 100);
-    }
-    else {
+    } else {
       hideElement('#confirm-clip', 100);
     }
   }
@@ -211,7 +215,7 @@ script.
            (vobj.clipEndTime !== undefined && vobj.clipEndTime !== vobj.duration);
   }
 
-  function isASelectedVideoClipped() {
+  function anySelectedVideoClipped() {
     var pl = selectedPlaylist() || {};
     var videos = _.sortBy(pl['videos'], 'position');
     var indices = selectedTracks();
@@ -256,9 +260,9 @@ script.
         document.getElementById("clip-start-value").disabled = false;
         document.getElementById("clip-end-value").disabled = false;
         loadClipTimes();
+        updateClipButton();
       }
-      if ((document.getElementById("clip-start-value").style.display != "none")
-         && isASelectedVideoClipped()) {
+      if (clipMenuShown() && anySelectedVideoClipped()) {
         revealElement('#reset-clip');
       }
       else {
@@ -547,7 +551,7 @@ script.
     }
     revealElement('#clip-start-value', dur);
     revealElement('#clip-end-value', dur);
-    if (isASelectedVideoClipped()) {
+    if (anySelectedVideoClipped()) {
       revealElement('#reset-clip', dur);
     }
     loadClipTimes();
