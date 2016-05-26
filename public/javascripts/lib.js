@@ -95,7 +95,7 @@ function vendor() {
 }
 
 function areVideoClipSettingsValid(videoObj) {
-  return videoObj.hasOwnProperty('clipStartTime') 
+  return videoObj.hasOwnProperty('clipStartTime')
       && videoObj.hasOwnProperty('clipEndTime')
       && ((videoObj.clipEndTime - videoObj.clipStartTime) < videoObj.duration );
 }

@@ -32,13 +32,13 @@ div(id="queue-tab-content", class="tab-content")
             td
             td
               form(id='clip-start-form', action='')
-                input(class='form-control jub-nav-input jub-nav-item clip-input', 
-                  id='clip-start-value', placeholder='start', data-toggle='tooltip', 
+                input(class='form-control jub-nav-input jub-nav-item clip-input',
+                  id='clip-start-value', placeholder='start', data-toggle='tooltip',
                   data-placement='top', title='Start Clip Time', oninput='updateClipButton()')
             td
               form(id='clip-end-form', action='')
-                input(class='form-control jub-nav-input jub-nav-item clip-input', 
-                id='clip-end-value', placeholder='stop', data-toggle='tooltip', 
+                input(class='form-control jub-nav-input jub-nav-item clip-input',
+                id='clip-end-value', placeholder='stop', data-toggle='tooltip',
                 data-placement='top', title='End Clip Time', oninput='updateClipButton()')
             td(class='right')
               div(class='input-group input-group-md')
@@ -48,7 +48,7 @@ div(id="queue-tab-content", class="tab-content")
                 button(class='material-icons btn btn-default clip-btn', type='button', id='reset-clip',
                        data-toggle='tooltip', data-placement='top',
                        title='Reset Track Clip') restore
-      
+
       table(class='table', id='queue-banner')
         tbody
           tr
@@ -134,11 +134,11 @@ script.
     clipSettings.endValue = parseInt(formatTimeToSeconds($('#clip-end-value').val()));
     return clipSettings;
   }
-  
+
   function getVideoDuration(videoIndex) {
     var fullDuration = 0;
     var indices = selectedTracks() || [];
-    var pl = selectedPlaylist() || {};    
+    var pl = selectedPlaylist() || {};
     if((indices.length > 0) && (Object.keys(pl).length > 0)) {
       var videos = pl['videos'];
       videos = _.sortBy(videos, 'position');
@@ -171,8 +171,8 @@ script.
     var clipSettings = getClipSettings();
     clipSettings.fullDuration = getVideoDuration(videoIndex);
     if(areValidClipValues(clipSettings)) {
-      socket.emit('clip track', getUsername(), selectedPlaylistName(), 
-                videoIndex, 
+      socket.emit('clip track', getUsername(), selectedPlaylistName(),
+                videoIndex,
                 clipSettings.startValue,
                 clipSettings.endValue);
     }
@@ -202,7 +202,7 @@ script.
     return _.reduce(time.split(':'), function(secs, t) { return secs * 60 + parseInt(t); });
   }
 
-  //Sets the clip times for the first selected track in the playlist
+  // Sets the clip times for the first selected track in the playlist
   function loadClipTimes() {
     var selectedIndices = selectedTracks() || [];
     var pl = selectedPlaylist() || {};
@@ -210,7 +210,7 @@ script.
       var videos = pl['videos'];
       videos = _.sortBy(videos, 'position');
       var videoObj = videos[selectedIndices[0]];
-      
+
       if(areVideoClipSettingsValid(videoObj)){
         $('#clip-start-value').val(formatTime(videoObj.clipStartTime / 1000));
         $('#clip-end-value').val(formatTime(videoObj.clipEndTime / 1000));
@@ -401,15 +401,15 @@ script.
 
     // The 'delete' and 'send to top' buttons only appear if a track is selected
     chk.change(updateQueueButtons);
-    
+
     var clipTd = $('<td>').addClass('clip-td');
-    var clip = $('<span>').addClass('clip-icon')    
+    var clip = $('<span>').addClass('clip-icon')
     clip.addClass('glyphicon glyphicon-scissors');
-    
+
     tr.append(chkTd);
     tr.append(titleTd);
     if(areVideoClipSettingsValid(videoObj)) {
-      clip.tooltip({title : formatTime(videoObj.clipStartTime / 1000) 
+      clip.tooltip({title : formatTime(videoObj.clipStartTime / 1000)
                           + ' - ' + formatTime(videoObj.clipEndTime / 1000)});
       clipTd.append(clip);
       tr.append(clipTd);
@@ -550,13 +550,13 @@ script.
     var dur = 100;
     revealElement('#clip-start-value', dur);
     revealElement('#clip-end-value', dur);
-    if(isASelectedVideoClipped()) {
+    if (isASelectedVideoClipped()) {
       revealElement('#reset-clip', dur);
     }
     loadClipTimes();
     $('#clip-end-value').focus();
   });
-  
+
   // Confirm track clip
   $('#confirm-clip').on('click', function(e) {
     submitClipSettings(selectedTracks()[0]);
