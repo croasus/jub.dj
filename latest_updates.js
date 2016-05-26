@@ -1,6 +1,6 @@
 module.exports = {
-  date: '2015-5-23',
+  date: '2015-5-26',
   list: [
-    "jubbot: locate [user]",
+    "Added track-clipping feature (++croasus)",
   ],
 }
