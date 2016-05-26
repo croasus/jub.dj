@@ -26,29 +26,6 @@ div(id="queue-tab-content", class="tab-content")
                        title='Shuffle')
                   span(id='shuffle-icon', class='glyphicon glyphicon-random')
 
-      table(class='table', id='clip-table')
-        tbody
-          tr(id='clip-settings')
-            td
-            td
-              form(id='clip-start-form', action='')
-                input(class='form-control jub-nav-item clip-input',
-                  id='clip-start-value', placeholder='start', data-toggle='tooltip',
-                  data-placement='top', title='Start Clip Time', oninput='updateClipButton()')
-            td
-              form(id='clip-end-form', action='')
-                input(class='form-control jub-nav-item clip-input',
-                id='clip-end-value', placeholder='stop', data-toggle='tooltip',
-                data-placement='top', title='End Clip Time', oninput='updateClipButton()')
-            td(class='right')
-              div(class='input-group input-group-md')
-                button(class='material-icons btn btn-default clip-btn', type='button', id='confirm-clip',
-                       data-toggle='tooltip', data-placement='top',
-                       title='Confirm Track Clip') check
-                button(class='material-icons btn btn-default clip-btn', type='button', id='reset-clip',
-                       data-toggle='tooltip', data-placement='top',
-                       title='Reset Track Clip') restore
-
       table(class='table', id='queue-banner')
         tbody
           tr
@@ -62,7 +39,7 @@ div(id="queue-tab-content", class="tab-content")
               div(class='input-group input-group-md')
                 button(class='btn btn-default left', type='button', id='show-clip-settings',
                        data-toggle='tooltip', data-placement='top',
-                       title='Clip Selected Track')
+                       title='Clip selected track')
                   span(id='show-clip-settings-icon', class='glyphicon glyphicon-scissors')
                 button(class='btn btn-default right', type='button', id='delete-track',
                        data-toggle='tooltip', data-placement='top',
@@ -76,6 +53,25 @@ div(id="queue-tab-content", class="tab-content")
                        data-toggle='tooltip', data-placement='top',
                        title='Send to top')
                   span(id='send-to-top-icon', class='glyphicon glyphicon-chevron-up')
+
+      table(class='table', id='clip-table')
+        tbody
+          tr(id='clip-settings')
+            td
+              form(id='clip-times-form')
+                input(class='form-control jub-nav-item clip-input',
+                      id='clip-start-value', placeholder='Start', data-toggle='tooltip',
+                      data-placement='top', title='Clip start', oninput='updateClipButton()')
+                input(class='form-control jub-nav-item clip-input',
+                      id='clip-end-value', placeholder='End', data-toggle='tooltip',
+                      data-placement='top', title='Clip end', oninput='updateClipButton()')
+                div(class='input-group input-group-md right')
+                  button(class='material-icons btn btn-default clip-btn', type='submit', id='confirm-clip',
+                         data-toggle='tooltip', data-placement='top',
+                         title='Confirm clip') check
+                  button(class='material-icons btn btn-default clip-btn', id='reset-clip',
+                         data-toggle='tooltip', data-placement='top',
+                         title='Reset clip') restore
 
       div(class='panel-body')
         div(id='video-queue')
