@@ -354,6 +354,10 @@ button[type="button"]:disabled {
   background: #161616;
 }
 
+.navbar-inverse .navbar-nav a {
+  color: #9d9d9d;
+}
+
 #messages {
   overflow-y:auto;
 }

@@ -2,24 +2,17 @@ doctype html
 html(lang="en")
   head
     link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
-    include ./head.jade
+    include head
   body
     div(class='container-fluid', id='jub-container')
-      include ./top.jade
+      include top
 
       // Main page content
-      div(class='row', id='jub-row-main')
-        div(class='col-md-3', id='jub-col-queue')
-          include ./queue.jade
-
-        div(class='col-md-6', id='jub-col-player')
-          include ./player.jade
-
-        div(class='col-md-3', id='jub-col-chat')
-          include ./chat.jade
+      block main-content
 
     // Outside of the container
-    include ./bottom.jade
+    include bottom
+      block bottom-content
 
 // Load some JavaScript files
 script(src='/javascripts/resizing.js')

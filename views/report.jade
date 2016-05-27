@@ -1,24 +1,6 @@
-doctype html
-html(lang="en")
-  head
-    link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
-    include ./head.jade
-
-  body
-    nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
-      div(class='container-fluid')
-        div(class='row', id='jub-row-top')
-          div(class='col-md-9')
-          div(class='col-md-3')
-            ul(class='nav navbar-nav navbar-right')
-              // Title
-              li
-                p(class='navbar-text', id='title', style='font-size:36px;') thejub.pub
-              li
-                a(class="a-link-to-the-past" href='https://github.com/aromatt/thejub.pub/issues',
-                  target="_blank", style="line-height:1.9; margin-right: 25px") Git
-
-    div(class='container-fluid', id='report-container', style='font-family: monospace;')
+extends layout
+block content
+  div(class='container-fluid', id='report-container', style='font-family: monospace;')
 
 script.
 

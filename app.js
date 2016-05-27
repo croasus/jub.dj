@@ -53,7 +53,7 @@ app.config = config;
 (function() {
   var slash = config.private_route[0] !== '/' ? '/' : '';
   app.get(slash + config.private_route, function(req, res, next) {
-    res.render('index', { title: config.title }, function(err, html) {
+    res.render('room', function(err, html) {
       if (err) {
         console.error(err.message);
         next.send(html);
@@ -80,6 +80,22 @@ app.get('/report', function(req, res, next) {
   }, console.error);
 });
 
+app.get('/login', function(req, res, next) {
+  app.report.getKarmaReport(function(report) {
+    var r =  JSON.stringify(report);
+    console.log(r);
+    res.render('login', { }, function(err, html) {
+      if (err) {
+        console.error(err.message);
+        next.send(html);
+      } else {
+        res.send(html);
+      }
+    });
+  }, console.error);
+});
+
+
 // Minimal message at '/' route
 app.get('/', function(req, res, next) {
   res.render('moved', { message: config.moved_message }, function(err, html) {
@@ -104,7 +120,7 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
+if (process.env.TEST) {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {

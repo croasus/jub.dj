@@ -19,30 +19,13 @@ Smooth slide-out menu
 http://apeatling.com/2014/building-smooth-sliding-mobile-menu/
 
 Queue UX
+  React https://www.fullstackreact.com/articles/react-tutorial-cloning-yelp/
   Final design:
     - select a track by clicking anywhere in the track's box
     - buttons appear when you select tracks
     - right-click context menu
       - delete
-      - send to top
+      - send to top/bottom
+      - clip track
 
-
-
-TESTING
-  - nock
-    - can be used like VCR, but currently breaks when trying to record/playback requests
-      that include query params with spaces in them
-  - INTEGRATION
-    - start a jub server (may require work to make a 'test mode' for the server)
-  - MODULES
-    - jub_util
-    - gapi
-      - nock
-    - jub
-      - break out the business logic from the IO
-      - fixtures with state
-      - no sockets
-    - chat
-      - isolated enough
-    - db
-      - mockgoose
+Accounts

@@ -1,0 +1,18 @@
+extends layout
+
+block top-content
+  include room-top
+
+block main-content
+  div(class='row', id='jub-row-main')
+    div(class='col-md-3', id='jub-col-queue')
+      include queue
+
+    div(class='col-md-6', id='jub-col-player')
+      include player
+
+    div(class='col-md-3', id='jub-col-chat')
+      include chat
+
+block bottom-content
+  include room-bottom

@@ -1,0 +1,208 @@
+div(class='col-md-3')
+  form(class='navbar-form form-group navbar-left',
+       id='load-video', action='')
+
+    div(class='input-group input-group-md')
+      input(class='form-control jub-nav-input jub-nav-item', id='omnibox',
+            placeholder='Search / video or playlist ID / URL')
+
+div(class='col-md-6')
+  table(class='table', id='dj-banner', style='margin-bottom:0px;')
+    tbody
+      tr
+        //td(id='now-playing-label') Now Playing
+        td(id='current-dj-name')
+        td(id='current-track')
+        td(id='time-left')
+
+script.
+
+  var MAX_RESULTS = 7;
+  var MAX_PRETTY_LEN = 60;
+  var djing = false;
+
+  // e.g. "michelleheafy: Some cool video about someth..."
+  function prettifyResult(result) {
+    var artist = result.snippet.channelTitle
+    var pretty = artist + ": " + result.snippet.title;
+    if (pretty.length > MAX_PRETTY_LEN) {
+      pretty = pretty.slice(0, MAX_PRETTY_LEN - 3) + "...";
+    }
+    return pretty
+  }
+
+  // Take in youtube search result items and turn them into an array of objects
+  // that autocomplete can handle, truncating the list in the process
+  function transformSearchResults(results) {
+    return results.slice(0, MAX_RESULTS).map(function(result) {
+      return {
+        label: prettifyResult(result),
+        value: result.id.videoId
+      }
+    });
+  }
+
+  $('#omnibox').autocomplete({
+    // Request a video search; once the results come back, update the UI
+    source: function(request, response) {
+      console.log('searching for', request.term);
+      youtubeVideoSearch(request.term, function(items) {
+        response(transformSearchResults(items));
+      })
+    },
+
+    // Don't change the value of the search box while user is choosing
+    focus: function(event, ui) {
+      return false;
+    },
+
+    // When a user chooses a suggestion (hits enter) start the video
+    select: function(event, ui) {
+      var event = $.Event("submit");
+      event.videoId = ui.item.value;
+      $('#load-video').trigger(event);
+      return false;
+    },
+    minLength: 5,
+    delay: 300,
+  });
+
+  // Client text box for submitting a video
+  $('#load-video').submit(function(event) {
+    // We might have been invoked straight from an autocomplete callback,
+    // in which case the value of the search box is not the video id; the
+    // video id was passed in with the event.
+    var id = event.videoId;
+    var user = getCookie('username');
+    var plName = selectedPlaylistName();
+    if (!plName) {
+      console.error('no playlist selected (this should never happen)');
+      return;
+    }
+
+    // We were invoked via a normal form submit
+    if (id == undefined) {
+      id = $('#omnibox').val();
+    }
+
+    // Accept video URLs
+    if (id.startsWith('https:\/\/www.youtube.com')) {
+      console.log('user entered url');
+      // TODO do we have regex?
+      if (id.indexOf('youtube.com\/watch') > 0) {
+        console.log('user entered video');
+        id = id.split('watch?v=')[1];
+      } else if (id.indexOf('youtube.com\/playlist') > 0) {
+        console.log('user entered playlist');
+        id = id.split('playlist?list=')[1];
+      }
+    }
+
+    // We've obtained the ID (either a playlist or video ID)
+    if (id.length > 11) {
+      var count = 0;
+      var done = false;
+      $('#omnibox').val('');
+      var waitForPlaylist = function() {
+        if (!done) {
+          $('#omnibox').val($('#omnibox').val() + '.');
+          setTimeout(waitForPlaylist, 300);
+        }
+      }
+      setTimeout(waitForPlaylist, 300);
+      youtubePlaylist(id, function(videoList) {
+        done = true;
+        for (video of videoList) {
+          video.user = user;
+          youtubeVideoSpecs(video, function(obj) {
+            if (!(obj.title && obj.duration && user)) {
+              console.log('failed to find info for video', video.id);
+            }
+            count += 1;
+          });
+        }
+
+        // Periodically see if we're done fetching info for all the videos.
+        // Once we are, sort them and update the client's queue.
+        var waitForSpecs = function() {
+          if (count == videoList.length) {
+            console.log('yay! done fetching all video infos. sorting...');
+
+            // Sort by 'position', in place
+            videoList.sort(function(a, b) {
+              if (a.position <= b.position) { return -1; } else { return 1; }
+            });
+            console.log('emitting to videos enqueue');
+            socket.emit('videos enqueue', user, plName, videoList);
+            $('#omnibox').val('');
+          } else {
+            $('#omnibox').val($('#omnibox').val() + '.');
+            setTimeout(waitForSpecs, 300);
+          }
+        }
+        waitForSpecs();
+      });
+    } else {
+      // Not a playlist; it's a video. Submit it.
+      var videoObj = {
+        user: getCookie('username'),
+        id: id
+      }
+      youtubeVideoSpecs(videoObj, function(resultObj) {
+        if (resultObj.title && resultObj.duration) {
+          console.log('submitting video', resultObj);
+          socket.emit('video enqueue', user, plName, resultObj);
+          $('#omnibox').val('');
+        } else {
+          console.log('failed to find info for video', resultObj.id);
+        }
+      });
+    }
+    return false;
+  });
+
+  function updateTimeLeft() {
+    var secondsLeft = 0,
+        hide = true,
+        elem = $('#time-left');
+    if (player && player.getDuration) {
+      if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
+        if(areVideoClipSettingsValid(myVideoState)) {
+          secondsLeft = (myVideoState.clipEndTime / 1000) - player.getCurrentTime();
+        }
+        else {
+          secondsLeft = player.getDuration() - player.getCurrentTime();
+        }
+        hide = false;
+      }
+    }
+    elem.text(formatTime(secondsLeft));
+    if (hide) {
+      elem.css('visibility','hidden')
+    } else {
+      elem.css('visibility','visible')
+    }
+  }
+  setInterval(updateTimeLeft, 1000);
+
+  function updateCurrentDj(user, color) {
+    var dj = $('#current-dj-name');
+    if (user) {
+      dj.text(user);
+      if (color) {
+        dj.css({'color': color})
+      }
+    } else {
+      dj.text('');
+    }
+  }
+
+  function updateCurrentTrack(title) {
+    var track = $('#current-track');
+    if (myVideoState.title) {
+      track.text(myVideoState.title);
+      track.attr('title', myVideoState.title);
+    } else {
+      track.text("No one is playing.");
+    }
+  }
