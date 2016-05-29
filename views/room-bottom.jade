@@ -1,5 +1,4 @@
-div(class='col-md-9',
-    style='padding-right:0; padding-left: 8px;')
+div(class='col-md-9', style='padding-right:0; padding-left: 8px;')
   table(class='table', id='next-dj-banner',
         style='margin-bottom: 0px; margin-top: 6px; width: 100%;')
     tbody
@@ -117,5 +116,8 @@ script.
     return false;
   });
 
+script(src='/javascripts/resizing.js')
+script(src='/javascripts/gapi.js')
 
-
+// Loaded last because the "on load" callback needs to be defined first
+script(src="https://apis.google.com/js/client.js?onload=OnGAPILoad")

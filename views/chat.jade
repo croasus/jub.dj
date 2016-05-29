@@ -19,16 +19,31 @@ div(id="chat-tab-content", class="tab-content")
       table
         tbody(id='jubbin-list-tbody')
   div(class="tab-pane active" id="chat-settings-tab")
-    div(class='panel panel-default', id='chat-settings-panel')
+    div(id='chat-settings-panel')
       div(class='panel-body')
-        form(class='form-group', id='username', action='')
-          input(class='form-control', id='username-input', placeholder='Username', autocomplete='off')
-        input(id='show-chat-images', type='checkbox', action='')
-        label(id='show-chat-images-label', for='show-chat-images') Show images from links in chat messages
-        br
-        br
-        input(id='enable-mute-updates', type='checkbox', action='')
-        label(id='enable-mute-updates-label', for='enable-mute-updates') Allow other jubs to see your mute status
+        table
+          tbody(id='chat-settings-tbody')
+            tr
+              td
+                form(class='form-group', id='username', action='')
+                  input(class='form-control', id='username-input',
+                        placeholder='Username', autocomplete='off')
+            tr
+              td
+                input(id='show-chat-images', type='checkbox', action='')
+                label(id='show-chat-images-label', for='show-chat-images'
+                ) Show images from links in chat messages
+            tr
+              td
+                input(id='enable-mute-updates', type='checkbox', action='')
+                label(id='enable-mute-updates-label', for='enable-mute-updates'
+                ) Allow other jubs to see your mute status
+            tr
+              td
+                a(href='https://github.com/aromatt/thejub.pub/issues',
+                  target="_blank",
+                  style="line-height:1.9; color: #9d9d9d; margin-left: 21px;"
+                  ) GitHub issues
 
 include ./username.jade
 

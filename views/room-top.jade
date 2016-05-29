@@ -1,6 +1,7 @@
+- var show_login = true
 div(class='col-md-3')
   form(class='navbar-form form-group navbar-left',
-       id='load-video', action='')
+       id='load-video', action='', style='padding-left:0px;')
 
     div(class='input-group input-group-md')
       input(class='form-control jub-nav-input jub-nav-item', id='omnibox',
@@ -14,6 +15,9 @@ div(class='col-md-6')
         td(id='current-dj-name')
         td(id='current-track')
         td(id='time-left')
+
+div(class='col-md-3')
+  include title
 
 script.
 

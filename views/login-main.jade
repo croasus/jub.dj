@@ -1,0 +1,67 @@
+div(class='col-md-4')
+div(class='col-md-4')
+  ul(id="login-navtabs", class="nav nav-tabs")
+    li(id="login-navtab-li", role="presentation")
+      a(id="login-navtab-a", href="#login-tab", data-toggle='tab') Login
+    li(id="signup-navtab-li", role="presentation")
+      a(id="signup-navtab-a", href="#signup-tab", data-toggle='tab') Sign up
+
+  div(id="login-tab-content", class="tab-content")
+    div(class="tab-pane" id="login-tab")
+      div(class='panel panel-default', id='login-panel')
+        form(id='login-form')
+          table
+            tbody
+              tr
+                td(style='text-align: right;') Username:
+                td
+                  input(class='form-control login-form-input', id='username-input',
+                        autocomplete='off')
+              tr
+                td(style='text-align: right;') Password:
+                td
+                  input(class='form-control login-form-input', id='password-input',
+                        autocomplete='off', type='password')
+              tr
+                td
+                td
+                  button(class='btn btn-default', type='button', id='login',
+                         data-toggle='tooltip', data-placement='top',
+                         style='margin-top: 11px; float: right; position: relative; top: -5px;'
+                         title='Log in') Log in
+
+  div(id="signup-tab-content", class="tab-content")
+    div(class="tab-pane" id="signup-tab")
+      div(class='panel panel-default', id='signup-panel')
+        form(id='signup-form')
+          table
+            tbody
+              tr
+                td(style='text-align: right;') Username:
+                td
+                  input(class='form-control login-form-input', id='username-input',
+                        autocomplete='off')
+              tr
+                td(style='text-align: right;') Password:
+                td
+                  input(class='form-control login-form-input', id='password-input',
+                        autocomplete='off', type='password')
+              tr
+                td(style='text-align: right;') Email:
+                td
+                  input(class='form-control login-form-input', id='email-input',
+                        autocomplete='off')
+              tr
+                td
+                td
+                  button(class='btn btn-default', type='button', id='signup',
+                         data-toggle='tooltip', data-placement='top',
+                         style='margin-top: 11px; float: right; position: relative; top: -5px;'
+                         title='Sign up') Sign up
+div(class='col-md-4')
+
+script.
+  $( document ).ready(function() {
+    // Document is loaded so click the correct initially-active tab
+    $('#login-navtab-a').click();
+  });
