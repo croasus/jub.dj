@@ -12,13 +12,13 @@ latest() {
   git log $1 --oneline | cut -d' ' -f1 | head -1
 }
 
-if [ -z ${JUB_GIT_DIR} ]; then
-  log ERROR "JUB_GIT_DIR not set"
+if [ -z ${JUB_HOME} ]; then
+  log ERROR "JUB_HOME not set"
   exit -1
 fi
 
-cd $JUB_GIT_DIR
-PATH=$JUB_GIT_DIR/bin:$PATH
+cd $JUB_HOME
+PATH=$JUB_HOME/bin:$PATH
 
 git fetch origin $prod_branch >&/dev/null
 

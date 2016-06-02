@@ -1,12 +1,12 @@
 #!/bin/bash -e
 
-: ${JUB_GIT_DIR:=$(readlink -m $(dirname $0)/..)}
-cd $JUB_GIT_DIR
+: ${JUB_HOME:=$(readlink -m $(dirname $0)/..)}
+cd $JUB_HOME
 
 # Install dependencies
 npm set progress=false && npm install
 
 # Kill running node process and restart
 if pidof node; then kill `pidof node`; fi;
-nohup env PORT=9292 npm start >> /var/log/jub/thejub.pub.log 2>&1 &
+nohup env JUB_PORT=9292 npm start >> /var/log/jub/thejub.pub.log 2>&1 &
 cd - >&/dev/null

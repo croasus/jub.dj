@@ -16,7 +16,7 @@ cd $top_dir
 tcname=$(basename -s '.js' $1)
 
 export TEST=1
-export PORT=3001
+export JUB_PORT=3001
 export JUB_CONFIG=$test/config.js
 export JUB_TEST_ARTIFACT_DIR=$test_artifacts
 
