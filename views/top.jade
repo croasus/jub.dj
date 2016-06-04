@@ -2,11 +2,4 @@ nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
   div(class='container-fluid')
     div(class='row', id='jub-row-top')
       block top-content
-      div(class='col-md-3')
-        ul(class='nav navbar-nav navbar-right')
-          // Title
-          li
-            p(class='navbar-text', id='title', style='font-size:36px; margin-right: 30px;') thejub.pub
-          li
-            a(href='https://github.com/aromatt/thejub.pub/issues',
-              target="_blank", style="line-height:1.9;") Github
+        include default-top

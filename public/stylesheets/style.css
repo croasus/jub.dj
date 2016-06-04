@@ -100,6 +100,9 @@ button[type="button"]:disabled {
   border-color: #111111;
 }
 
+#signup-confirm-welcome {
+  font-size: 24px;
+}
 /* panel commonalities */
 #player-panel,
 #queue-panel,
@@ -139,6 +142,29 @@ button[type="button"]:disabled {
   background: #111;
 }
 
+/* login / signup panel */
+#login-panel,
+#signup-panel {
+  border: 0;
+  background-color: #222;
+  padding: 10px 10px 10px 10px;
+}
+
+#login-tab-content input,
+#signup-tab-content input {
+  background-color: #000;
+  /* margin-left: 10px; */
+}
+#login-tab-content td,
+#signup-tab-content td {
+  padding-bottom: 10px;
+}
+
+#login-tab-content td:nth-of-type(2),
+#signup-tab-content td:nth-of-type(2) {
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
 
 /* player panel */
 #player-panel * {
@@ -323,13 +349,6 @@ button[type="button"]:disabled {
 #chat-settings-panel input[type=checkbox] {
   margin: 2px 5px 5px 4px;
   float: left;
-}
-#username-input {
-  border: 1px;
-  border-color: #223;
-  width: 95%;
-  margin-left: 4px;
-  border-style: solid;
 }
 
 .a-link-to-the-past {

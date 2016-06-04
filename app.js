@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 
 var config_path = process.env.JUB_CONFIG || './config'
 var config = require(config_path) || {
-  private_route: '/foo',
+  private_room: 'foo',
   moved_message: 'Ask around for the new URL!'
 };
 
@@ -27,7 +27,7 @@ app.use(express.static(
   }
 ));
 
-config.private_route = config.private_route || '/foo';
+config.private_room = config.private_room || 'foo';
 
 // Create app components
 app.auth = require('./lib/auth')(config);
@@ -39,7 +39,7 @@ app.twitter = require('./lib/twitter')(config);
 app.urban = require('./external_lib/urban');
 app.bot = require('./lib/bot')(config, app.gapi, app.twitter, app.urban);
 app.chat = require('./lib/chat')(config, app.bot);
-app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db);
+app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db, app.auth);
 app.config = config;
 
 // Note: in ./bin/www -> socket-routing.js, jub and chat are passed into
@@ -69,9 +69,8 @@ app.use(function(req, res, next) {
 
 // Main page
 (function() {
-  var slash = config.private_route[0] !== '/' ? '/' : '';
-  app.get(slash + config.private_route, function(req, res, next) {
-    res.render('room', function(err, html) {
+  app.get('/' + config.private_room, function(req, res, next) {
+    res.render('room', { room: config.private_room }, function(err, html) {
       if (err) {
         console.error(err.message);
         next.send(html);
@@ -99,10 +98,28 @@ app.get('/report', function(req, res, next) {
 });
 
 app.get('/login', function(req, res, next) {
-  app.report.getKarmaReport(function(report) {
-    var r =  JSON.stringify(report);
-    console.log(r);
-    res.render('login', { }, function(err, html) {
+  res.render('login', { room: req.query.room }, function(err, html) {
+    if (err) {
+      console.error(err.message);
+      next.send(html);
+    } else {
+      res.send(html);
+    }
+  });
+}, console.error);
+
+app.post('/login', function(req, res, next) {
+  app.jub.login(req.body.username, req.body.password, function(validLogin) {
+    var dest;
+    var data;
+    if (validLogin) {
+      dest = 'room'; // TODO req.body.room tells which room
+      data = {};
+    } else {
+      dest = 'login';
+      data = { errors: 'Username / password combination incorrect!' };
+    }
+    res.render(dest, data, function(err, html) {
       if (err) {
         console.error(err.message);
         next.send(html);
@@ -110,8 +127,32 @@ app.get('/login', function(req, res, next) {
         res.send(html);
       }
     });
-  }, console.error);
-});
+  });
+}, console.error);
+
+app.post('/signup', function(req, res, next) {
+  app.jub.signup(req.body.username, req.body.password, req.body.email,
+                function(errorMsg) {
+    var validSignup = (errorMsg === null);
+    var dest;
+    var data;
+    if (validSignup) {
+      dest = 'signup-confirm';
+      data = { username: req.body.username, room: req.body.room };
+    } else {
+      dest = 'login';
+      data = { errors: errorMsg, tab: 'signup' };
+    }
+    res.render(dest, data, function(err, html) {
+      if (err) {
+        console.error(err.message);
+        next.send(html);
+      } else {
+        res.send(html);
+      }
+    });
+  });
+}, console.error);
 
 
 // Minimal message at '/' route

@@ -8,7 +8,7 @@ module.exports = {
   auth: {
     token_len: '20'
   },
-  private_route: '/test_private_route',
+  private_room: 'test_private_route',
   moved_message: "Ask for the new URL!",
   chat: {
     cache_dir: 'test/chat_cache',

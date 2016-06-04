@@ -2,7 +2,7 @@ ul(class='nav navbar-nav navbar-right')
   li
     div(id='login-div', style='min-width: 60px; margin: 20px 0px 0px 0px;')
       if show_login
-        a(href='/login') Log in
+        a(href='/login' + '?room=' + room) Log in
   li
     p(class='navbar-text', id='title',
       style='font-size:36px; margin: 0px 20px 0px 0px;') thejub.pub

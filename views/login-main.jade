@@ -9,59 +9,73 @@ div(class='col-md-4')
   div(id="login-tab-content", class="tab-content")
     div(class="tab-pane" id="login-tab")
       div(class='panel panel-default', id='login-panel')
-        form(id='login-form')
-          table
+        form(id='login-form', method='post', action='login')
+          input(type="hidden", name="room", value=room)
+          table(style='table-layout: fixed;')
             tbody
               tr
                 td(style='text-align: right;') Username:
-                td
-                  input(class='form-control login-form-input', id='username-input',
-                        autocomplete='off')
+                td(style='max-width: 200px;')
+                  input(class='form-control login-form-input', id='login-username-input',
+                        name='username', autocomplete='off')
+                td(rowspan='3', style='min-width: 50px;')
               tr
                 td(style='text-align: right;') Password:
-                td
-                  input(class='form-control login-form-input', id='password-input',
-                        autocomplete='off', type='password')
+                td(style='max-width: 100px;')
+                  input(class='form-control login-form-input', id='login-password-input',
+                        name='password', autocomplete='off', type='password')
               tr
                 td
                 td
-                  button(class='btn btn-default', type='button', id='login',
+                  button(class='btn btn-default', type='submit', id='login',
                          data-toggle='tooltip', data-placement='top',
                          style='margin-top: 11px; float: right; position: relative; top: -5px;'
                          title='Log in') Log in
+              tr
+                td(colspan='3', style='word-wrap:break-word; padding-bottom: 0px;')
+                  div(id='login-errors')= errors
 
-  div(id="signup-tab-content", class="tab-content")
     div(class="tab-pane" id="signup-tab")
       div(class='panel panel-default', id='signup-panel')
-        form(id='signup-form')
+        form(id='signup-form', method='post', action='signup')
+          input(type="hidden", name="room", value=room)
           table
             tbody
               tr
                 td(style='text-align: right;') Username:
-                td
-                  input(class='form-control login-form-input', id='username-input',
-                        autocomplete='off')
+                td(style='max-width: 200px;')
+                  input(class='form-control login-form-input', id='signup-username-input',
+                        name='username', autocomplete='off')
               tr
                 td(style='text-align: right;') Password:
-                td
-                  input(class='form-control login-form-input', id='password-input',
-                        autocomplete='off', type='password')
+                td(style='max-width: 200px;')
+                  input(class='form-control login-form-input', id='signup-password-input',
+                        name='password', autocomplete='off', type='password')
               tr
                 td(style='text-align: right;') Email:
-                td
-                  input(class='form-control login-form-input', id='email-input',
-                        autocomplete='off')
+                td(style='max-width: 200px;')
+                  input(class='form-control login-form-input', id='signup-email-input',
+                        name='email', autocomplete='off')
               tr
                 td
                 td
-                  button(class='btn btn-default', type='button', id='signup',
+                  button(class='btn btn-default', type='submit', id='signup',
                          data-toggle='tooltip', data-placement='top',
                          style='margin-top: 11px; float: right; position: relative; top: -5px;'
                          title='Sign up') Sign up
+              tr
+                td(colspan='3', style='word-wrap:break-word; padding-bottom: 0px;')
+                  div(id='signup-errors')= errors
+
 div(class='col-md-4')
 
 script.
   $( document ).ready(function() {
     // Document is loaded so click the correct initially-active tab
-    $('#login-navtab-a').click();
+    var activeTab = "!{tab}";
+    if (activeTab === 'signup') {
+      $('#signup-navtab-a').click();
+    } else {
+      $('#login-navtab-a').click();
+    }
   });
