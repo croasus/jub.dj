@@ -1,0 +1,36 @@
+http://stackoverflow.com/questions/549/the-definitive-guide-to-form-based-website-authentication#477579
+http://stackoverflow.com/questions/244882/what-is-the-best-way-to-implement-remember-me-for-a-website
+http://jaspan.com/improved_persistent_login_cookie_best_practice
+https://paragonie.com/blog/2015/04/secure-authentication-php-with-long-term-persistence#title.2
+
+
+Authentication for the websockets
+  https://devcenter.heroku.com/articles/websocket-security
+  http://howtonode.org/socket-io-auth
+
+Auth behavior
+  - auto log out after... 1 day?
+  - remember me
+    - what exactly does this do?
+    - means that you can close the browser and stay logged in
+  - reset password
+
+Do next:
+  - implement signup
+    - all three fields required
+  - create in-memory sessions state of users
+    - expire sessions periodically
+  - Which actions are allowed with and without auth?
+  - How does the UI change with and without auth?
+  - What gets sent to the server as a token to authentication actions?
+  - Add logout link
+  -
+  - BUG - separate login errors from signup errors
+  - BUG - "room" value gets lost on invalid login/signup
+
+Do later:
+  - independent auth micro-service
+  - reset password
+    - sends an email to the user with a link
+      - link expires after 1 day
+  - throttling/limiting for login and reset password
