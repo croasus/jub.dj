@@ -33,7 +33,7 @@ div(class='col-md-4')
                          title='Log in') Log in
               tr
                 td(colspan='3', style='word-wrap:break-word; padding-bottom: 0px;')
-                  div(id='login-errors')= errors
+                  div(id='login-error')= loginErrorMsg
 
     div(class="tab-pane" id="signup-tab")
       div(class='panel panel-default', id='signup-panel')
@@ -65,7 +65,7 @@ div(class='col-md-4')
                          title='Sign up') Sign up
               tr
                 td(colspan='3', style='word-wrap:break-word; padding-bottom: 0px;')
-                  div(id='signup-errors')= errors
+                  div(id='signup-error')= signupErrorMsg
 
 div(class='col-md-4')
 

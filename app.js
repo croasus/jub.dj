@@ -32,7 +32,7 @@ config.private_room = config.private_room || 'foo';
 // Create app components
 app.auth = require('./lib/auth')(config);
 app.models = require('./lib/models')(config, app.auth);
-app.db = require('./lib/db')(config, app.models);
+app.db = require('./lib/db')(config, app.models, app.auth);
 app.gapi = require('./lib/gapi')(config);
 app.report = require('./lib/report')(app.db, app.gapi);
 app.twitter = require('./lib/twitter')(config);
@@ -117,7 +117,7 @@ app.post('/login', function(req, res, next) {
       data = {};
     } else {
       dest = 'login';
-      data = { errors: 'Username / password combination incorrect!' };
+      data = { loginErrorMsg: 'Invalid username / password!' };
     }
     res.render(dest, data, function(err, html) {
       if (err) {
@@ -133,7 +133,7 @@ app.post('/login', function(req, res, next) {
 app.post('/signup', function(req, res, next) {
   app.jub.signup(req.body.username, req.body.password, req.body.email,
                 function(errorMsg) {
-    var validSignup = (errorMsg === null);
+    var validSignup = (errorMsg === null || errorMsg.length === 0);
     var dest;
     var data;
     if (validSignup) {
@@ -141,7 +141,7 @@ app.post('/signup', function(req, res, next) {
       data = { username: req.body.username, room: req.body.room };
     } else {
       dest = 'login';
-      data = { errors: errorMsg, tab: 'signup' };
+      data = { signupErrorMsg: errorMsg, tab: 'signup' };
     }
     res.render(dest, data, function(err, html) {
       if (err) {
