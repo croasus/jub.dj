@@ -8,29 +8,75 @@ Authentication for the websockets
   https://devcenter.heroku.com/articles/websocket-security
   http://howtonode.org/socket-io-auth
 
-Auth behavior
-  - auto log out after... 1 day?
+Auth behavior, first pass
+  - our room is public
+  - t.e. nickname
+    - defaults to account name, but you can have a nickname without an account
+  - chat is allowed only if you choose a nickname
+  - welcome screen (redirect here if try to access room with no nickname or auth)
+  - Login should redirect to the room afterward
+  - not allowed without auth:
+    - DJing
+      - Don't show the search bar
+      - Don't show the 'click to dj' button
+      - show a message in the queue panel
+    - skip
+  - auto log out after... 3 days?
   - remember me
     - what exactly does this do?
     - means that you can close the browser and stay logged in
   - reset password
+  - still assign temporary jub-* username for anonymous people
 
 Do next:
-  - implement signup
-    - all three fields required
-  - create in-memory sessions state of users
-    - expire sessions periodically
-  - Which actions are allowed with and without auth?
-  - How does the UI change with and without auth?
-  - What gets sent to the server as a token to authentication actions?
-  - Add logout link
-  -
-  - BUG - separate login errors from signup errors
-  - BUG - "room" value gets lost on invalid login/signup
+  - SERVER
+    - What gets sent to the server as a token to authentication actions?
+    - don't create new user preferences for jub-* users
+    - separate fetching and initing of playlists
+    - create in-memory session state of users
+      - expire sessions periodically
+    - reset password
+      - sends an email to the user with a generated link
+        - add /reset_password/:uuid
+        - link expires after 1 day
+    - add auth check to... pretty much everything but chat and hoot
+  - UI
+    - no more 'username' cookie
+    - create 'nickname' cookie
+      - mischevious people might delete the cookie, so make sure even read-only interactions
+        are gated by nickname || auth
+    - create /welcome
+      - URL query param 'room'
+        - if no query param room, say 'How did you get here?'
+      - Two choices:
+        - Log in as guest
+          - nickname input
+          - hidden input for 'room'
+          - join button
+        - Login --> redirect to /login?room=foo
+    - Player UI
+      - don't start next video unless nickname or session token
+    - chat UI
+      - chat socket emissions send auth if present AND nickname
+      - don't display chat without either nickname or session token
+      - on load, make sure default nickname is fetched by client (comes with user prefs)
+        - prefer local cookie nickname if it exists
+      - if no session token, hide all chat prefs except for 'Nickname' box
+    - Queue UI
+      - all queue interactions send auth
+      - If not logged in, Change 'this playlist is empty' message
+    - top UI
+      - hide search bar if no session token
+      - Create 'log out' link
+        - deletes session token
+        - leaves nickname intact
+        - redirects to /logout "Goodbye, foo!"
+    - Sign up should automatically log you in
+    - Add reset password reset password link to login
+    - BUG - "room" value gets lost on invalid login/signup
+
 
 Do later:
+  - room admin page
   - independent auth micro-service
-  - reset password
-    - sends an email to the user with a link
-      - link expires after 1 day
   - throttling/limiting for login and reset password
