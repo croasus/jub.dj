@@ -46,8 +46,26 @@ app.config = config;
 // socket-routing which gives them callbacks allowing them to *initiate*
 // messages over the sockets
 
+// TODO hack
+app.bot.requestReloadUser = app.jub.reloadUser;
 
 /* Routes */
+
+// Blacklist middleware. Assumes we're behind a proxy and x-real-ip is the
+// client's IP
+app.use(function(req, res, next) {
+  if (!req.headers || !req.headers['x-real-ip'] || !app.bot.blacklist) {
+    return next();
+  }
+  if (app.bot.blacklist[req.headers['x-real-ip']]) {
+    res.status(503);
+    res.render('error', {
+      message: 'Blacklisted.',
+    });
+  } else {
+    next();
+  }
+});
 
 // Main page
 (function() {
@@ -108,7 +126,6 @@ app.get('/', function(req, res, next) {
   });
 });
 
-
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -134,10 +151,7 @@ if (process.env.TEST) {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+  res.render('error', { });
 });
 
 /* scratch */
