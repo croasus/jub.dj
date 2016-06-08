@@ -58,9 +58,9 @@ app.use(function(req, res, next) {
     return next();
   }
   if (app.bot.blacklist[req.headers['x-real-ip']]) {
-    res.status(503);
+    res.status(403);
     res.render('error', {
-      message: 'Blacklisted.',
+      message: 'Forbidden.',
     });
   } else {
     next();
