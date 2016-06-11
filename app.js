@@ -113,8 +113,8 @@ app.post('/login', function(req, res, next) {
     var dest;
     var data;
     if (validLogin) {
-      dest = 'room'; // TODO req.body.room tells which room
-      data = {};
+      dest = 'signup-confirm';
+      data = { username: req.body.username, room: req.body.room };
     } else {
       dest = 'login';
       data = { loginErrorMsg: 'Invalid username / password!' };

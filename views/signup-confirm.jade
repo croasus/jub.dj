@@ -5,11 +5,9 @@ extends layout
 block main-content
   div(class='col-md-4')
   div(class='col-md-4')
-    div(id='signup-confirm-welcome')
-      span(style='margin-right: 0.25em;') Welcome to the pub,
-      span=username
-      span !
+    div(id='signup-confirm-welcome', style='font-size: 32px;')
+      span Welcome to the pub, !{username}!
     div
       if room
-        a(href=room) Back to the room
+        a(href=room, style='font-size: 16px;') Back to the room (!{room})
   div(class='col-md-4')

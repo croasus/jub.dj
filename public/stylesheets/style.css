@@ -100,9 +100,6 @@ button[type="button"]:disabled {
   border-color: #111111;
 }
 
-#signup-confirm-welcome {
-  font-size: 24px;
-}
 /* panel commonalities */
 #player-panel,
 #queue-panel,
