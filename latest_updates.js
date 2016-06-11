@@ -1,6 +1,6 @@
 module.exports = {
-  date: '2015-5-26',
+  date: '2015-6-10',
   list: [
-    "Added track-clipping feature (++croasus)",
+    "Hopefully fixed DJ rotation bug"
   ],
 }
