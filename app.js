@@ -46,8 +46,16 @@ app.config = config;
 // socket-routing which gives them callbacks allowing them to *initiate*
 // messages over the sockets
 
-// TODO hack
-app.bot.requestReloadUser = app.jub.reloadUser;
+function simpleRender(view, res, data, next) {
+  res.render(view, data, function(err, html) {
+    if (err) {
+      console.error(err.message);
+      next.send(html);
+    } else {
+      res.send(html);
+    }
+  });
+}
 
 /* Routes */
 
@@ -68,65 +76,36 @@ app.use(function(req, res, next) {
 });
 
 // Main page
-(function() {
-  app.get('/' + config.private_room, function(req, res, next) {
-    res.render('room', { room: config.private_room }, function(err, html) {
-      if (err) {
-        console.error(err.message);
-        next.send(html);
-      } else {
-        res.send(html);
-      }
-    });
-  });
-})();
+app.get('/' + config.private_room, function(req, res, next) {
+  var data = { room: config.private_room };
+  simpleRender('room', res, data, next);
+});
 
 // TODO this will need to be per room
 app.get('/report', function(req, res, next) {
   app.report.getKarmaReport(function(report) {
-    var r =  JSON.stringify(report);
     console.log(r);
-    res.render('report', { report: r }, function(err, html) {
-      if (err) {
-        console.error(err.message);
-        next.send(html);
-      } else {
-        res.send(html);
-      }
-    });
-  }, console.error);
-});
+    var data = { report: JSON.stringify(report) };
+    simpleRender('report', res, data, next);
+  });
+}, console.error);
 
 app.get('/login', function(req, res, next) {
-  res.render('login', { room: req.query.room }, function(err, html) {
-    if (err) {
-      console.error(err.message);
-      next.send(html);
-    } else {
-      res.send(html);
-    }
-  });
+  simpleRender('login', res, { room: req.query.room }, next);
 }, console.error);
 
 app.post('/login', function(req, res, next) {
   app.jub.login(req.body.username, req.body.password, function(validLogin) {
-    var dest;
-    var data;
     if (validLogin) {
-      dest = 'signup-confirm';
-      data = { username: req.body.username, room: req.body.room };
-    } else {
-      dest = 'login';
-      data = { loginErrorMsg: 'Invalid username / password!' };
-    }
-    res.render(dest, data, function(err, html) {
-      if (err) {
-        console.error(err.message);
-        next.send(html);
-      } else {
-        res.send(html);
+      var nextPath = 'signup-confirm?' + 'username=' + req.body.username;
+      if (req.body.room && req.body.room !== '') {
+        nextPath += '&room=' + req.body.room;
       }
-    });
+      res.redirect(nextPath);
+    } else {
+      var data = { loginErrorMsg: 'Invalid username/password' };
+      simpleRender('login', res, data, next);
+    }
   });
 }, console.error);
 
@@ -134,37 +113,32 @@ app.post('/signup', function(req, res, next) {
   app.jub.signup(req.body.username, req.body.password, req.body.email,
                 function(errorMsg) {
     var validSignup = (errorMsg === null || errorMsg.length === 0);
-    var dest;
-    var data;
     if (validSignup) {
-      dest = 'signup-confirm';
-      data = { username: req.body.username, room: req.body.room };
-    } else {
-      dest = 'login';
-      data = { signupErrorMsg: errorMsg, tab: 'signup' };
-    }
-    res.render(dest, data, function(err, html) {
-      if (err) {
-        console.error(err.message);
-        next.send(html);
-      } else {
-        res.send(html);
+      var nextPath = 'signup-confirm?' + 'username=' + req.body.username;
+      if (req.body.room && req.body.room !== '') {
+        nextPath += '&room=' + req.body.room;
       }
-    });
+      res.redirect(nextPath);
+    } else {
+      var data = { signupErrorMsg: errorMsg, tab: 'signup' };
+      simpleRender('login', res, data, next);
+    }
   });
 }, console.error);
 
+// TODO expect token and validate it before rendering
+app.get('/signup-confirm', function(req, res, next) {
+  var data = { username: req.query.username };
+  if (req.body.room && req.body.room !== '') {
+    data.room = req.query.room;
+  }
+  simpleRender('signup-confirm', res, data, next);
+});
 
 // Minimal message at '/' route
 app.get('/', function(req, res, next) {
-  res.render('moved', { message: config.moved_message }, function(err, html) {
-    if (err) {
-      console.error(err.message);
-      next.send(html);
-    } else {
-      res.send(html);
-    }
-  });
+  var data = { message: config.moved_message };
+  simpleRender('moved', res, data, next);
 });
 
 // Catch 404 and forward to error handler
