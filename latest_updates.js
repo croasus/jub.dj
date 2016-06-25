@@ -1,6 +1,6 @@
 module.exports = {
-  date: '2015-6-10',
+  date: '2015-6-24',
   list: [
-    "Hopefully fixed DJ rotation bug"
+    "Added 'imitate' command to jubbot",
   ],
 }
