@@ -18,7 +18,7 @@ Auth behavior, first pass
     - DJing
       - Don't show the search bar
       - Don't show the 'click to dj' button
-      - show a message in the queue panel
+      - (show a message in the queue panel)
     - skip
   - auto log out after... 3 days?
   - remember me
@@ -31,7 +31,15 @@ Do next:
   - SERVER
     - What gets sent to the server as a token to authentication actions?
     - don't create new user preferences for jub-* users
+      - This break settings
+        - so just hide those options?
+            selectedPlaylist
+            requeueVideos
+            showChatImages
+            allowMuteStatus
+            color?
     - separate fetching and initing of playlists
+      - why?
     - create in-memory session state of users
       - expire sessions periodically
     - reset password
@@ -57,13 +65,13 @@ Do next:
       - don't start next video unless nickname or session token
     - chat UI
       - chat socket emissions send auth if present AND nickname
-      - don't display chat without either nickname or session token
+      - don't display chat without nickname || session token
       - on load, make sure default nickname is fetched by client (comes with user prefs)
         - prefer local cookie nickname if it exists
       - if no session token, hide all chat prefs except for 'Nickname' box
     - Queue UI
       - all queue interactions send auth
-      - If not logged in, Change 'this playlist is empty' message
+      - If not logged in, Change 'this playlist is empty' message to 'you must be logged in'
     - top UI
       - hide search bar if no session token
       - Create 'log out' link
@@ -71,7 +79,7 @@ Do next:
         - leaves nickname intact
         - redirects to /logout "Goodbye, foo!"
     - Sign up should automatically log you in
-    - Add reset password reset password link to login
+    - Add reset password link to login
     - BUG - "room" value gets lost on invalid login/signup
 
 

@@ -94,13 +94,29 @@ app.get('/login', function(req, res, next) {
   simpleRender('login', res, { room: req.query.room }, next);
 }, console.error);
 
+function buildTokenCookie(token, expiration) {
+  // TODO HttpOnly?
+  // TODO Secure?  Can we add/strip that with nginx?
+  var tokenCookie = 'sessionToken=';
+  tokenCookie += token + '; ';
+  tokenCookie += 'Path=/; ';
+  tokenCookie += 'Expires=' + expiration.toUTCString() + ';';
+  return tokenCookie;
+}
+
 app.post('/login', function(req, res, next) {
-  app.jub.login(req.body.username, req.body.password, function(validLogin) {
-    if (validLogin) {
+  var expiration = new Date();
+  expiration = new Date(expiration.getTime() + 86400000 * 3); // 3 days
+  app.jub.login(req.body.username,
+                req.body.password,
+                expiration.getTime(),
+                function(token) {
+    if (token) {
       var nextPath = 'signup-confirm?' + 'username=' + req.body.username;
       if (req.body.room && req.body.room !== '') {
         nextPath += '&room=' + req.body.room;
       }
+      res.append('Set-Cookie', buildTokenCookie(token, expiration));
       res.redirect(nextPath);
     } else {
       var data = { loginErrorMsg: 'Invalid username/password' };
