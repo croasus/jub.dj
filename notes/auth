@@ -39,7 +39,7 @@ Do next:
             allowMuteStatus
             color?
     - separate fetching and initing of playlists
-      - why?
+      - why? well, we definitely need to do this for preferences, so that accounts aren't created for every jub-*
     - create in-memory session state of users
       - expire sessions periodically
     - reset password

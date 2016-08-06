@@ -145,7 +145,7 @@ app.post('/signup', function(req, res, next) {
 // TODO expect token and validate it before rendering
 app.get('/signup-confirm', function(req, res, next) {
   var data = { username: req.query.username };
-  if (req.body.room && req.body.room !== '') {
+  if (req.query.room && req.query.room !== '') {
     data.room = req.query.room;
   }
   simpleRender('signup-confirm', res, data, next);
