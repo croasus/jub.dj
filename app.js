@@ -78,6 +78,7 @@ app.use(function(req, res, next) {
 // Main page
 app.get('/' + config.private_room, function(req, res, next) {
   var data = { room: config.private_room };
+  console.log('cookies', req.cookies);
   simpleRender('room', res, data, next);
 });
 
@@ -128,14 +129,19 @@ app.post('/login', function(req, res, next) {
 app.post('/signup', function(req, res, next) {
   app.jub.signup(req.body.username, req.body.password, req.body.email,
                 function(errorMsg) {
+    var room = null;
+    if (req.body.room && req.body.room !== '') {
+      room = req.body.room;
+    }
+    console.log('signup', req.body);
     var validSignup = (errorMsg === null || errorMsg.length === 0);
     if (validSignup) {
       var nextPath = 'signup-confirm?' + 'username=' + req.body.username;
-      if (req.body.room && req.body.room !== '') {
-        nextPath += '&room=' + req.body.room;
-      }
+      if (room) { nextPath += '&room=' + room; }
       res.redirect(nextPath);
     } else {
+      var nextPath = 'login';
+      if (room) { nextPath += '&room=' + room; }
       var data = { signupErrorMsg: errorMsg, tab: 'signup' };
       simpleRender('login', res, data, next);
     }

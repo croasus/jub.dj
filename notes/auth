@@ -5,6 +5,7 @@ https://paragonie.com/blog/2015/04/secure-authentication-php-with-long-term-pers
 
 Authentication for the websockets
   https://devcenter.heroku.com/articles/websocket-security
+  https://auth0.com/blog/auth-with-socket-io/
   http://howtonode.org/socket-io-auth
 
 Auth behavior, first pass
