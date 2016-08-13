@@ -95,56 +95,32 @@ app.get('/login', function(req, res, next) {
   simpleRender('login', res, { room: req.query.room }, next);
 }, console.error);
 
-function buildTokenCookie(token, expiration) {
-  // TODO HttpOnly?
-  // TODO Secure?  Can we add/strip that with nginx?
-  var tokenCookie = 'sessionToken=';
-  tokenCookie += token + '; ';
-  tokenCookie += 'Path=/; ';
-  tokenCookie += 'Expires=' + expiration.toUTCString() + ';';
-  return tokenCookie;
-}
-
+// AJAX endpoint, returns { success, sessionToken, expiration in UTC epoch millis }
 app.post('/login', function(req, res, next) {
   var expiration = new Date();
-  expiration = new Date(expiration.getTime() + 86400000 * 3); // 3 days
+  expiration = new Date(expiration.getTime() + 86400000 * 3).getTime();
   app.jub.login(req.body.username,
                 req.body.password,
-                expiration.getTime(),
+                expiration,
                 function(token) {
-    if (token) {
-      var nextPath = 'signup-confirm?' + 'username=' + req.body.username;
-      if (req.body.room && req.body.room !== '') {
-        nextPath += '&room=' + req.body.room;
-      }
-      res.append('Set-Cookie', buildTokenCookie(token, expiration));
-      res.redirect(nextPath);
+    var success = !!token;
+    var data = { success: success };
+    if (success) {
+      data.sessionToken = token;
+      data.expiration = expiration;
     } else {
-      var data = { loginErrorMsg: 'Invalid username/password' };
-      simpleRender('login', res, data, next);
+      data.errorMsg = 'Invalid username/password';
     }
+    res.send(data);
   });
 }, console.error);
 
+// AXAJ endpoint, returns JSON { success, errorMsg }
 app.post('/signup', function(req, res, next) {
   app.jub.signup(req.body.username, req.body.password, req.body.email,
                 function(errorMsg) {
-    var room = null;
-    if (req.body.room && req.body.room !== '') {
-      room = req.body.room;
-    }
-    console.log('signup', req.body);
-    var validSignup = (errorMsg === null || errorMsg.length === 0);
-    if (validSignup) {
-      var nextPath = 'signup-confirm?' + 'username=' + req.body.username;
-      if (room) { nextPath += '&room=' + room; }
-      res.redirect(nextPath);
-    } else {
-      var nextPath = 'login';
-      if (room) { nextPath += '&room=' + room; }
-      var data = { signupErrorMsg: errorMsg, tab: 'signup' };
-      simpleRender('login', res, data, next);
-    }
+    var success = (errorMsg === null || errorMsg.length === 0);
+    res.send({ success: success, errorMsg: errorMsg });
   });
 }, console.error);
 

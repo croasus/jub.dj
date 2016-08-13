@@ -10,7 +10,8 @@ div(class='col-md-4')
     div(class="tab-pane" id="login-tab")
       div(class='panel panel-default', id='login-panel')
         form(id='login-form', method='post', action='login')
-          input(type="hidden", name="room", value=room)
+          // Magically set by Express render
+          input(type="hidden", name="room", value=room, id='login-room')
           table(style='table-layout: fixed;')
             tbody
               tr
@@ -33,12 +34,13 @@ div(class='col-md-4')
                          title='Log in') Log in
               tr
                 td(colspan='3', style='word-wrap:break-word; padding-bottom: 0px;')
-                  div(id='login-error')= loginErrorMsg
+                  div(id='login-error')
 
     div(class="tab-pane" id="signup-tab")
       div(class='panel panel-default', id='signup-panel')
         form(id='signup-form', method='post', action='signup')
-          input(type="hidden", name="room", value=room)
+          // Magically set by Express render
+          input(type="hidden", name="room", value=room, id='signup-room')
           table
             tbody
               tr
@@ -65,11 +67,12 @@ div(class='col-md-4')
                          title='Sign up') Sign up
               tr
                 td(colspan='3', style='word-wrap:break-word; padding-bottom: 0px;')
-                  div(id='signup-error')= signupErrorMsg
+                  div(id='signup-error')
 
 div(class='col-md-4')
 
 script.
+
   $( document ).ready(function() {
     // Document is loaded so click the correct initially-active tab
     var activeTab = "!{tab}";
@@ -78,4 +81,55 @@ script.
     } else {
       $('#login-navtab-a').click();
     }
+    $('#signup-form').submit(function(e) {
+      var signupData = {
+        username: $('#signup-username-input').val(),
+        password: $('#signup-password-input').val(),
+        email: $('#signup-email-input').val()
+      };
+      console.log('signup', signupData);
+      $.post('/signup', signupData)
+        .done(function(resultData) {
+          console.log('signup result', resultData);
+          if (resultData.success === true) {
+            // login
+            $('#login-username-input').val(signupData.username);
+            $('#login-password-input').val(signupData.password);
+            $('#login-form').submit();
+          } else {
+            $('#signup-error').text(resultData.errorMsg);
+          }
+        });
+      e.preventDefault();
+    });
+
+    $('#login-form').submit(function(e) {
+      var loginData = {
+        username: $('#login-username-input').val(),
+        password: $('#login-password-input').val(),
+      };
+      console.log('login', loginData);
+      $.post('/login', loginData)
+        .done(function(resultData) {
+          console.log('login result', resultData);
+          if (resultData.success === true) {
+            // Set token cookie and navigate to confirmation
+            setCookie('sessionToken',
+                      resultData.sessionToken,
+                      new Date(resultData.expiration));
+            var confUrl = '/signup-confirm';
+            confUrl += '?username=' + loginData.username;
+
+            var room = $('#login-room').val();
+            if (room) { confUrl += '&room=' + room; }
+            console.log('room', room);
+
+            window.location.href = confUrl;
+          } else {
+            $('#login-error').text(resultData.errorMsg);
+          }
+        });
+      e.preventDefault();
+    });
+
   });
