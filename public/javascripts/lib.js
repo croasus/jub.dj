@@ -99,6 +99,3 @@ function areVideoClipSettingsValid(videoObj) {
       && videoObj.hasOwnProperty('clipEndTime')
       && ((videoObj.clipEndTime - videoObj.clipStartTime) < videoObj.duration );
 }
-
-// Some globals
-var socket = io();

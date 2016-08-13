@@ -1,5 +1,13 @@
 extends layout
 
+block includes
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.6/socket.io.min.js')
+  script(src='/javascripts/sockets.js')
+  script(src='/javascripts/resizing.js')
+  script(src='/javascripts/gapi.js')
+  // Loaded last because the "on load" callback needs to be defined first, in gapi.js
+  script(src="https://apis.google.com/js/client.js?onload=OnGAPILoad")
+
 block top-content
   include room-top
 

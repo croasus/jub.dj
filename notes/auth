@@ -30,9 +30,8 @@ Auth behavior, first pass
 
 Do next:
   - SERVER
-    - What gets sent to the server as a token to authentication actions?
     - don't create new user preferences for jub-* users
-      - This break settings
+      - This breaks preferences
         - so just hide those options?
             selectedPlaylist
             requeueVideos
@@ -42,6 +41,7 @@ Do next:
     - separate fetching and initing of playlists
       - why? well, we definitely need to do this for preferences, so that accounts aren't created for every jub-*
     - create in-memory session state of users
+      - why? This is what tokens are for
       - expire sessions periodically
     - reset password
       - sends an email to the user with a generated link
