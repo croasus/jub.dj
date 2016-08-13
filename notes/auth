@@ -24,14 +24,16 @@ Auth behavior, first pass
   - auto log out after... 3 days?
   - remember me
     - what exactly does this do?
-    - means that you can close the browser and stay logged in
-  - reset password
+    - means that you can close the browser and stay logged in?
+  - user can reset password
   - still assign temporary jub-* username for anonymous people
+  - don't require logging in every day
+    - I guess this means reissuing a token when the expiration gets close
 
 Do next:
   - SERVER
     - don't create new user preferences for jub-* users
-      - This breaks preferences
+      - This breaks UI elements that are backed by this table
         - so just hide those options?
             selectedPlaylist
             requeueVideos
@@ -43,11 +45,17 @@ Do next:
     - create in-memory session state of users
       - why? This is what tokens are for
       - expire sessions periodically
-    - reset password
+    - add reset password feature
       - sends an email to the user with a generated link
         - add /reset_password/:uuid
         - link expires after 1 day
     - add auth check to... pretty much everything but chat and hoot
+      - since everything uses sockets, I think this means authenticating socket connections
+      - not sure how we'll handle nickname-only users
+        - different socket server?
+        - give them a token, and make the data different from account users?
+          - this is a good solution
+          - I think nicknames must then be unique? no, why would that be?
   - UI
     - no more 'username' cookie
     - create 'nickname' cookie
@@ -71,7 +79,6 @@ Do next:
         - prefer local cookie nickname if it exists
       - if no session token, hide all chat prefs except for 'Nickname' box
     - Queue UI
-      - all queue interactions send auth
       - If not logged in, Change 'this playlist is empty' message to 'you must be logged in'
     - top UI
       - hide search bar if no session token
