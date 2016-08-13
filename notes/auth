@@ -57,6 +57,10 @@ Do next:
           - this is a good solution
           - I think nicknames must then be unique? no, why would that be?
   - UI
+    - redirect to /welcome if you know you aren't authed
+      - check for session token
+      - check expiration
+      - make sure socket can connect
     - no more 'username' cookie
     - create 'nickname' cookie
       - mischevious people might delete the cookie, so make sure even read-only interactions
