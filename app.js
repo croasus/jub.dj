@@ -126,17 +126,29 @@ app.post('/signup', function(req, res, next) {
 
 // TODO expect token and validate it before rendering
 app.get('/signup-confirm', function(req, res, next) {
-  var data = { username: req.query.username };
-  if (req.query.room && req.query.room !== '') {
-    data.room = req.query.room;
-  }
-  simpleRender('signup-confirm', res, data, next);
+  app.jub.validateSessionToken(req.cookies.sessionToken, function(valid) {
+    if (valid) {
+      var data = { username: req.query.username };
+      if (req.query.room && req.query.room !== '') {
+        data.room = req.query.room;
+      }
+      simpleRender('signup-confirm', res, data, next);
+    } else {
+      res.redirect('welcome');
+    }
+  });
 });
 
 // Minimal message at '/' route
 app.get('/', function(req, res, next) {
   var data = { message: config.moved_message };
   simpleRender('moved', res, data, next);
+});
+
+// TODO make this view
+// Welcome -> create a nickname or an account
+app.get('/welcome', function(req, res, next) {
+  simpleRender('welcome', res, {}, next);
 });
 
 // Catch 404 and forward to error handler
