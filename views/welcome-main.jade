@@ -5,25 +5,49 @@ div(class='col-md-4')
   br
   br
   div(class='panel panel-default', id='login-panel')
-    form(id='nickname-form', method='post', action='nickname')
+    div(style='font-size:19px; margin: 0px 0px 10px 0px;')
+      span Please&nbsp
+      a(href='/login?room='+room) create an account
+      span &nbspor join as a guest:
+    form(class='form-horizontal' id='nickname-form', method='post', action='nickname', role='form')
       // Magically set by Express render
       input(type="hidden", name="room", value=room, id='nickname-room')
-      table(style='table-layout: fixed; margin: 0px 0px 10px 0px;')
-        tbody
-          tr
-            td(colspan=2)
-              div(style='font-size:19px; margin: 0px 0px 10px 0px;')
-                span Please&nbsp
-                a(href='/login?room='+room) create an account
-                span &nbspor join as a guest:
-          tr
-            td
-              input(class='form-control login-form-input', id='login-nickname-input',
-                  name='nickname', autocomplete='off', placeholder='Choose a nickname',
-                  style='')
-            td
-              button(class='btn btn-default', type='submit', id='join-as-guest',
-                     data-toggle='tooltip', data-placement='top',
-                     style='margin: 0px 0px 0px 0px; float: right; position: relative; padding-top: 6px;'
-                     title='Join as a guest') Join as a guest
+      div(class='form-group')
+        label(class='control-label col-md-2', for='nickname-input') Nickname:
+        div(class='col-md-10')
+          input(class='form-control login-form-input', id='nickname-input',
+                name='nickname', autocomplete='off', placeholder='Choose a nickname',
+                style='max-width: 200px;')
+      div(class='form-group')
+        div(class='col-sm-offset-2 col-sm-10')
+          button(class='btn btn-default', type='submit', id='join-as-guest',
+                 data-toggle='tooltip', data-placement='top',
+                 title='Join as a guest') Join as a guest
 
+script.
+
+  $( document ).ready(function() {
+    $('#nickname-form').submit(function(e) {
+      var guestData = {
+        nickname: $('#nickname-input').val(),
+      };
+      console.log('joining as guest', guestData);
+      $.post('/join-as-guest', guestData)
+        .done(function(resultData) {
+          console.log('join as guest result', resultData);
+          if (resultData.success === true) {
+            var confUrl = '/signup-confirm';
+            confUrl += '?username=' + guestData.nickname;
+
+            var room = $('#nick-room').val();
+            if (room) { confUrl += '&room=' + room; }
+            console.log('room', room);
+            window.location.href = confUrl;
+          } else {
+            $('#nickname-error').text(resultData.errorMsg);
+          }
+        });
+      e.preventDefault();
+    });
+
+  });

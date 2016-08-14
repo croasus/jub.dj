@@ -130,6 +130,25 @@ app.post('/signup', function(req, res, next) {
   });
 }, console.error);
 
+// AJAX endpoint, sets sessionToken cookie
+app.post('/join-as-guest', function(req, res, next) {
+  var expiration = new Date();
+  expiration = new Date(expiration.getTime() + 86400000 * 3);
+  console.log("attempting join as guest with nickname", req.body.nickname);
+  app.jub.joinAsGuest(req.body.nickname,
+                      expiration.getTime(),
+                      function(token) {
+    var success = !!token;
+    var data = { success: success };
+    if (success) {
+      res.cookie('sessionToken', token, { expires: expiration, httpOnly: true });
+    } else {
+      data.errorMsg = 'That nickname is taken :-(';
+    }
+    res.send(data);
+  });
+}, console.error);
+
 app.get('/signup-confirm', function(req, res, next) {
   var token = getSessionToken(req);
   var room = null;
@@ -164,7 +183,6 @@ app.get('/', function(req, res, next) {
 app.get('/welcome', function(req, res, next) {
   var data = {};
   if (req.query.room) { data.room = req.query.room; }
-  console.log("rendering welcome with", data);
   simpleRender('welcome', res, data, next);
 });
 
@@ -195,14 +213,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', { });
 });
-
-/* scratch */
-/*
-var token = app.auth.genToken(function(token) {
-  console.log("generated token:", token);
-  console.log("encoded token:", app.auth.encodeToken(token));
-  app.db.storeAuth('123456abcdef', token, 1);
-});*/
-/* scratch over */
 
 module.exports = app;
