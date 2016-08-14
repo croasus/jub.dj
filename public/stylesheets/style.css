@@ -148,7 +148,8 @@ button[type="button"]:disabled {
 }
 
 #login-tab-content input,
-#signup-tab-content input {
+#signup-tab-content input,
+#nickname-form input {
   background-color: #000;
   /* margin-left: 10px; */
 }

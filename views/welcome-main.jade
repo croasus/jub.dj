@@ -1,0 +1,29 @@
+div(class='col-md-4')
+div(class='col-md-4')
+  div(style='font-size:36px; text-align: center;')
+    span Welcome to the pub!
+  br
+  br
+  div(class='panel panel-default', id='login-panel')
+    form(id='nickname-form', method='post', action='nickname')
+      // Magically set by Express render
+      input(type="hidden", name="room", value=room, id='nickname-room')
+      table(style='table-layout: fixed; margin: 0px 0px 10px 0px;')
+        tbody
+          tr
+            td(colspan=2)
+              div(style='font-size:19px; margin: 0px 0px 10px 0px;')
+                span Please&nbsp
+                a(href='/login?room='+room) create an account
+                span &nbspor join as a guest:
+          tr
+            td
+              input(class='form-control login-form-input', id='login-nickname-input',
+                  name='nickname', autocomplete='off', placeholder='Choose a nickname',
+                  style='')
+            td
+              button(class='btn btn-default', type='submit', id='join-as-guest',
+                     data-toggle='tooltip', data-placement='top',
+                     style='margin: 0px 0px 0px 0px; float: right; position: relative; padding-top: 6px;'
+                     title='Join as a guest') Join as a guest
+

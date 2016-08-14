@@ -1,4 +1,6 @@
-div
-  span Please&nbsp
-  a(href='/login?room='+room) create an account
-  span &nbspor a nickname.
+extends layout
+
+- var show_login = false
+
+block main-content
+  include welcome-main
