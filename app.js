@@ -59,27 +59,35 @@ function simpleRender(view, res, data, next) {
 
 /* Routes */
 
-// Blacklist middleware. Assumes we're behind a proxy and x-real-ip is the
-// client's IP
-app.use(function(req, res, next) {
-  if (!req.headers || !req.headers['x-real-ip'] || !app.bot.blacklist) {
-    return next();
-  }
-  if (app.bot.blacklist[req.headers['x-real-ip']]) {
-    res.status(403);
-    res.render('error', {
-      message: 'Forbidden.',
-    });
-  } else {
-    next();
-  }
+function getSessionToken(req) {
+  console.log(req.cookies);
+  return req.cookies.sessionToken;
+  /*
+  var auth = req.headers['authorization'];
+  if (!auth) { return null; }
+  var token = auth.split('Bearer ')[1];
+  return token;*/
+}
+
+app.get('/dispatch', function(req, res, next) {
+  simpleRender('dispatch', res, data, next);
 });
 
 // Main page
 app.get('/' + config.private_room, function(req, res, next) {
-  var data = { room: config.private_room };
-  console.log('cookies', req.cookies);
-  simpleRender('room', res, data, next);
+  var token = getSessionToken(req);
+  if (token) {
+    app.jub.validateSessionToken(token, function(valid) {
+      if (valid) {
+        var data = { room: config.private_room };
+        simpleRender('room', res, data, next);
+      } else {
+        res.redirect('welcome?room=' + config.private_room);
+      }
+    });
+  } else {
+    res.redirect('welcome?room=' + config.private_room);
+  }
 });
 
 // TODO this will need to be per room
@@ -95,19 +103,18 @@ app.get('/login', function(req, res, next) {
   simpleRender('login', res, { room: req.query.room }, next);
 }, console.error);
 
-// AJAX endpoint, returns { success, sessionToken, expiration in UTC epoch millis }
+// AJAX endpoint, sets sessionToken cookie
 app.post('/login', function(req, res, next) {
   var expiration = new Date();
-  expiration = new Date(expiration.getTime() + 86400000 * 3).getTime();
+  expiration = new Date(expiration.getTime() + 86400000 * 3);
   app.jub.login(req.body.username,
                 req.body.password,
-                expiration,
+                expiration.getTime(),
                 function(token) {
     var success = !!token;
     var data = { success: success };
     if (success) {
-      data.sessionToken = token;
-      data.expiration = expiration;
+      res.cookie('sessionToken', token, { expires: expiration, httpOnly: true });
     } else {
       data.errorMsg = 'Invalid username/password';
     }
@@ -126,17 +133,22 @@ app.post('/signup', function(req, res, next) {
 
 // TODO expect token and validate it before rendering
 app.get('/signup-confirm', function(req, res, next) {
-  app.jub.validateSessionToken(req.cookies.sessionToken, function(valid) {
-    if (valid) {
-      var data = { username: req.query.username };
-      if (req.query.room && req.query.room !== '') {
-        data.room = req.query.room;
+  var token = getSessionToken(req);
+  if (token) {
+    app.jub.validateSessionToken(token, function(valid) {
+      if (valid) {
+        var data = { username: req.query.username };
+        if (req.query.room) {
+          data.room = req.query.room;
+        }
+        simpleRender('signup-confirm', res, data, next);
+      } else {
+        res.redirect('welcome');
       }
-      simpleRender('signup-confirm', res, data, next);
-    } else {
-      res.redirect('welcome');
-    }
-  });
+    });
+  } else {
+    res.redirect('welcome');
+  }
 });
 
 // Minimal message at '/' route
@@ -148,7 +160,9 @@ app.get('/', function(req, res, next) {
 // TODO make this view
 // Welcome -> create a nickname or an account
 app.get('/welcome', function(req, res, next) {
-  simpleRender('welcome', res, {}, next);
+  var data = {};
+  if (req.query.room) { data.room = req.query.room; }
+  simpleRender('welcome', res, data, next);
 });
 
 // Catch 404 and forward to error handler

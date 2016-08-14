@@ -113,17 +113,12 @@ script.
         .done(function(resultData) {
           console.log('login result', resultData);
           if (resultData.success === true) {
-            // Set token cookie and navigate to confirmation
-            setCookie('sessionToken',
-                      resultData.sessionToken,
-                      new Date(resultData.expiration));
             var confUrl = '/signup-confirm';
             confUrl += '?username=' + loginData.username;
 
             var room = $('#login-room').val();
             if (room) { confUrl += '&room=' + room; }
             console.log('room', room);
-
             window.location.href = confUrl;
           } else {
             $('#login-error').text(resultData.errorMsg);

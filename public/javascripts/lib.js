@@ -22,14 +22,19 @@ function getCookie(name) {
     return null;
 }
 
-function setCookie(name, value, expirationDate) {
+function setCookie(name, value, expirationDate, extra) {
   if (arguments.length < 3) {
     expirationDate = new Date();
     expirationDate.setFullYear( expirationDate.getFullYear() + 1 );
     expirationDate.toUTCString();
   }
-  document.cookie = name + '=' + value + '; ' +
-                    'expires=' + expirationDate;
+  var cookie = name + '=' + value + '; ' +
+                  'expires=' + expirationDate;
+  if (extra) {
+    cookie = cookie + '; ' + extra;
+  }
+  console.log('setting cookie', cookie);
+  document.cookie = cookie;
 }
 
 function formatTime(secs) {
