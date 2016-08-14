@@ -5,6 +5,12 @@ socket.on('force reload', function(obj) {
   location.reload();
 });
 
+socket.on('error', function(obj) {
+  console.log("Socket connection error:", obj);
+  var room = window.location.pathname.slice(1);
+  window.location.href = '/welcome' + '?room=' + room;
+});
+
 // TODO it would be nice if each section of the page could handle its own stuff
 // on preferences updates
 socket.on('preferences', function(preferences) {

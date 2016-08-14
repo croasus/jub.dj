@@ -33,7 +33,6 @@ function setCookie(name, value, expirationDate, extra) {
   if (extra) {
     cookie = cookie + '; ' + extra;
   }
-  console.log('setting cookie', cookie);
   document.cookie = cookie;
 }
 
@@ -95,7 +94,6 @@ function vendor() {
     css: '-' + pre + '-',
     js: pre[0].toUpperCase() + pre.substr(1)
   }
-  console.log(obj);
   return obj;
 }
 

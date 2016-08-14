@@ -60,33 +60,32 @@ function simpleRender(view, res, data, next) {
 /* Routes */
 
 function getSessionToken(req) {
-  console.log(req.cookies);
   return req.cookies.sessionToken;
-  /*
-  var auth = req.headers['authorization'];
-  if (!auth) { return null; }
-  var token = auth.split('Bearer ')[1];
-  return token;*/
 }
 
 app.get('/dispatch', function(req, res, next) {
   simpleRender('dispatch', res, data, next);
 });
 
-// Main page
+// Main room
 app.get('/' + config.private_room, function(req, res, next) {
   var token = getSessionToken(req);
+  var welcomeRedirect = 'welcome?room=' + config.private_room;
   if (token) {
+  //if (true) { // TODO remove
+    console.log('validating session token');
     app.jub.validateSessionToken(token, function(valid) {
       if (valid) {
+      //if (true) { // TODO remove
+        console.log('token is valid; about to render room');
         var data = { room: config.private_room };
         simpleRender('room', res, data, next);
       } else {
-        res.redirect('welcome?room=' + config.private_room);
+        res.redirect(welcomeRedirect);
       }
     });
   } else {
-    res.redirect('welcome?room=' + config.private_room);
+    res.redirect(welcomeRedirect);
   }
 });
 
@@ -131,23 +130,26 @@ app.post('/signup', function(req, res, next) {
   });
 }, console.error);
 
-// TODO expect token and validate it before rendering
 app.get('/signup-confirm', function(req, res, next) {
   var token = getSessionToken(req);
+  var room = null;
+  var welcomeRedirect = 'welcome';
+  if (req.query.room) {
+    room = req.query.room;
+    welcomeRedirect += '?room=' + room;
+  }
   if (token) {
     app.jub.validateSessionToken(token, function(valid) {
       if (valid) {
         var data = { username: req.query.username };
-        if (req.query.room) {
-          data.room = req.query.room;
-        }
+        if (room) { data.room = room; }
         simpleRender('signup-confirm', res, data, next);
       } else {
-        res.redirect('welcome');
+        res.redirect(welcomeRedirect);
       }
     });
   } else {
-    res.redirect('welcome');
+    res.redirect(welcomeRedirect);
   }
 });
 
@@ -162,6 +164,7 @@ app.get('/', function(req, res, next) {
 app.get('/welcome', function(req, res, next) {
   var data = {};
   if (req.query.room) { data.room = req.query.room; }
+  console.log("rendering welcome with", data);
   simpleRender('welcome', res, data, next);
 });
 
