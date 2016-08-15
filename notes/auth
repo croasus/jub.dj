@@ -9,12 +9,6 @@ Authentication for the websockets
   http://howtonode.org/socket-io-auth
 
 
-The username is used for more than just preferences:
-  - trimming sockets
-    - for guests, each browser is independent. One browser per guest.
-  - auto-reloading clients when the server restarts
-    - now, clients will need to reauthenticate if the server restarts
-
 Chat -
   - curently, client sends username with chat message.
   - now, the username/nickname will just be determined based on the socket's session token.
@@ -44,6 +38,10 @@ Auth behavior, first pass
 
 Do next:
   - SERVER
+    - remove code related to auto-reloading
+    - figure out whether username should still be used as keys for server state about who's in the room
+      - there are now different types of users so it's more complicated
+      - read through lib/jub.js (and probably everything else)
     - don't create new user preferences for jub-* users
       - This breaks UI elements that are backed by this table
         - so just hide those options?
