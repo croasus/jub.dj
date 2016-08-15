@@ -42,9 +42,9 @@ app.chat = require('./lib/chat')(config, app.bot);
 app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db, app.auth);
 app.config = config;
 
-// Note: in ./bin/www -> socket-routing.js, jub and chat are passed into
-// socket-routing which gives them callbacks allowing them to *initiate*
-// messages over the sockets
+// Note: in ./bin/www -> socket-routing.js, some of the above objects are
+// passed into socket-routing which gives them callbacks allowing them to
+// *initiate* messages over the sockets
 
 function simpleRender(view, res, data, next) {
   res.render(view, data, function(err, html) {

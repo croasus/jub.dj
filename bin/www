@@ -28,7 +28,7 @@ var server = http.createServer(app);
 // Create socket.io with http server, then set up socket behavior. Inject
 // the socket router's dependencies here.
 var io = require('socket.io')(server);
-require('../lib/socket-routing')(app.jub, app.chat, app.bot, app.config, io);
+require('../lib/socket-routing')(app.jub, app.chat, app.bot, app.config, app.auth, io);
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -28,11 +28,11 @@ script.
   // DJ button
   $('#join-dj').on('click', function() {
     if (!djing) {
-      socket.emit('add dj', getUsername());
+      socket.emit('add dj');
       console.log("add dj");
       djing = true;
     } else {
-      socket.emit('remove dj', getUsername());
+      socket.emit('remove dj');
       console.log("remove dj");
       djing = false;
     }
@@ -108,7 +108,6 @@ script.
       alert('You must be logged in to chat.')
     } else {
       socket.emit('chat message', {
-        user: username,
         text: msg,
       });
     }

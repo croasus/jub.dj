@@ -137,7 +137,7 @@ script.
               if (a.position <= b.position) { return -1; } else { return 1; }
             });
             console.log('emitting to videos enqueue');
-            socket.emit('videos enqueue', user, plName, videoList);
+            socket.emit('videos enqueue', plName, videoList);
             $('#omnibox').val('');
           } else {
             $('#omnibox').val($('#omnibox').val() + '.');
@@ -155,7 +155,7 @@ script.
       youtubeVideoSpecs(videoObj, function(resultObj) {
         if (resultObj.title && resultObj.duration) {
           console.log('submitting video', resultObj);
-          socket.emit('video enqueue', user, plName, resultObj);
+          socket.emit('video enqueue', plName, resultObj);
           $('#omnibox').val('');
         } else {
           console.log('failed to find info for video', resultObj.id);

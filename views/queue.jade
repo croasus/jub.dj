@@ -169,7 +169,7 @@ script.
   function submitClipSettings(videoIndex) {
     var clipState = getClipState(videoIndex);
     if (isClipStateValid(clipState)) {
-      socket.emit('clip track', getUsername(), selectedPlaylistName(),
+      socket.emit('clip track', selectedPlaylistName(),
                 videoIndex,
                 clipState.clipStartTime,
                 clipState.clipEndTime);
@@ -333,7 +333,7 @@ script.
   // Server responds on 'preferences' channel, handled by global.js
   $('#requeue-videos').click(function (e) {
     var data = { requeueVideos: this.checked };
-    socket.emit('update user preferences', getUsername(), data);
+    socket.emit('update user preferences', data);
   });
 
   // TODO include the number of videos and the duration
@@ -350,7 +350,7 @@ script.
     });
     radio.click( function( e ) {
       var data = { selectedPlaylist: this.value };
-      socket.emit('update user preferences', getUsername(), data);
+      socket.emit('update user preferences', data);
     });
     li.append(radio);
     li.append(nameSpan);
@@ -493,14 +493,14 @@ script.
   $('#playlist-form').submit(function() {
     var selectedName = selectedPlaylistName();
     var newName = $('#playlist-name-input').val();
-    var user = getUsername();
 
-    if (user == '') {
+    // TODO check userKind
+    if (true) {
       alert('You must be logged in to edit playlists.')
     } else {
       if (selectedName.length > 0 && selectedName != 'sandbox') {
         console.log('renaming playlist', newName);
-        socket.emit('rename playlist', user, selectedName, newName);
+        socket.emit('rename playlist', selectedName, newName);
         $('#playlist-name-input').val('');
       }
     }
@@ -517,26 +517,26 @@ script.
 
   // Shuffle
   $('#shuffle').on('click', function(e) {
-    socket.emit('shuffle', getUsername(), selectedPlaylistName());
+    socket.emit('shuffle', selectedPlaylistName());
     return false;
   });
 
   // Delete track(s)
   $('#delete-track').on('click', function(e) {
-    socket.emit('delete tracks', getUsername(), selectedPlaylistName(),
+    socket.emit('delete tracks', selectedPlaylistName(),
                 selectedTracks());
     return false;
   });
 
   // Send track(s) to top
   $('#send-to-top').on('click', function(e) {
-    socket.emit('send to top', getUsername(), selectedPlaylistName(), selectedTracks());
+    socket.emit('send to top', selectedPlaylistName(), selectedTracks());
     return false;
   });
 
   // Send track(s) to bottom
   $('#send-to-bottom').on('click', function(e) {
-    socket.emit('send to bottom', getUsername(), selectedPlaylistName(), selectedTracks());
+    socket.emit('send to bottom', selectedPlaylistName(), selectedTracks());
     return false;
   });
 
@@ -584,13 +584,13 @@ script.
 
   // Copy playlist
   $('#copy-playlist').on('click', function(e) {
-    socket.emit('copy playlist', getUsername(), selectedPlaylistName());
+    socket.emit('copy playlist', selectedPlaylistName());
   });
 
   // Delete playlist
   $('#delete-playlist').on('click', function(e) {
     if (selectedPlaylistName() != 'sandbox') {
-      socket.emit('delete playlist', getUsername(), selectedPlaylistName());
+      socket.emit('delete playlist', selectedPlaylistName());
     }
   });
 

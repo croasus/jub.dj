@@ -1,46 +1,20 @@
 script.
 
-  var storeUsername = function(username) {
-    setCookie('username', username);
-  }
-
-  // Any desired effects of the user changing username should go in here
-  var updateUsername = function(username) {
-    storeUsername(username);
-    socket.emit('user update', username);
-  }
-
   var getUsername = function() {
-    return getCookie('username');
-  }
+    return getCookie('username') || getCookie('nickname');
+  };
 
-  // Username input box
-  $('#username').submit(function() {
-    var username = $('#username-input').val();
-    if (username && username.length > 0) {
-      updateUsername(username);
-      $('#username-input').val('');
-    }
-    return false;
-  });
-
-  // Document is loaded so cookies are probably ready. If the username cookie
-  // is empty, the server will assign us a name, and we'll store it.
+  // Document is loaded so cookies are probably ready. User sends its
+  // sessionToken, we can request all the room's context info
   $( document ).ready(function() {
-    socket.emit('user loaded', getUsername(), function(assigned) {
-      storeUsername(assigned.name);
-
-      // Now that we have our official user name, ask for our preferences and
-      // other state info. Other parts of the page respond to the answers
-      socket.emit('preferences', assigned.name);
-      socket.emit('playlists', assigned.name);
-      socket.emit('user djing', assigned.name);
-      socket.emit('chat cache');
-      socket.emit('up next');
-    });
+    // Now that we have our official user name, ask for our preferences and
+    // other state info. Other parts of the page respond to the answers
+    socket.emit('chat cache');
+    socket.emit('up next');
   });
 
   // Server is asking who is present
+  // TODO this probably isn't needed anymore
   socket.on('ping users', function() {
-    socket.emit('user present', getUsername());
+    socket.emit('user present');
   });

@@ -25,9 +25,9 @@ div(id="chat-tab-content", class="tab-content")
           tbody(id='chat-settings-tbody')
             tr
               td
-                form(class='form-group', id='username', action='')
-                  input(class='form-control', id='username-input',
-                        placeholder='Username', autocomplete='off')
+                form(class='form-group', id='nickname', action='')
+                  input(class='form-control', id='nickname-input',
+                        placeholder='Nickname', autocomplete='off')
             tr
               td
                 input(id='show-chat-images', type='checkbox', action='')
@@ -101,10 +101,10 @@ script.
   $('#enable-mute-updates').on('change', function(e) {
     var data = { allowMuteStatus: this.checked };
     if(!this.checked)
-      socket.emit('mute update', getUsername(), false);
+      socket.emit('mute update', false);
     else
-      socket.emit('mute update', getUsername(), player.isMuted());
-    socket.emit('update user preferences', getUsername(), data);
+      socket.emit('mute update', player.isMuted());
+    socket.emit('update user preferences', data);
   })
 
   $('#chat-navtabs a').click(function (e) {
@@ -122,7 +122,7 @@ script.
   })
 
   // Message from server saying who's connected
-  socket.on('current users', function(users) {
+  socket.on('users info', function(users) {
     currentUsers = users;
     drawCurrentUsers();
   });
@@ -317,7 +317,7 @@ script.
   // Server responds on 'preferences' channel, handled by global.js
   $('#show-chat-images').click(function (e) {
     var data = { showChatImages: this.checked };
-    socket.emit('update user preferences', getUsername(), data);
+    socket.emit('update user preferences', data);
   });
 
   // The chat is the correct initially-active tab; we loaded the page with the

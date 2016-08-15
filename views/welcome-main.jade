@@ -39,7 +39,7 @@ script.
             var confUrl = '/signup-confirm';
             confUrl += '?username=' + guestData.nickname;
 
-            var room = $('#nick-room').val();
+            var room = $('#nickname-room').val();
             if (room) { confUrl += '&room=' + room; }
             console.log('room', room);
             window.location.href = confUrl;

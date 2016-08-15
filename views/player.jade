@@ -148,7 +148,7 @@ script.
     setMute(newState);
     setVolumeSlider(newVolume);
     if($('#enable-mute-updates').is(":checked"))
-      socket.emit('mute update', getUsername(), newState);
+      socket.emit('mute update', newState);
   }
 
   // callback for volume range slider
@@ -169,8 +169,9 @@ script.
 
     refreshSizes(true);
     socket.emit('video state');
-    if($('#enable-mute-updates').is(":checked"))
-      socket.emit('mute update', getUsername(), isMuted);
+    if($('#enable-mute-updates').is(":checked")) {
+      socket.emit('mute update', isMuted);
+    }
   }
 
   // The API calls this function when the player's state changes.
@@ -204,8 +205,7 @@ script.
 
   // Skip
   $('#skip').on('click', function(e) {
-    var user = getCookie('username');
-    socket.emit('video skip', user);
+    socket.emit('video skip');
     return false;
   });
 
@@ -257,13 +257,13 @@ script.
 
   // Like
   $('#like-btn').on('click', function(e) {
-    socket.emit('like', getUsername());
+    socket.emit('like');
     return false;
   });
 
   // Dislike
   $('#dislike-btn').on('click', function(e) {
-    socket.emit('dislike', getUsername());
+    socket.emit('dislike');
     return false;
   });
 
