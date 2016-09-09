@@ -43,6 +43,7 @@ Do next:
     - figure out whether username should still be used as keys for server state about who's in the room
       - there are now different types of users so it's more complicated
       - read through lib/jub.js (and probably everything else)
+      - this is why nicknames must be unique
     - don't create new user preferences for jub-* users
       - This breaks UI elements that are backed by this table
         - so just hide those options?
@@ -54,37 +55,28 @@ Do next:
     - separate fetching and initing of playlists
       - why? well, we definitely need to do this for preferences, so that
         accounts aren't created for every jub-*
-    - Keep set of users in memory and check on them periodically
-      - Don't need to trim sockets though?
     - add reset password feature
       - sends an email to the user with a generated link
-        - add /reset_password/:uuid
+        - add /reset-password/:uuid
         - link expires after 1 day
     - add auth check to... pretty much everything but chat and hoot
       - since everything uses sockets, I think this means authenticating socket connections
-      - not sure how we'll handle nickname-only users
-        - different socket server?
-        - give them a token, and make the data different from account users?
-          - this is a good solution
-          - I think nicknames must then be unique? no, why would that be?
+      - handle nickname-only users
+        - give them a token with userKind == guest
+          - I think nicknames must then be unique, since we keep track of current users
+            by using some name
+    - set 'secure' flag on sessionToken and configure nginx to modify the cookie on requests
   - UI
     - redirect to /welcome if you know you aren't authed
       - check for session token
       - check expiration
       - make sure socket can connect
-    - no more 'username' cookie
+    - no more 'username' cookie?
+    - update nickname box
     - create 'nickname' cookie
       - mischevious people might delete the cookie, so make sure even read-only interactions
         are gated by nickname || auth
-    - create /welcome
-      - URL query param 'room'
-        - if no query param room, say 'How did you get here?'
-      - Two choices:
-        - Log in as guest
-          - nickname input
-          - hidden input for 'room'
-          - join button
-        - Login --> redirect to /login?room=foo
+    - in /welcome, if no query param room, say 'How did you get here?'
     - Player UI
       - don't start next video unless nickname or session token
     - chat UI
@@ -94,16 +86,14 @@ Do next:
         - prefer local cookie nickname if it exists
       - if no session token, hide all chat prefs except for 'Nickname' box
     - Queue UI
-      - If not logged in, Change 'this playlist is empty' message to 'you must be logged in'
+      - If userKind == guest, Change 'this playlist is empty' message to 'you must be logged in'
     - top UI
-      - hide search bar if no session token
+      - hide search bar if userKind == guest
       - Create 'log out' link
-        - deletes session token
+        - deletes session token (server must do this)
         - leaves nickname intact
         - redirects to /logout "Goodbye, foo!"
-    - Sign up should automatically log you in
     - Add reset password link to login
-    - BUG - "room" value gets lost on invalid login/signup
 
 
 Do later:

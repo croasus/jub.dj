@@ -4,13 +4,26 @@ script.
     return getCookie('username') || getCookie('nickname');
   };
 
-  // Document is loaded so cookies are probably ready. User sends its
-  // sessionToken, we can request all the room's context info
+  var getUserKind = function() {
+    return getCookie('userKind') || 'guest';
+  }
+
   $( document ).ready(function() {
-    // Now that we have our official user name, ask for our preferences and
-    // other state info. Other parts of the page respond to the answers
+    // Inform the server we are good to go
+    socket.emit('user loaded');
+
+    // Request page state from the server.
+    // Other parts of the page respond to the answers.
+    console.log("requesting chat cache and up next");
     socket.emit('chat cache');
     socket.emit('up next');
+
+    if (getUserKind().userKind === 'account') {
+      console.log("requesting user data");
+      socket.emit('preferences');
+      socket.emit('playlists');
+      socket.emit('user djing');
+    }
   });
 
   // Server is asking who is present

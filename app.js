@@ -106,7 +106,7 @@ app.get('/login', function(req, res, next) {
   simpleRender('login', res, { room: req.query.room }, next);
 }, console.error);
 
-// AJAX endpoint, sets sessionToken cookie
+// AJAX endpoint, sets sessionToken, username and userKind cookies
 app.post('/login', function(req, res, next) {
   var expiration = new Date();
   expiration = new Date(expiration.getTime() + 86400000 * 3);
@@ -117,7 +117,12 @@ app.post('/login', function(req, res, next) {
     var success = !!token;
     var data = { success: success };
     if (success) {
+      // This cookie is HTTP only so client code can't access it
       res.cookie('sessionToken', token, { expires: expiration, httpOnly: true });
+      // The client uses these cookies
+      res.cookie('username', req.body.username, { expires: expiration });
+      res.cookie('userKind', 'account', { expires: expiration });
+      // TODO nickname?
     } else {
       data.errorMsg = 'Invalid username/password';
     }
@@ -134,7 +139,7 @@ app.post('/signup', function(req, res, next) {
   });
 }, console.error);
 
-// AJAX endpoint, sets sessionToken cookie
+// AJAX endpoint, sets sessionToken, username and userKind cookies
 app.post('/join-as-guest', function(req, res, next) {
   var expiration = new Date();
   expiration = new Date(expiration.getTime() + 86400000 * 3);
@@ -146,6 +151,9 @@ app.post('/join-as-guest', function(req, res, next) {
     var data = { success: success };
     if (success) {
       res.cookie('sessionToken', token, { expires: expiration, httpOnly: true });
+      res.cookie('username', req.body.nickname, { expires: expiration });
+      res.cookie('nickname', req.body.nickname, { expires: expiration });
+      res.cookie('userKind', 'guest', { expires: expiration });
     } else {
       data.errorMsg = errorMsg;
     }
