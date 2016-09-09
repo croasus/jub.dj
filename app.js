@@ -67,7 +67,8 @@ app.get('/dispatch', function(req, res, next) {
   simpleRender('dispatch', res, data, next);
 });
 
-// Main room
+// Main room. If session token is present (as cookie) and valid, render the
+// room. Otherwise, redirect to welcome page.
 app.get('/' + config.private_room, function(req, res, next) {
   var token = getSessionToken(req);
   var welcomeRedirect = 'welcome?room=' + config.private_room;
@@ -98,6 +99,9 @@ app.get('/report', function(req, res, next) {
   });
 }, console.error);
 
+// On this page, user can either sign up or log in. The client uses AJAX calls
+// to create the account and/or log in, and ends up redirecting either to
+// signup-confirm or welcome page.
 app.get('/login', function(req, res, next) {
   simpleRender('login', res, { room: req.query.room }, next);
 }, console.error);
@@ -137,18 +141,21 @@ app.post('/join-as-guest', function(req, res, next) {
   console.log("attempting join as guest with nickname", req.body.nickname);
   app.jub.joinAsGuest(req.body.nickname,
                       expiration.getTime(),
-                      function(token) {
+                      function(token, errorMsg) {
     var success = !!token;
     var data = { success: success };
     if (success) {
       res.cookie('sessionToken', token, { expires: expiration, httpOnly: true });
     } else {
-      data.errorMsg = 'That nickname is taken :-(';
+      data.errorMsg = errorMsg;
     }
     res.send(data);
   });
 }, console.error);
 
+// If their session token is valid, say welcome and provide a link to get into
+// the room (if they began by trying to get into a room). Otherwise, redirect
+// back to the welcome page.
 app.get('/signup-confirm', function(req, res, next) {
   var token = getSessionToken(req);
   var room = null;
@@ -210,6 +217,7 @@ if (process.env.TEST) {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
+  console.log(err.stack);
   res.status(err.status || 500);
   res.render('error', { });
 });

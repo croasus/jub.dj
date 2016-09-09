@@ -39,6 +39,7 @@ Auth behavior, first pass
 Do next:
   - SERVER
     - remove code related to auto-reloading
+      - Or rather, make sure that we get auto-reloading for free with new scheme.
     - figure out whether username should still be used as keys for server state about who's in the room
       - there are now different types of users so it's more complicated
       - read through lib/jub.js (and probably everything else)
@@ -51,10 +52,10 @@ Do next:
             allowMuteStatus
             color?
     - separate fetching and initing of playlists
-      - why? well, we definitely need to do this for preferences, so that accounts aren't created for every jub-*
-    - create in-memory session state of users
-      - why? This is what tokens are for
-      - expire sessions periodically
+      - why? well, we definitely need to do this for preferences, so that
+        accounts aren't created for every jub-*
+    - Keep set of users in memory and check on them periodically
+      - Don't need to trim sockets though?
     - add reset password feature
       - sends an email to the user with a generated link
         - add /reset_password/:uuid

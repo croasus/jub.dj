@@ -44,7 +44,8 @@ script.
             console.log('room', room);
             window.location.href = confUrl;
           } else {
-            $('#nickname-error').text(resultData.errorMsg);
+            //$('#nickname-error').text(resultData.errorMsg);
+            alert(resultData.errorMsg);
           }
         });
       e.preventDefault();
