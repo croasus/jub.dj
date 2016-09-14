@@ -2,17 +2,17 @@ doctype html
 html(lang="en")
   head
     link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
-    include head
+    include head.jade
     block includes
   body
     div(class='container-fluid', id='jub-container')
-      include top
+      include top.jade
 
       // Main page content
       block main-content
 
     // Outside of the container
-    include bottom
+    include bottom.jade
       block bottom-content
 
 script(src='/javascripts/global.js')

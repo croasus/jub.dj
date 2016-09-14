@@ -73,13 +73,15 @@ app.get('/' + config.private_room, function(req, res, next) {
   var token = getSessionToken(req);
   var welcomeRedirect = 'welcome?room=' + config.private_room;
   if (token) {
-  //if (true) { // TODO remove
     console.log('validating session token');
     app.jub.validateSessionToken(token, function(valid) {
       if (valid) {
-      //if (true) { // TODO remove
+        var userKind = app.auth.parseToken(token).userKind;
         console.log('token is valid; about to render room');
-        var data = { room: config.private_room };
+        var data = {
+          room: config.private_room,
+          loggedIn: userKind === "account"
+        };
         simpleRender('room', res, data, next);
       } else {
         res.redirect(welcomeRedirect);
@@ -106,6 +108,10 @@ app.get('/login', function(req, res, next) {
   simpleRender('login', res, { room: req.query.room }, next);
 }, console.error);
 
+app.get('/logout', function(req, res, next) {
+  simpleRender('logout', res, { room: req.query.room }, next);
+}, console.error);
+
 // AJAX endpoint, sets sessionToken, username and userKind cookies
 app.post('/login', function(req, res, next) {
   var expiration = new Date();
@@ -128,6 +134,15 @@ app.post('/login', function(req, res, next) {
     }
     res.send(data);
   });
+}, console.error);
+
+// AJAX endpoint, sets sessionToken, username and userKind cookies
+app.post('/logout', function(req, res, next) {
+  res.cookie('sessionToken', '', { httpOnly: true });
+  // The client uses these cookies
+  res.cookie('username', '');
+  res.cookie('userKind', '');
+  res.send({ success: true });
 }, console.error);
 
 // AXAJ endpoint, returns JSON { success, errorMsg }

@@ -11,14 +11,12 @@ Authentication for the websockets
 
 Chat -
   - curently, client sends username with chat message.
-  - now, the username/nickname will just be determined based on the socket's session token.
+  - now, the username will just be determined based on the socket's session token.
 
 
 Auth behavior, first pass
   - our room is public
-  - t.e. nickname
-    - defaults to account name, but you can have a nickname without an account
-  - chat is allowed only if you choose a nickname
+  - chat is allowed only if you choose a nickname or log in
   - welcome screen (redirect here if try to access room with no nickname or auth)
   - Login should redirect to the room afterward
   - not allowed without auth:
@@ -32,71 +30,47 @@ Auth behavior, first pass
     - what exactly does this do?
     - means that you can close the browser and stay logged in?
   - user can reset password
-  - still assign temporary jub-* username for anonymous people
   - don't require logging in every day
     - I guess this means reissuing a token when the expiration gets close
+    - if the browser stays open, let it keep refreshing its token (once a day would be fine)
 
 Do next:
   - SERVER
     - remove code related to auto-reloading
       - Or rather, make sure that we get auto-reloading for free with new scheme.
-    - figure out whether username should still be used as keys for server state about who's in the room
+    - username should still be used as keys for server state about who's in the room
       - there are now different types of users so it's more complicated
       - read through lib/jub.js (and probably everything else)
       - this is why nicknames must be unique
-    - don't create new user preferences for jub-* users
-      - This breaks UI elements that are backed by this table
-        - so just hide those options?
-            selectedPlaylist
-            requeueVideos
-            showChatImages
-            allowMuteStatus
-            color?
-    - separate fetching and initing of playlists
-      - why? well, we definitely need to do this for preferences, so that
-        accounts aren't created for every jub-*
+    - for guests:
+      - allowMuteStatus = true
+      - showChatImages = false
+      - color is stored in memory
     - add reset password feature
       - sends an email to the user with a generated link
         - add /reset-password/:uuid
         - link expires after 1 day
     - add auth check to... pretty much everything but chat and hoot
       - since everything uses sockets, I think this means authenticating socket connections
-      - handle nickname-only users
-        - give them a token with userKind == guest
-          - I think nicknames must then be unique, since we keep track of current users
-            by using some name
     - set 'secure' flag on sessionToken and configure nginx to modify the cookie on requests
   - UI
     - redirect to /welcome if you know you aren't authed
       - check for session token
       - check expiration
       - make sure socket can connect
+    - periodically, server makes client refresh websocket connection
     - no more 'username' cookie?
-    - update nickname box
-    - create 'nickname' cookie
-      - mischevious people might delete the cookie, so make sure even read-only interactions
-        are gated by nickname || auth
-    - in /welcome, if no query param room, say 'How did you get here?'
-    - Player UI
-      - don't start next video unless nickname or session token
     - chat UI
-      - chat socket emissions send auth if present AND nickname
-      - don't display chat without nickname || session token
-      - on load, make sure default nickname is fetched by client (comes with user prefs)
-        - prefer local cookie nickname if it exists
       - if no session token, hide all chat prefs except for 'Nickname' box
-    - Queue UI
-      - If userKind == guest, Change 'this playlist is empty' message to 'you must be logged in'
     - top UI
-      - hide search bar if userKind == guest
       - Create 'log out' link
         - deletes session token (server must do this)
-        - leaves nickname intact
         - redirects to /logout "Goodbye, foo!"
     - Add reset password link to login
 
 
 Do later:
+  - nicknames for account users
   - room admin page
   - independent auth micro-service
   - throttling/limiting for login and reset password

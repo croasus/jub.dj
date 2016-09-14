@@ -4,8 +4,9 @@ div(class='col-md-3')
        id='load-video', action='', style='padding-left:0px;')
 
     div(class='input-group input-group-md')
-      input(class='form-control jub-nav-input jub-nav-item', id='omnibox',
-            placeholder='Search / video or playlist ID / URL')
+      if loggedIn
+        input(class='form-control jub-nav-input jub-nav-item', id='omnibox',
+              placeholder='Search / video or playlist ID / URL')
 
 div(class='col-md-6')
   table(class='table', id='dj-banner', style='margin-bottom:0px;')

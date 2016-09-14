@@ -7,9 +7,10 @@ ul(id="chat-navtabs", class="nav nav-tabs")
     a(id="jubbin-list-navtab-a", href="#jubbin-list-tab", data-toggle='tab')
       i(class="material-icons", data-toggle="tooltip", title="Who's jubbin'") people
       div(id="num-users", class="right", style="margin-left:3px;") (0)
-  li(id="chat-settings-navtab-li", role="presentation")
-    a(id="chat-settings-navtab-a", href="#chat-settings-tab", data-toggle='tab')
-      i(class="material-icons", data-toggle="tooltip", title="Chat settings") settings
+  if loggedIn
+    li(id="chat-settings-navtab-li", role="presentation")
+      a(id="chat-settings-navtab-a", href="#chat-settings-tab", data-toggle='tab')
+        i(class="material-icons", data-toggle="tooltip", title="Chat settings") settings
 
 div(id="chat-tab-content", class="tab-content")
   div(class="tab-pane active" id="chat-tab")
@@ -45,7 +46,7 @@ div(id="chat-tab-content", class="tab-content")
                   style="line-height:1.9; color: #9d9d9d; margin-left: 21px;"
                   ) GitHub issues
 
-include ./username.jade
+include username.jade
 
 script.
   var scrolledUp = false;

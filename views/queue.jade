@@ -6,79 +6,82 @@ ul(id="queue-navtabs", class="nav nav-tabs")
      data-toggle="tooltip", title="Playlists")
     a(id="playlists-navtab-a", href="#playlists-tab", data-toggle='tab')
       i(class="material-icons", data-toggle="tooltip", title="Playlists") library_music
-  li(id="queue-settings-navtab-li", role="presentation", class="active",
-     data-toggle="tooltip", title="Settings")
-    a(id="queue-settings-navtab-a", href="#queue-settings-tab", data-toggle='tab')
-      i(class="material-icons", data-toggle="tooltip", title="Queue settings") settings
+  if loggedIn
+    li(id="queue-settings-navtab-li", role="presentation", class="active",
+       data-toggle="tooltip", title="Settings")
+      a(id="queue-settings-navtab-a", href="#queue-settings-tab", data-toggle='tab')
+        i(class="material-icons", data-toggle="tooltip", title="Queue settings") settings
 
 div(id="queue-tab-content", class="tab-content")
   div(class="tab-pane" id="queue-tab")
     div(class='panel panel-default', id='queue-panel')
       table(class='table', id='playlist-name-banner')
         tbody
-          tr
-            td(id="big-playlist-name",
-              style="width: 100%; text-align: left; font-size: large; margin-top: 5px; line-height:1.9;")
-            td(class='right')
-              div(class='input-group input-group-md')
-                button(class='btn btn-default', type='button', id='shuffle',
-                       data-toggle='tooltip', data-placement='top',
-                       title='Shuffle')
-                  span(id='shuffle-icon', class='glyphicon glyphicon-random')
-
-      table(class='table', id='queue-banner')
-        tbody
-          tr
-            td
-              input(id='select-all', type='checkbox',
-                    data-toggle='tooltip', title='Select all',
-                    style='visibility:hidden')
-              label(for='select-all', style='font-weight: normal; display: none;'
-                    id='select-all-label') Select all
-            td(class='right', id='queue-buttons')
-              div(class='input-group input-group-md')
-                button(class='btn btn-default left', type='button', id='show-clip-settings',
-                       data-toggle='tooltip', data-placement='top',
-                       title='Clip selected track')
-                  span(id='show-clip-settings-icon', class='glyphicon glyphicon-scissors')
-                button(class='btn btn-default right', type='button', id='delete-track',
-                       data-toggle='tooltip', data-placement='top',
-                       title='Delete')
-                  span(id='delete-track-icon', class='glyphicon glyphicon-remove')
-                button(class='btn btn-default', type='button', id='send-to-bottom',
-                       data-toggle='tooltip', data-placement='top',
-                       title='Send to bottom')
-                  span(id='send-to-bottom-icon', class='glyphicon glyphicon-chevron-down')
-                button(class='btn btn-default left', type='button', id='send-to-top',
-                       data-toggle='tooltip', data-placement='top',
-                       title='Send to top')
-                  span(id='send-to-top-icon', class='glyphicon glyphicon-chevron-up')
-
-      table(class='table', id='clip-table')
-        tbody
-          tr(id='clip-settings')
-            td
-              form(id='clip-times-form')
-                input(class='form-control jub-nav-item clip-input',
-                      id='clip-start-value', placeholder='Start', data-toggle='tooltip',
-                      data-placement='top', title='Clip start', oninput='updateClipButton()',
-                      autocomplete='off')
-                input(class='form-control jub-nav-item clip-input',
-                      id='clip-end-value', placeholder='End', data-toggle='tooltip',
-                      data-placement='top', title='Clip end', oninput='updateClipButton()',
-                      autocomplete='off')
-                div(class='input-group input-group-md right')
-                  button(class='material-icons btn btn-default clip-btn', type='submit', id='confirm-clip',
+          if loggedIn
+            tr
+              td(id="big-playlist-name",
+                style="width: 100%; text-align: left; font-size: large; margin-top: 5px; line-height:1.9;")
+              td(class='right')
+                div(class='input-group input-group-md')
+                  button(class='btn btn-default', type='button', id='shuffle',
                          data-toggle='tooltip', data-placement='top',
-                         title='Confirm clip') check
-                  button(class='material-icons btn btn-default clip-btn', id='reset-clip',
-                         data-toggle='tooltip', data-placement='top',
-                         title='Reset clip') restore
+                         title='Shuffle')
+                    span(id='shuffle-icon', class='glyphicon glyphicon-random')
 
-      div(class='panel-body')
-        div(id='video-queue')
-          table
-            tbody(id='video-queue-tbody')
+        table(class='table', id='queue-banner')
+          tbody
+            tr
+              td
+                input(id='select-all', type='checkbox',
+                      data-toggle='tooltip', title='Select all',
+                      style='visibility:hidden')
+                label(for='select-all', style='font-weight: normal; display: none;'
+                      id='select-all-label') Select all
+              td(class='right', id='queue-buttons')
+                div(class='input-group input-group-md')
+                  button(class='btn btn-default left', type='button', id='show-clip-settings',
+                         data-toggle='tooltip', data-placement='top',
+                         title='Clip selected track')
+                    span(id='show-clip-settings-icon', class='glyphicon glyphicon-scissors')
+                  button(class='btn btn-default right', type='button', id='delete-track',
+                         data-toggle='tooltip', data-placement='top',
+                         title='Delete')
+                    span(id='delete-track-icon', class='glyphicon glyphicon-remove')
+                  button(class='btn btn-default', type='button', id='send-to-bottom',
+                         data-toggle='tooltip', data-placement='top',
+                         title='Send to bottom')
+                    span(id='send-to-bottom-icon', class='glyphicon glyphicon-chevron-down')
+                  button(class='btn btn-default left', type='button', id='send-to-top',
+                         data-toggle='tooltip', data-placement='top',
+                         title='Send to top')
+                    span(id='send-to-top-icon', class='glyphicon glyphicon-chevron-up')
+
+        table(class='table', id='clip-table')
+          tbody
+            tr(id='clip-settings')
+              td
+                form(id='clip-times-form')
+                  input(class='form-control jub-nav-item clip-input',
+                        id='clip-start-value', placeholder='Start', data-toggle='tooltip',
+                        data-placement='top', title='Clip start', oninput='updateClipButton()',
+                        autocomplete='off')
+                  input(class='form-control jub-nav-item clip-input',
+                        id='clip-end-value', placeholder='End', data-toggle='tooltip',
+                        data-placement='top', title='Clip end', oninput='updateClipButton()',
+                        autocomplete='off')
+                  div(class='input-group input-group-md right')
+                    button(class='material-icons btn btn-default clip-btn', type='submit', id='confirm-clip',
+                           data-toggle='tooltip', data-placement='top',
+                           title='Confirm clip') check
+                    button(class='material-icons btn btn-default clip-btn', id='reset-clip',
+                           data-toggle='tooltip', data-placement='top',
+                           title='Reset clip') restore
+
+        div(class='panel-body')
+          div(id='video-queue')
+            table
+              tbody(id='video-queue-tbody')
+
 
   div(class="tab-pane" id="playlists-tab")
     div(class='panel panel-default', id='playlists-panel')
@@ -361,10 +364,10 @@ script.
     var tr = $('<tr>');
     var titleTd = $('<td>');
     tr.append(titleTd);
-    titleTd.text(
-      "This playlist is empty. Use the search bar to find videos, or enter " +
-      "a YouTube video/playlist ID."
-    );
+    var accountMsg = "This playlist is empty. Use the search bar to find videos, " +
+                     "or enter a YouTube video/playlist ID.";
+    var guestMsg = "Log in to join the DJ rotation!";
+    titleTd.text(#{loggedIn ? "accountMsg" : "guestMsg" });
     return tr;
   }
 
@@ -494,8 +497,7 @@ script.
     var selectedName = selectedPlaylistName();
     var newName = $('#playlist-name-input').val();
 
-    // TODO check userKind
-    if (true) {
+    if (#{!loggedIn}) {
       alert('You must be logged in to edit playlists.')
     } else {
       if (selectedName.length > 0 && selectedName != 'sandbox') {
@@ -599,3 +601,4 @@ script.
     $('#queue-navtab-a').click();
     updateQueueButtons();
   });
+

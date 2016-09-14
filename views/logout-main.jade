@@ -1,0 +1,53 @@
+div(class='col-md-4')
+div(class='col-md-4')
+  div(class='panel panel-default', id='logout-panel')
+    form(id='logout-form', method='post', action='logout')
+      input(type="hidden", name="room", value=room, id='logout-room')
+      table(style='table-layout: fixed; width: 100%; margin: 10px 0 10px 0;')
+        tbody
+          tr
+            td(style='width: 20%')
+            td(style='text-align: center; font-size: 16px;') Are you sure you want to log out?
+            td(style='width: 20%')
+          tr(colspan='2')
+            td(style='width: 20%')
+            td
+              button(class='btn btn-default', type='submit', id='logout',
+                     data-toggle='tooltip', data-placement='top',
+                     style='margin: 11px 20px 0 0; position: relative;'
+                     title='Log out') Log out
+              button(class='btn btn-default', type='button', id='no-logout',
+                     data-toggle='tooltip', data-placement='top',
+                     style='margin: 11px 0 0 0; float: right; position: relative;'
+                     title='Back to the room') Nevermind
+            td(style='width: 20%')
+
+
+
+  script.
+    $('#no-logout').click(function(e) {
+      var url = '/welcome';
+      var room = $('#logout-room').val();
+      if (room) { url = '/' + room; }
+      window.location.href = url;
+      e.preventDefault();
+    });
+
+    $('#logout-form').submit(function(e) {
+      console.log('logout');
+      $.post('/logout', {})
+        .done(function(resultData) {
+          console.log('logout result', resultData);
+          if (resultData.success === true) {
+            var confUrl = '/welcome';
+            var room = $('#logout-room').val();
+            if (room) { confUrl += '?room=' + room; }
+            console.log('room', room);
+            window.location.href = confUrl;
+          } else {
+            alert(resultData.errorMsg || 'Unknown error!');
+          }
+        });
+      e.preventDefault();
+    });
+

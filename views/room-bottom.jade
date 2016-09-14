@@ -6,11 +6,12 @@ div(class='col-md-9', style='padding-right:0; padding-left: 8px;')
         td(id='up-next-label', style='visibility:hidden;', rowspan=2) Next:
         td(id='next-track')
         td(id='join-dj-td', rowspan=2)
-          button(class='btn btn-default', type='button', id='join-dj',
-                 data-toggle='tooltip', data-placement='top',
-                 style='margin-top: 11px; float: right; position: relative; top: -5px;'
-                 title='Click to DJ')
-            span(id='join-dj-icon', class='glyphicon glyphicon-headphones')
+          if loggedIn
+            button(class='btn btn-default', type='button', id='join-dj',
+                   data-toggle='tooltip', data-placement='top',
+                   style='margin-top: 11px; float: right; position: relative; top: -5px;'
+                   title='Click to DJ')
+              span(id='join-dj-icon', class='glyphicon glyphicon-headphones')
       tr
         td(id='next-dj')
           span(id='next-dj-by-span',
@@ -109,6 +110,7 @@ script.
     } else {
       socket.emit('chat message', {
         text: msg,
+        user: username
       });
     }
     $('#chat-input').val('');
