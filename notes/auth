@@ -36,16 +36,9 @@ Auth behavior, first pass
 
 Do next:
   - SERVER
-    - remove code related to auto-reloading
-      - Or rather, make sure that we get auto-reloading for free with new scheme.
-    - username should still be used as keys for server state about who's in the room
-      - there are now different types of users so it's more complicated
-      - read through lib/jub.js (and probably everything else)
-      - this is why nicknames must be unique
     - for guests:
       - allowMuteStatus = true
       - showChatImages = false
-      - color is stored in memory
     - add reset password feature
       - sends an email to the user with a generated link
         - add /reset-password/:uuid
@@ -53,20 +46,15 @@ Do next:
     - add auth check to... pretty much everything but chat and hoot
       - since everything uses sockets, I think this means authenticating socket connections
     - set 'secure' flag on sessionToken and configure nginx to modify the cookie on requests
+    - make sure the new paths are routed to nodejs from nginx
   - UI
-    - redirect to /welcome if you know you aren't authed
+    - periodically, server makes client refresh websocket connection
+    - no more 'username' cookie?
+    - Add reset password link to login
+    - redirect to /welcome if you know you aren't authed?
       - check for session token
       - check expiration
       - make sure socket can connect
-    - periodically, server makes client refresh websocket connection
-    - no more 'username' cookie?
-    - chat UI
-      - if no session token, hide all chat prefs except for 'Nickname' box
-    - top UI
-      - Create 'log out' link
-        - deletes session token (server must do this)
-        - redirects to /logout "Goodbye, foo!"
-    - Add reset password link to login
 
 
 Do later:

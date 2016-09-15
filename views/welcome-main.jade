@@ -7,7 +7,10 @@ div(class='col-md-4')
   div(class='panel panel-default', id='login-panel')
     div(style='font-size:19px; margin: 0px 0px 10px 0px;')
       span Please&nbsp
-      a(href='/login?room='+room) create an account
+      if room
+        a(href='/login?room='+room) create an account
+      else
+        a(href='/login') create an account
       span &nbspor join as a guest:
     form(class='form-horizontal' id='nickname-form', method='post', action='nickname', role='form')
       // Magically set by Express render

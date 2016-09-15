@@ -24,11 +24,12 @@ div(id="chat-tab-content", class="tab-content")
       div(class='panel-body')
         table
           tbody(id='chat-settings-tbody')
-            tr
-              td
-                form(class='form-group', id='nickname', action='')
-                  input(class='form-control', id='nickname-input',
-                        placeholder='Nickname', autocomplete='off')
+            unless loggedIn
+              tr
+                td
+                  form(class='form-group', id='nickname', action='')
+                    input(class='form-control', id='nickname-input',
+                          placeholder='Nickname', autocomplete='off')
             tr
               td
                 input(id='show-chat-images', type='checkbox', action='')

@@ -2,10 +2,11 @@ ul(id="queue-navtabs", class="nav nav-tabs")
   li(id="queue-navtab-li", role="presentation")
     a(id="queue-navtab-a", href="#queue-tab", data-toggle='tab')
       i(class="material-icons", data-toggle="tooltip", title="Your queue") queue_music
-  li(id="playlists-navtab-li", role="presentation",
-     data-toggle="tooltip", title="Playlists")
-    a(id="playlists-navtab-a", href="#playlists-tab", data-toggle='tab')
-      i(class="material-icons", data-toggle="tooltip", title="Playlists") library_music
+  if loggedIn
+    li(id="playlists-navtab-li", role="presentation",
+       data-toggle="tooltip", title="Playlists")
+      a(id="playlists-navtab-a", href="#playlists-tab", data-toggle='tab')
+        i(class="material-icons", data-toggle="tooltip", title="Playlists") library_music
   if loggedIn
     li(id="queue-settings-navtab-li", role="presentation", class="active",
        data-toggle="tooltip", title="Settings")
@@ -17,8 +18,8 @@ div(id="queue-tab-content", class="tab-content")
     div(class='panel panel-default', id='queue-panel')
       table(class='table', id='playlist-name-banner')
         tbody
-          if loggedIn
-            tr
+          tr
+            if loggedIn
               td(id="big-playlist-name",
                 style="width: 100%; text-align: left; font-size: large; margin-top: 5px; line-height:1.9;")
               td(class='right')
@@ -27,6 +28,11 @@ div(id="queue-tab-content", class="tab-content")
                          data-toggle='tooltip', data-placement='top',
                          title='Shuffle')
                     span(id='shuffle-icon', class='glyphicon glyphicon-random')
+            else
+              td(id="big-playlist-name",
+                style="width: 100%; text-align: left; font-size: large; margin-top: 5px; line-height:1.9;"
+                ) Welcome!
+
 
         table(class='table', id='queue-banner')
           tbody
@@ -103,15 +109,16 @@ div(id="queue-tab-content", class="tab-content")
                 input(class='form-control right', id='playlist-name-input',
                       autocomplete='off', placeholder='Rename selected playlist')
 
-      div(class='panel-body')
-        div(id='playlists', class='jub-list')
+        div(class='panel-body')
+          div(id='playlists', class='jub-list')
 
   div(class="tab-pane active" id="queue-settings-tab")
     div(class='panel panel-default', id='queue-settings-panel')
-      div(class='panel-body')
-        input(id='requeue-videos', type='checkbox')
-        // TODO update programmatically
-        label(id='requeue-label', for='requeue-videos') Requeue "Free Play!" videos
+      if loggedIn
+        div(class='panel-body')
+          input(id='requeue-videos', type='checkbox')
+          // TODO update programmatically
+          label(id='requeue-label', for='requeue-videos') Requeue "Free Play!" videos
 
 script.
 
@@ -366,7 +373,7 @@ script.
     tr.append(titleTd);
     var accountMsg = "This playlist is empty. Use the search bar to find videos, " +
                      "or enter a YouTube video/playlist ID.";
-    var guestMsg = "Log in to join the DJ rotation!";
+    var guestMsg = "Log in to join the DJ rotation.";
     titleTd.text(#{loggedIn ? "accountMsg" : "guestMsg" });
     return tr;
   }
@@ -450,7 +457,7 @@ script.
   });
 
   // Redraw playlists
-  $('#playlists').bind('redraw',function() {
+  $('#playlists').bind('redraw', function() {
     console.log('redrawing playlists');
     $(this).empty();
     _.chain(myPlaylists)
@@ -488,6 +495,7 @@ script.
 
   // Server tells us our list of playlists, and our selected playlist
   socket.on('playlists', function(playlists, prefsSelected) {
+    console.log('playlists', playlists, prefsSelected);
     if (prefsSelected) { prefsSelectedPlaylist = prefsSelected; };
     updatePlaylists(playlists);
   });

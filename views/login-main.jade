@@ -11,7 +11,7 @@ div(class='col-md-4')
       div(class='panel panel-default', id='login-panel')
         form(id='login-form', method='post', action='login')
           // Magically set by Express render
-          input(type="hidden", name="room", value=room, id='login-room')
+          input(type="hidden", name="room", value=room, id='which-room')
           table(style='table-layout: fixed;')
             tbody
               tr
@@ -39,8 +39,6 @@ div(class='col-md-4')
     div(class="tab-pane" id="signup-tab")
       div(class='panel panel-default', id='signup-panel')
         form(id='signup-form', method='post', action='signup')
-          // Magically set by Express render
-          input(type="hidden", name="room", value=room, id='signup-room')
           table
             tbody
               tr
@@ -116,7 +114,7 @@ script.
             var confUrl = '/signup-confirm';
             confUrl += '?username=' + loginData.username;
 
-            var room = $('#login-room').val();
+            var room = $('#which-room').val();
             if (room) { confUrl += '&room=' + room; }
             console.log('room', room);
             window.location.href = confUrl;

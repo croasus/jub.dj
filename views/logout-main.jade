@@ -2,7 +2,7 @@ div(class='col-md-4')
 div(class='col-md-4')
   div(class='panel panel-default', id='logout-panel')
     form(id='logout-form', method='post', action='logout')
-      input(type="hidden", name="room", value=room, id='logout-room')
+      input(type="hidden", name="room", value=room, id='which-room')
       table(style='table-layout: fixed; width: 100%; margin: 10px 0 10px 0;')
         tbody
           tr
@@ -26,8 +26,9 @@ div(class='col-md-4')
 
   script.
     $('#no-logout').click(function(e) {
+      redirectToWelcome();
       var url = '/welcome';
-      var room = $('#logout-room').val();
+      var room = $('#which-room').val();
       if (room) { url = '/' + room; }
       window.location.href = url;
       e.preventDefault();
@@ -39,11 +40,7 @@ div(class='col-md-4')
         .done(function(resultData) {
           console.log('logout result', resultData);
           if (resultData.success === true) {
-            var confUrl = '/welcome';
-            var room = $('#logout-room').val();
-            if (room) { confUrl += '?room=' + room; }
-            console.log('room', room);
-            window.location.href = confUrl;
+            redirectToWelcome();
           } else {
             alert(resultData.errorMsg || 'Unknown error!');
           }

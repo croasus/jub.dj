@@ -1,16 +1,22 @@
 script.
 
   var getUsername = function() {
-    return getCookie('username') || getCookie('nickname');
+    return getCookie('username');
   };
 
   var getUserKind = function() {
-    return getCookie('userKind') || 'guest';
+    return getCookie('userKind') || null;
   }
 
   $( document ).ready(function() {
     // Inform the server we are good to go
     socket.emit('user loaded');
+
+    userKind = getUserKind();
+
+    if (userKind === null) {
+      redirectToWelcome();
+    }
 
     // Request page state from the server.
     // Other parts of the page respond to the answers.
@@ -18,7 +24,7 @@ script.
     socket.emit('chat cache');
     socket.emit('up next');
 
-    if (getUserKind().userKind === 'account') {
+    if (userKind === 'account') {
       console.log("requesting user data");
       socket.emit('preferences');
       socket.emit('playlists');

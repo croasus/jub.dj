@@ -102,3 +102,10 @@ function areVideoClipSettingsValid(videoObj) {
       && videoObj.hasOwnProperty('clipEndTime')
       && ((videoObj.clipEndTime - videoObj.clipStartTime) < videoObj.duration );
 }
+
+function redirectToWelcome() {
+  var url = '/welcome';
+  var room = $('#which-room').val();
+  if (room) { url = '/' + room; }
+  window.location.href = url;
+}
