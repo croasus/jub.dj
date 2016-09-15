@@ -43,10 +43,11 @@ Do next:
       - sends an email to the user with a generated link
         - add /reset-password/:uuid
         - link expires after 1 day
-    - add auth check to... pretty much everything but chat and hoot
-      - since everything uses sockets, I think this means authenticating socket connections
     - set 'secure' flag on sessionToken and configure nginx to modify the cookie on requests
     - make sure the new paths are routed to nodejs from nginx
+    - make sure blacklist still works
+    - add auth check to... pretty much everything but chat and hoot
+      - since everything uses sockets, I think this means authenticating socket connections
   - UI
     - periodically, server makes client refresh websocket connection
     - no more 'username' cookie?
