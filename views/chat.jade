@@ -7,10 +7,9 @@ ul(id="chat-navtabs", class="nav nav-tabs")
     a(id="jubbin-list-navtab-a", href="#jubbin-list-tab", data-toggle='tab')
       i(class="material-icons", data-toggle="tooltip", title="Who's jubbin'") people
       div(id="num-users", class="right", style="margin-left:3px;") (0)
-  if loggedIn
-    li(id="chat-settings-navtab-li", role="presentation")
-      a(id="chat-settings-navtab-a", href="#chat-settings-tab", data-toggle='tab')
-        i(class="material-icons", data-toggle="tooltip", title="Chat settings") settings
+  li(id="chat-settings-navtab-li", role="presentation")
+    a(id="chat-settings-navtab-a", href="#chat-settings-tab", data-toggle='tab')
+      i(class="material-icons", data-toggle="tooltip", title="Chat settings") settings
 
 div(id="chat-tab-content", class="tab-content")
   div(class="tab-pane active" id="chat-tab")
@@ -27,19 +26,20 @@ div(id="chat-tab-content", class="tab-content")
             unless loggedIn
               tr
                 td
-                  form(class='form-group', id='nickname', action='')
+                  form(class='form-group', id='nickname-form', action='join-as-guest')
                     input(class='form-control', id='nickname-input',
                           placeholder='Nickname', autocomplete='off')
-            tr
-              td
-                input(id='show-chat-images', type='checkbox', action='')
-                label(id='show-chat-images-label', for='show-chat-images'
-                ) Show images from links in chat messages
-            tr
-              td
-                input(id='enable-mute-updates', type='checkbox', action='')
-                label(id='enable-mute-updates-label', for='enable-mute-updates'
-                ) Allow other jubs to see your mute status
+            if loggedIn
+              tr
+                td
+                  input(id='show-chat-images', type='checkbox', action='')
+                  label(id='show-chat-images-label', for='show-chat-images'
+                  ) Show images from links in chat messages
+              tr
+                td
+                  input(id='enable-mute-updates', type='checkbox', action='')
+                  label(id='enable-mute-updates-label', for='enable-mute-updates'
+                  ) Allow other jubs to see your mute status
             tr
               td
                 a(href='https://github.com/aromatt/thejub.pub/issues',
@@ -328,3 +328,22 @@ script.
   $( document ).ready(function() {
     $('#chat-navtab-a').click();
   });
+
+unless loggedIn
+  script.
+    $('#nickname-form').submit(function(e) {
+      var guestData = {
+        nickname: $('#nickname-input').val(),
+      };
+      console.log('changing nickname', guestData);
+      $.post('/join-as-guest', guestData)
+        .done(function(resultData) {
+          console.log('join as guest result', resultData);
+          if (resultData.success === true) {
+            location.reload();
+          } else {
+            alert(resultData.errorMsg);
+          }
+        });
+      e.preventDefault();
+    });
