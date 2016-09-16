@@ -5,27 +5,30 @@ div(class='col-md-4')
   br
   br
   div(class='panel panel-default', id='login-panel')
-    div(style='font-size:19px; margin: 0px 0px 10px 0px;')
+    div(style='font-size:19px; margin: 0px 0px 10px 0px; text-align: center;')
       span Please&nbsp
       if room
-        a(href='/login?room='+room) create an account
+        a(href='/login?room='+room) login
       else
-        a(href='/login') create an account
-      span &nbspor join as a guest:
+        a(href='/login') login
+      span &nbspor join as a guest.
+
     form(class='form-horizontal' id='nickname-form', method='post', action='nickname', role='form')
       // Magically set by Express render
       input(type="hidden", name="room", value=room, id='nickname-room')
-      div(class='form-group')
-        label(class='control-label col-md-2', for='nickname-input') Nickname:
-        div(class='col-md-10')
-          input(class='form-control login-form-input', id='nickname-input',
-                name='nickname', autocomplete='off', placeholder='Choose a nickname',
-                style='max-width: 200px;')
-      div(class='form-group')
-        div(class='col-sm-offset-2 col-sm-10')
-          button(class='btn btn-default', type='submit', id='join-as-guest',
-                 data-toggle='tooltip', data-placement='top',
-                 title='Join as a guest') Join as a guest
+      table(style='table-layout: fixed;')
+        tbody
+          tr
+            td(style='width: 80%; padding-right: 10px;')
+              input(class='form-control login-form-input', id='nickname-input',
+                    name='nickname', autocomplete='off',
+                    placeholder='Choose a nickname')
+            td
+              button(class='btn btn-default', type='submit', id='join-as-guest',
+                     data-toggle='tooltip', data-placement='top',
+                     style='margin-top: 11px; float: left; \
+                     position: relative; top: -5px;',
+                     title='Join as a guest') Join as a guest
 
 script.
 

@@ -145,9 +145,15 @@ button[type="button"]:disabled {
 #signup-panel {
   border: 0;
   background-color: #222;
-  padding: 10px 10px 10px 10px;
 }
 
+#login-panel {
+  padding: 10px 10px 10px 10px;
+}
+#logout-panel,
+#signup-panel {
+  padding: 10px 10px 10px 10px;
+}
 #login-tab-content input,
 #signup-tab-content input,
 #nickname-form input {
