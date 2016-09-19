@@ -28,6 +28,7 @@ div(class='col-md-4')
               tr
                 td
                 td
+                  a(href='/request-password-reset', style='line-height:3.3;') Forgot password
                   button(class='btn btn-default', type='submit', id='login',
                          data-toggle='tooltip', data-placement='top',
                          style='margin-top: 11px; float: right; position: relative; top: -5px;'
@@ -85,10 +86,8 @@ script.
         password: $('#signup-password-input').val(),
         email: $('#signup-email-input').val()
       };
-      console.log('signup', signupData);
       $.post('/signup', signupData)
         .done(function(resultData) {
-          console.log('signup result', resultData);
           if (resultData.success === true) {
             // login
             $('#login-username-input').val(signupData.username);
@@ -106,17 +105,14 @@ script.
         username: $('#login-username-input').val(),
         password: $('#login-password-input').val(),
       };
-      console.log('login', loginData);
       $.post('/login', loginData)
         .done(function(resultData) {
-          console.log('login result', resultData);
           if (resultData.success === true) {
             var confUrl = '/signup-confirm';
             confUrl += '?username=' + loginData.username;
 
             var room = $('#which-room').val();
             if (room) { confUrl += '&room=' + room; }
-            console.log('room', room);
             window.location.href = confUrl;
           } else {
             $('#login-error').text(resultData.errorMsg);

@@ -141,13 +141,17 @@ button[type="button"]:disabled {
 
 /* login / signup panel */
 #login-panel,
+#reset-password-panel,
+#request-password-reset-panel,
 #logout-panel,
 #signup-panel {
   border: 0;
   background-color: #222;
 }
 
-#login-panel {
+#login-panel,
+#reset-password-panel,
+#request-password-reset-panel {
   padding: 10px 10px 10px 10px;
 }
 #logout-panel,
@@ -155,17 +159,21 @@ button[type="button"]:disabled {
   padding: 10px 10px 10px 10px;
 }
 #login-tab-content input,
+#reset-password-panel input,
+#request-password-reset-panel input,
 #signup-tab-content input,
 #nickname-form input {
   background-color: #000;
   /* margin-left: 10px; */
 }
 #login-tab-content td,
+#reset-password-panel td,
 #signup-tab-content td {
   padding-bottom: 10px;
 }
 
 #login-tab-content td:nth-of-type(2),
+#reset-password-panel td:nth-of-type(2),
 #signup-tab-content td:nth-of-type(2) {
   padding-bottom: 10px;
   padding-left: 10px;

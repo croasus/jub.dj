@@ -15,7 +15,7 @@ div(class='col-md-4')
 
     form(class='form-horizontal' id='nickname-form', method='post', action='nickname', role='form')
       // Magically set by Express render
-      input(type="hidden", name="room", value=room, id='nickname-room')
+      input(type="hidden", name="room", value=room, id='which-room')
       table(style='table-layout: fixed;')
         tbody
           tr
@@ -45,7 +45,7 @@ script.
             var confUrl = '/signup-confirm';
             confUrl += '?username=' + guestData.nickname;
 
-            var room = $('#nickname-room').val();
+            var room = $('#which-room').val();
             if (room) { confUrl += '&room=' + room; }
             console.log('room', room);
             window.location.href = confUrl;

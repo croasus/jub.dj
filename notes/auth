@@ -40,9 +40,10 @@ Do next:
       - allowMuteStatus = true
       - showChatImages = false
     - add reset password feature
-      - sends an email to the user with a generated link
-        - add /reset-password/:uuid
-        - link expires after 1 day
+      - link expires
+      - show_login in jade files doesn't work? I want to show login link on reset-password
+      - make sure usernames don't contain weird characters for URLs
+    - use cookie to store a default 'room'
     - set 'secure' flag on sessionToken and configure nginx to modify the cookie on requests
     - make sure the new paths are routed to nodejs from nginx
     - make sure blacklist still works

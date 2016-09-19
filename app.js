@@ -39,7 +39,8 @@ app.twitter = require('./lib/twitter')(config);
 app.urban = require('./external_lib/urban');
 app.bot = require('./lib/bot')(config, app.gapi, app.twitter, app.urban);
 app.chat = require('./lib/chat')(config, app.bot);
-app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db, app.auth);
+app.mail = require('./lib/mail')(config);
+app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db, app.auth, app.mail);
 app.config = config;
 
 // Note: in ./bin/www -> socket-routing.js, some of the above objects are
@@ -144,6 +145,50 @@ app.post('/logout', function(req, res, next) {
   res.cookie('userKind', '');
   res.send({ success: true });
 }, console.error);
+
+app.get('/request-password-reset', function(req, res, next) {
+  simpleRender('request-password-reset', res, { room: req.query.room }, next);
+}, console.error);
+
+app.post('/request-password-reset', function(req, res, next) {
+  app.jub.requestPasswordReset(req.body.username, function(success, message) {
+    res.send({ success: success, message: message });
+  });
+}, console.error);
+
+app.get('/reset-password', function(req, res, next) {
+  var token = req.query.token || '';
+  var username = req.query.username || '';
+  app.jub.validatePasswordResetToken(username,
+                                     token,
+                                     function(success, message) {
+    var data = {
+      valid: success,
+      validationMessage: message
+    };
+    if (success) {
+      data.token = token;
+      data.username = username;
+    }
+    simpleRender('reset-password', res, data, next);
+  });
+}, console.error);
+
+// AJAX endpoint
+app.post('/reset-password', function(req, res, next) {
+  var token = req.body.token || '';
+  var username = req.body.username || '';
+  var password = req.body.password || '';
+  app.jub.resetPassword(username, token, password,
+                        function(success, message) {
+    var data = {
+      success: success,
+      message: message
+    };
+    res.send(data);
+  });
+}, console.error);
+
 
 // AXAJ endpoint, returns JSON { success, errorMsg }
 app.post('/signup', function(req, res, next) {
