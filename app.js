@@ -81,7 +81,8 @@ app.get('/' + config.private_room, function(req, res, next) {
         console.log('token is valid; about to render room');
         var data = {
           room: config.private_room,
-          loggedIn: userKind === "account"
+          loggedIn: userKind === "account",
+          show_login: true,
         };
         simpleRender('room', res, data, next);
       } else {
@@ -106,11 +107,11 @@ app.get('/report', function(req, res, next) {
 // to create the account and/or log in, and ends up redirecting either to
 // signup-confirm or welcome page.
 app.get('/login', function(req, res, next) {
-  simpleRender('login', res, { room: req.query.room }, next);
+  simpleRender('login', res, { room: req.query.room, show_login: false }, next);
 }, console.error);
 
 app.get('/logout', function(req, res, next) {
-  simpleRender('logout', res, { room: req.query.room }, next);
+  simpleRender('logout', res, { room: req.query.room, show_login: true }, next);
 }, console.error);
 
 // AJAX endpoint, sets sessionToken, username and userKind cookies
@@ -156,6 +157,10 @@ app.post('/request-password-reset', function(req, res, next) {
   });
 }, console.error);
 
+app.get('/reset-password-confirm', function(req, res, next) {
+  simpleRender('reset-password-confirm', res, { }, next);
+}, console.error);
+
 app.get('/reset-password', function(req, res, next) {
   var token = req.query.token || '';
   var username = req.query.username || '';
@@ -164,7 +169,7 @@ app.get('/reset-password', function(req, res, next) {
                                      function(success, message) {
     var data = {
       valid: success,
-      validationMessage: message
+      validationMessage: message,
     };
     if (success) {
       data.token = token;
@@ -233,9 +238,14 @@ app.get('/signup-confirm', function(req, res, next) {
     welcomeRedirect += '?room=' + room;
   }
   if (token) {
+    var userKind = app.auth.parseToken(token).userKind;
     app.jub.validateSessionToken(token, function(valid) {
       if (valid) {
-        var data = { username: req.query.username };
+        var data = {
+          username: req.query.username,
+          loggedIn: userKind === "account",
+          show_login: true
+        };
         if (room) { data.room = room; }
         simpleRender('signup-confirm', res, data, next);
       } else {
@@ -256,7 +266,7 @@ app.get('/', function(req, res, next) {
 // TODO make this view
 // Welcome -> create a nickname or an account
 app.get('/welcome', function(req, res, next) {
-  var data = {};
+  var data = { };
   if (req.query.room) { data.room = req.query.room; }
   simpleRender('welcome', res, data, next);
 });

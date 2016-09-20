@@ -40,7 +40,8 @@ Do next:
       - allowMuteStatus = true
       - showChatImages = false
     - add reset password feature
-      - link expires
+      - link expires after some period of time
+      - link is single-use
       - show_login in jade files doesn't work? I want to show login link on reset-password
       - make sure usernames don't contain weird characters for URLs
     - use cookie to store a default 'room'

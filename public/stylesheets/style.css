@@ -368,6 +368,14 @@ button[type="button"]:disabled {
   color: #0097AA;
 }
 
+#title a {
+  text-decoration: none;
+  color: #DDDDEE;
+}
+a.title:focus {
+  outline: 0;
+}
+
 /* navbar */
 .jub-nav-item {
   margin-top: 5px;
