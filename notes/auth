@@ -39,28 +39,27 @@ Do next:
     - for guests:
       - allowMuteStatus = true
       - showChatImages = false
-    - add reset password feature
-      - link expires after some period of time
-      - show_login in jade files doesn't work? I want to show login link on reset-password
-      - make sure usernames don't contain weird characters for URLs
-    - use cookie to store a default 'room'
-    - set 'secure' flag on sessionToken and configure nginx to modify the cookie on requests
+    - upon logout, force reload to account for user's other tabs / browsers
+    - bug: you can have a guest tab and an account tab open at the same time
+      - the websocket connection just stays open
+      - solution: whenever someone enters or exits, force all websockets to refresh
     - make sure the new paths are routed to nodejs from nginx
     - make sure blacklist still works
-    - add auth check to... pretty much everything but chat and hoot
-      - since everything uses sockets, I think this means authenticating socket connections
+    - only allow actual karma to be given between account users
+      - still allow hooting (just no karma)
   - UI
-    - periodically, server makes client refresh websocket connection
-    - no more 'username' cookie?
-    - Add reset password link to login
-    - redirect to /welcome if you know you aren't authed?
-      - check for session token
-      - check expiration
-      - make sure socket can connect
-
+    - redirect /login to /logout if the user is logged in
+    - periodically, server should client force refresh websocket connection
+  - User-oriented functions
+    - Playlist copy doesn't refresh the playlist view and also doesn't copy any videos
 
 Do later:
+  - periodically, server sends a new session token for people who want to leave their browser open
+  - set 'secure' flag on sessionToken and configure nginx to modify the cookie on requests
+  - use cookie to store a default 'room'
   - nicknames for account users
   - room admin page
   - independent auth micro-service
+  - consider storing token for use in every request so that websocket connections can't be hijacked?
+    - it could then not be HttpOnly...
   - throttling/limiting for login and reset password
