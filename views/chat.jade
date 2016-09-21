@@ -185,7 +185,7 @@ script.
        var isLink = (urlRegex).test(word);
        if(isLink) {
          var isImage = (imageRegex).test( word );
-         if ( isImage && $('#show-chat-images').is(":checked") ) {
+         if ( isImage && #{loggedIn} && $('#show-chat-images').is(":checked") ) {
            transformedWord = makeImage( word );
          } else {
            transformedWord = makeLink( word );

@@ -138,7 +138,7 @@ script.
     if (isMuted) { player.mute(); } else { player.unMute(); }
     setCookie('muted', isMuted ? 1 : 0);
     drawMuteState(isMuted);
-    if ($('#enable-mute-updates').is(":checked")) {
+    if ($('#enable-mute-updates').is(":checked") || #{!loggedIn}) {
       socket.emit('mute update', isMuted);
     }
   }

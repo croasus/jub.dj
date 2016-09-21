@@ -1,13 +1,5 @@
 script.
 
-  var getUsername = function() {
-    return getCookie('username');
-  };
-
-  var getUserKind = function() {
-    return getCookie('userKind') || null;
-  }
-
   $( document ).ready(function() {
     // Inform the server we are good to go
     socket.emit('user loaded');

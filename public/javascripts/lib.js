@@ -36,6 +36,14 @@ function setCookie(name, value, expirationDate, extra) {
   document.cookie = cookie;
 }
 
+var getUsername = function() {
+  return getCookie('username');
+};
+
+var getUserKind = function() {
+  return getCookie('userKind') || null;
+}
+
 function formatTime(secs) {
   var time = new Date(1970, 1, 1); // Unix epoch
   var format = secs >= 3600 ? '%k:%M:%S' : '%M:%S';

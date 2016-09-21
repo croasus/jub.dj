@@ -107,11 +107,23 @@ app.get('/report', function(req, res, next) {
 // to create the account and/or log in, and ends up redirecting either to
 // signup-confirm or welcome page.
 app.get('/login', function(req, res, next) {
-  simpleRender('login', res, { room: req.query.room, show_login: false }, next);
+  var token = getSessionToken(req) || '';
+  var userKind = (app.auth.parseToken(token) || {}).userKind;
+
+  // Don't show the login screen for already-logged in users
+  app.jub.validateSessionToken(token, function(valid) {
+    if (valid && userKind === 'account') {
+      var redirect = '/logout';
+      if (req.query.room) { redirect += '?room=' + req.query.room; }
+      return res.redirect(redirect);
+    } else {
+      simpleRender('login', res, { room: req.query.room, show_login: false }, next);
+    }
+  });
 }, console.error);
 
 app.get('/logout', function(req, res, next) {
-  simpleRender('logout', res, { room: req.query.room, show_login: true }, next);
+  simpleRender('logout', res, { room: req.query.room, show_login: false }, next);
 }, console.error);
 
 // AJAX endpoint, sets sessionToken, username and userKind cookies

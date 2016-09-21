@@ -34,29 +34,25 @@ Auth behavior, first pass
     - I guess this means reissuing a token when the expiration gets close
     - if the browser stays open, let it keep refreshing its token (once a day would be fine)
 
+
+
 Do next:
   - SERVER
-    - for guests:
-      - allowMuteStatus = true
-      - showChatImages = false
-    - upon logout, force reload to account for user's other tabs / browsers
-    - bug: you can have a guest tab and an account tab open at the same time
-      - the websocket connection just stays open
-      - solution: whenever someone enters or exits, force all websockets to refresh
     - make sure the new paths are routed to nodejs from nginx
     - make sure blacklist still works
-    - only allow actual karma to be given between account users
-      - still allow hooting (just no karma)
   - UI
-    - redirect /login to /logout if the user is logged in
-    - periodically, server should client force refresh websocket connection
-  - User-oriented functions
-    - Playlist copy doesn't refresh the playlist view and also doesn't copy any videos
+    - color username in signup-confirm
+    - Add automatic delayed redirect to signup-confirm
+  - Functional testing
 
 Do later:
+  - periodically, server should force client to refresh websocket connection
+    - without this, TCP connection could stay open forever, even after token is expired
+    - but, each action is gated by a socket session check in socket-routing, so
+      users can't actually write anything, only read, and the first time they try
+      to write, the browser will reload
   - periodically, server sends a new session token for people who want to leave their browser open
   - set 'secure' flag on sessionToken and configure nginx to modify the cookie on requests
-  - use cookie to store a default 'room'
   - nicknames for account users
   - room admin page
   - independent auth micro-service
