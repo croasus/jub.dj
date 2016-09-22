@@ -117,7 +117,6 @@ app.get('/' + config.private_room, function(req, res, next) {
 // TODO this will need to be per room
 app.get('/report', function(req, res, next) {
   app.report.getKarmaReport(function(report) {
-    console.log(r);
     var data = { report: JSON.stringify(report) };
     simpleRender('report', res, data, next);
   });

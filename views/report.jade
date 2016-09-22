@@ -1,46 +1,49 @@
 extends layout
-block content
+
+block main-content
   div(class='container-fluid', id='report-container', style='font-family: monospace;')
 
-script.
+  script.
 
-  var report = !{report};
+    var report = !{report};
 
-  function appendData(div, data) {
-    console.log("appending data", data);
-    if (typeof data === 'Array') {
-      for (item of data) {
-        div.append(document.createTextNode(JSON.stringify(item)));
-        div.append($('<br>'));
-      }
-    } else if (typeof data === 'number' || typeof data === 'string') {
-      div.append(document.createTextNode(data));
-    } else if (typeof data === 'object') {
-      for (key in data) {
-        div.append(document.createTextNode(key + ": " + JSON.stringify(data[key])));
-        div.append($('<br>'));
-      }
-    } else {
-      div.append(document.createTextNode("Uh oh... type is " + (typeof data).toString()));
-    }
-  }
-
-  function drawReport(report) {
     console.log(report);
-    for (section of report) {
-      console.log(JSON.stringify(section));
-      var sectionDiv = $('<div>');
-      var heading = $('<h3>');
-      var body = $('<div>');
-      heading.append(document.createTextNode(section.title));
-      appendData(body, section.data);
-      sectionDiv.append(heading);
-      sectionDiv.append(body);
-      $('#report-container').append(sectionDiv);
-    }
-  }
 
-  $( document ).ready(function() {
-    console.log(report);
-    drawReport(report);
-  });
+    function appendData(div, data) {
+      console.log("appending data", data);
+      if (typeof data === 'Array') {
+        for (item of data) {
+          div.append(document.createTextNode(JSON.stringify(item)));
+          div.append($('<br>'));
+        }
+      } else if (typeof data === 'number' || typeof data === 'string') {
+        div.append(document.createTextNode(data));
+      } else if (typeof data === 'object') {
+        for (key in data) {
+          div.append(document.createTextNode(key + ": " + JSON.stringify(data[key])));
+          div.append($('<br>'));
+        }
+      } else {
+        div.append(document.createTextNode("Uh oh... type is " + (typeof data).toString()));
+      }
+    }
+
+    function drawReport(report) {
+      console.log(report);
+      for (section of report) {
+        console.log(JSON.stringify(section));
+        var sectionDiv = $('<div>');
+        var heading = $('<h3>');
+        var body = $('<div>');
+        heading.append(document.createTextNode(section.title));
+        appendData(body, section.data);
+        sectionDiv.append(heading);
+        sectionDiv.append(body);
+        $('#report-container').append(sectionDiv);
+      }
+    }
+
+    $( document ).ready(function() {
+      console.log(report);
+      drawReport(report);
+    });
