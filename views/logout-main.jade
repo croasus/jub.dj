@@ -35,10 +35,8 @@ div(class='col-md-4')
     });
 
     $('#logout-form').submit(function(e) {
-      console.log('logout');
       $.post('/logout', {})
         .done(function(resultData) {
-          console.log('logout result', resultData);
           if (resultData.success === true) {
             redirectToWelcome();
           } else {

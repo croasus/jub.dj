@@ -379,7 +379,6 @@ script.
   }
 
   function newQueueItem(videoObj) {
-    console.log("new queue item", videoObj);
     var tr = $('<tr>').addClass('queue-item');
     tr.css({
       'overflow': 'visible',
@@ -431,7 +430,6 @@ script.
 
   // Redraw queue
   $('#video-queue').bind('redraw',function() {
-    console.log('redrawing queue');
     $("#video-queue-tbody tr").remove();
     var pl = selectedPlaylist() || {};
 
@@ -458,7 +456,6 @@ script.
 
   // Redraw playlists
   $('#playlists').bind('redraw', function() {
-    console.log('redrawing playlists');
     $(this).empty();
     _.chain(myPlaylists)
       .partition(function(p) { return p.name == 'sandbox'; })
@@ -484,7 +481,6 @@ script.
   // playlists is an object keyed by playlist name
   function updatePlaylists(playlists) {
     if (playlists) {
-      console.log('updating playlists', _.cloneDeep(playlists));
       myPlaylists = _.cloneDeep(playlists);
       $('#playlists').trigger('redraw');
       $('#video-queue').trigger('redraw');
@@ -495,7 +491,6 @@ script.
 
   // Server tells us our list of playlists, and our selected playlist
   socket.on('playlists', function(playlists, prefsSelected) {
-    console.log('playlists', playlists, prefsSelected);
     if (prefsSelected) { prefsSelectedPlaylist = prefsSelected; };
     updatePlaylists(playlists);
   });
@@ -509,7 +504,6 @@ script.
       alert('You must be logged in to edit playlists.')
     } else {
       if (selectedName.length > 0 && selectedName != 'sandbox') {
-        console.log('renaming playlist', newName);
         socket.emit('rename playlist', selectedName, newName);
         $('#playlist-name-input').val('');
       }

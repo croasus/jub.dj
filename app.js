@@ -44,6 +44,9 @@ app.mail = require('./lib/mail')(config);
 app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db, app.auth, app.mail);
 app.config = config;
 
+// XXX
+app.bot.reloadUser = app.jub.reloadUser;
+
 // Note: in ./bin/www -> socket-routing.js, some of the above objects are
 // passed into socket-routing which gives them callbacks allowing them to
 // *initiate* messages over the sockets
@@ -67,6 +70,22 @@ function getSessionToken(req) {
 
 app.get('/dispatch', function(req, res, next) {
   simpleRender('dispatch', res, data, next);
+});
+
+// Blacklist middleware. Assumes we're behind a proxy and x-real-ip is the
+// client's IP
+app.use(function(req, res, next) {
+  if (!req.headers || !req.headers['x-real-ip'] || !app.bot.blacklist) {
+    return next();
+  }
+  if (app.bot.blacklist[req.headers['x-real-ip']]) {
+    res.status(403);
+    res.render('error', {
+      message: 'Forbidden.',
+    });
+  } else {
+    next();
+  }
 });
 
 // Main room. If session token is present (as cookie) and valid, render the

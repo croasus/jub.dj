@@ -5,7 +5,7 @@ var socket = io();
 socket.on('check auth', function(obj) {
   var userKind = getUserKind();
   var username = getUsername();
-  console.log('checking auth', obj, userKind, username);
+  console.log('checking auth');
   if (userKind !== obj.userKind) {
     location.reload();
   }

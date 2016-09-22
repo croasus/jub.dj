@@ -37,17 +37,14 @@ script.
       var guestData = {
         nickname: $('#nickname-input').val(),
       };
-      console.log('joining as guest', guestData);
       $.post('/join-as-guest', guestData)
         .done(function(resultData) {
-          console.log('join as guest result', resultData);
           if (resultData.success === true) {
             var confUrl = '/login-confirm';
             confUrl += '?username=' + guestData.nickname;
 
             var room = $('#which-room').val();
             if (room) { confUrl += '&room=' + room; }
-            console.log('room', room);
             window.location.href = confUrl;
           } else {
             //$('#nickname-error').text(resultData.errorMsg);

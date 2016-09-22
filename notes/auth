@@ -41,7 +41,6 @@ Do next:
     - make sure the new paths are routed to nodejs from nginx
     - make sure blacklist still works
   - UI
-    - color username in signup-confirm
     - Add automatic delayed redirect to signup-confirm
   - Functional testing
 

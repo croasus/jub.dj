@@ -7,3 +7,5 @@
 $('.btn').on('click', function(e) {
   this.blur();
 });
+
+

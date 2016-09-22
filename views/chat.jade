@@ -335,10 +335,8 @@ unless loggedIn
       var guestData = {
         nickname: $('#nickname-input').val(),
       };
-      console.log('changing nickname', guestData);
       $.post('/join-as-guest', guestData)
         .done(function(resultData) {
-          console.log('join as guest result', resultData);
           if (resultData.success === true) {
             location.reload();
           } else {
