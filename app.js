@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var async = require("async");
 
 var config_path = process.env.JUB_CONFIG || './config'
 var config = require(config_path) || {
@@ -105,7 +106,7 @@ app.get('/report', function(req, res, next) {
 
 // On this page, user can either sign up or log in. The client uses AJAX calls
 // to create the account and/or log in, and ends up redirecting either to
-// signup-confirm or welcome page.
+// login-confirm or welcome page.
 app.get('/login', function(req, res, next) {
   var token = getSessionToken(req) || '';
   var userKind = (app.auth.parseToken(token) || {}).userKind;
@@ -241,7 +242,7 @@ app.post('/join-as-guest', function(req, res, next) {
 // If their session token is valid, say welcome and provide a link to get into
 // the room (if they began by trying to get into a room). Otherwise, redirect
 // back to the welcome page.
-app.get('/signup-confirm', function(req, res, next) {
+app.get('/login-confirm', function(req, res, next) {
   var token = getSessionToken(req);
   var room = null;
   var welcomeRedirect = 'welcome';
@@ -249,24 +250,38 @@ app.get('/signup-confirm', function(req, res, next) {
     room = req.query.room;
     welcomeRedirect += '?room=' + room;
   }
-  if (token) {
-    var userKind = app.auth.parseToken(token).userKind;
-    app.jub.validateSessionToken(token, function(valid) {
-      if (valid) {
-        var data = {
-          username: req.query.username,
-          loggedIn: userKind === "account",
-          show_login: true
-        };
-        if (room) { data.room = room; }
-        simpleRender('signup-confirm', res, data, next);
-      } else {
-        res.redirect(welcomeRedirect);
-      }
-    });
-  } else {
-    res.redirect(welcomeRedirect);
+  if (!token) {
+    return res.redirect(welcomeRedirect);
   }
+  app.jub.validateSessionToken(token, function(valid) {
+
+    if (!valid) {
+      return res.redirect(welcomeRedirect);
+    }
+
+    var userKind = app.auth.parseToken(token).userKind;
+    var username = req.query.username;
+    var data = {
+      username: username,
+      loggedIn: userKind === "account",
+      show_login: true
+    };
+    if (room) { data.room = room; }
+    async.series([
+      function(done) {
+        app.jub.fetchPreferencesFor(username, function(fetched) {
+          if (fetched) {
+            data.userColor = fetched.color || '#DDDDEE';
+          }
+          done();
+        }, done);
+      },
+      function(done) {
+        simpleRender('login-confirm', res, data, next);
+        done();
+      }
+    ]);
+  });
 });
 
 // Minimal message at '/' route

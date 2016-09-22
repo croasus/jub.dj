@@ -108,7 +108,7 @@ script.
       $.post('/login', loginData)
         .done(function(resultData) {
           if (resultData.success === true) {
-            var confUrl = '/signup-confirm';
+            var confUrl = '/login-confirm';
             confUrl += '?username=' + loginData.username;
 
             var room = $('#which-room').val();

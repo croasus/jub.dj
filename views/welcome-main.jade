@@ -42,7 +42,7 @@ script.
         .done(function(resultData) {
           console.log('join as guest result', resultData);
           if (resultData.success === true) {
-            var confUrl = '/signup-confirm';
+            var confUrl = '/login-confirm';
             confUrl += '?username=' + guestData.nickname;
 
             var room = $('#which-room').val();
