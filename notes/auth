@@ -39,7 +39,6 @@ Auth behavior, first pass
 Do next:
   - SERVER
     - make sure the new paths are routed to nodejs from nginx
-    - make sure blacklist still works
   - UI
     - Add automatic delayed redirect to signup-confirm
   - Functional testing
