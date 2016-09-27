@@ -1,6 +1,6 @@
 module.exports = {
-  date: '2015-6-24',
+  date: '2016-09-26',
   list: [
-    "Added 'imitate' command to jubbot",
+    "Case insensitivity for username text fields",
   ],
 }
