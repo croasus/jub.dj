@@ -152,14 +152,14 @@ app.post('/login', function(req, res, next) {
   app.jub.login(req.body.username,
                 req.body.password,
                 expiration.getTime(),
-                function(token) {
+                function(token, username) {
     var success = !!token;
-    var data = { success: success };
+    var data = { success: success, username: username };
     if (success) {
       // This cookie is HTTP only so client code can't access it
       res.cookie('sessionToken', token, { expires: expiration, httpOnly: true });
       // The client uses these cookies
-      res.cookie('username', req.body.username, { expires: expiration });
+      res.cookie('username', username, { expires: expiration });
       res.cookie('userKind', 'account', { expires: expiration });
       // TODO nickname?
     } else {

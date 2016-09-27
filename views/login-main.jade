@@ -109,7 +109,7 @@ script.
         .done(function(resultData) {
           if (resultData.success === true) {
             var confUrl = '/login-confirm';
-            confUrl += '?username=' + loginData.username;
+            confUrl += '?username=' + resultData.username;
 
             var room = $('#which-room').val();
             if (room) { confUrl += '&room=' + room; }
