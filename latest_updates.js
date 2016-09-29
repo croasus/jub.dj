@@ -1,6 +1,6 @@
 module.exports = {
-  date: '2016-09-26',
+  date: '2016-09-28',
   list: [
-    "Case insensitivity for username text fields",
+    "Notification when users join or leave",
   ],
 }
