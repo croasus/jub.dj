@@ -23,9 +23,3 @@ script.
       socket.emit('user djing');
     }
   });
-
-  // Server is asking who is present
-  // TODO this probably isn't needed anymore
-  socket.on('ping users', function() {
-    socket.emit('user present');
-  });

@@ -9,6 +9,9 @@ socket.on('check auth', function(obj) {
   if (userKind !== obj.userKind) {
     location.reload();
   }
+  if (username !== obj.username) {
+    location.reload();
+  }
 });
 
 socket.on('force reload', function(obj) {
