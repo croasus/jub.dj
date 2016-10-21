@@ -1,6 +1,6 @@
 module.exports = {
-  date: '2016-09-28',
+  date: '2016-10-21',
   list: [
-    "Notification when users join or leave",
+    "Fixed jubbot imitate",
   ],
 }
