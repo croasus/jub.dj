@@ -11,7 +11,7 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install -y mongodb-org=3.0.5 mongodb-org-server=3.0.5 mongodb-org-shell=3.0.5 mongodb-org-mongos=3.0.5 mongodb-org-tools=3.0.5
   - sudo apt-get install -y google-chrome-stable
-  - sudo curl -s http://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip -o /tmp/chromedriver.zip
+  - sudo curl -s http://chromedriver.storage.googleapis.com/2.24/chromedriver_linux64.zip -o /tmp/chromedriver.zip
   - sudo unzip /tmp/chromedriver.zip -d /usr/bin/
   - sudo chmod 755 /usr/bin/chromedriver
   - export DISPLAY=:99.0
