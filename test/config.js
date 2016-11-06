@@ -13,5 +13,8 @@ module.exports = {
   chat: {
     cache_dir: 'test/chat_cache',
     cache_limit: 1000,
+  },
+  mail: {
+    host: 'fake.host',
   }
 }
