@@ -16,5 +16,5 @@ module.exports = {
   },
   mail: {
     host: 'fake.host',
-  }
+  },
 }
