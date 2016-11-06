@@ -1,3 +1,4 @@
+/*
 var util = require('../util');
 module.exports = {
   'Update preferences (basic)' : function (browser) {
@@ -19,3 +20,4 @@ module.exports = {
       .end();
   },
 };
+*/

@@ -1,6 +1,6 @@
+/*
 var util = require('../util');
 module.exports = {
-  /*
   'Who\'s Jubbin\' username cookie' : function (browser) {
     browser.resizeWindow(1920, 1080)
       .url('http://localhost:3001/test_private_route')
@@ -18,7 +18,7 @@ module.exports = {
       .assert.containsText('#jubbin-list-tbody', 'jubbot')
       .getLog('browser', util.logWriter(__filename))
       .end();
-  },*/
+  },
   'Who\'s Jubbin\' username form' : function (browser) {
     browser.resizeWindow(1920, 1080)
       .url('http://localhost:3001/test_private_route')
@@ -54,3 +54,4 @@ module.exports = {
       .end();
   },
 };
+*/
