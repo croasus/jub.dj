@@ -1,16 +1,16 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var async = require("async");
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let bodyParser = require('body-parser');
+let async = require("async");
 
-var config_path = process.env.JUB_CONFIG || './config'
-var config = require(config_path) || {
+let config_path = process.env.JUB_CONFIG || './config'
+let config = require(config_path) || {
   private_room: 'foo',
   moved_message: 'Ask around for the new URL!'
 };
 
-var app = express();
+let app = express();
 require('./lib/logging')(app);
 
 // view engine setup
@@ -27,8 +27,6 @@ app.use(express.static(
     redirect: false
   }
 ));
-
-config.private_room = config.private_room || 'foo';
 
 // Create app components
 app.auth = require('./lib/auth')(config);
@@ -91,15 +89,15 @@ app.use((req, res, next) => {
 // Main room. If session token is present (as cookie) and valid, render the
 // room. Otherwise, redirect to welcome page.
 app.get('/' + config.private_room, (req, res, next) => {
-  var token = getSessionToken(req);
-  var welcomeRedirect = 'welcome?room=' + config.private_room;
+  let token = getSessionToken(req);
+  let welcomeRedirect = 'welcome?room=' + config.private_room;
   if (token) {
     console.log('validating session token');
     app.jub.validateSessionToken(token, valid => {
       if (valid) {
-        var userKind = app.auth.parseToken(token).userKind;
+        let userKind = app.auth.parseToken(token).userKind;
         console.log('token is valid; about to render room');
-        var data = {
+        let data = {
           room: config.private_room,
           loggedIn: userKind === "account",
           show_login: true,
@@ -117,7 +115,7 @@ app.get('/' + config.private_room, (req, res, next) => {
 // TODO this will need to be per room
 app.get('/report', (req, res, next) => {
   app.report.getKarmaReport(report => {
-    var data = { report: JSON.stringify(report) };
+    let data = { report: JSON.stringify(report) };
     simpleRender('report', res, data, next);
   });
 }, console.error);
@@ -126,13 +124,13 @@ app.get('/report', (req, res, next) => {
 // to create the account and/or log in, and ends up redirecting either to
 // login-confirm or welcome page.
 app.get('/login', (req, res, next) => {
-  var token = getSessionToken(req) || '';
-  var userKind = (app.auth.parseToken(token) || {}).userKind;
+  let token = getSessionToken(req) || '';
+  let userKind = (app.auth.parseToken(token) || {}).userKind;
 
   // Don't show the login screen for already-logged in users
   app.jub.validateSessionToken(token, valid => {
     if (valid && userKind === 'account') {
-      var redirect = '/logout';
+      let redirect = '/logout';
       if (req.query.room) { redirect += '?room=' + req.query.room; }
       return res.redirect(redirect);
     } else {
@@ -147,15 +145,15 @@ app.get('/logout', (req, res, next) => {
 
 // AJAX endpoint, sets sessionToken, username and userKind cookies
 app.post('/login', (req, res, next) => {
-  var expiration = new Date();
+  let expiration = new Date();
   expiration = new Date(expiration.getTime() + 86400000 * 3);
   console.log("attempting login");
   app.jub.login(req.body.username,
                 req.body.password,
                 expiration.getTime(),
                 (token, username) => {
-    var success = !!token;
-    var data = { success: success, username: username };
+    let success = !!token;
+    let data = { success: success, username: username };
     if (success) {
       // This cookie is HTTP only so client code can't access it
       res.cookie('sessionToken', token, { expires: expiration, httpOnly: true });
@@ -194,12 +192,12 @@ app.get('/reset-password-confirm', (req, res, next) => {
 }, console.error);
 
 app.get('/reset-password', (req, res, next) => {
-  var token = req.query.token || '';
-  var username = req.query.username || '';
+  let token = req.query.token || '';
+  let username = req.query.username || '';
   app.jub.validatePasswordResetToken(username,
                                      token,
                                      (success, message) => {
-    var data = {
+    let data = {
       valid: success,
       validationMessage: message,
     };
@@ -213,12 +211,12 @@ app.get('/reset-password', (req, res, next) => {
 
 // AJAX endpoint
 app.post('/reset-password', (req, res, next) => {
-  var token = req.body.token || '';
-  var username = req.body.username || '';
-  var password = req.body.password || '';
+  let token = req.body.token || '';
+  let username = req.body.username || '';
+  let password = req.body.password || '';
   app.jub.resetPassword(username, token, password,
                         (success, message) => {
-    var data = {
+    let data = {
       success: success,
       message: message
     };
@@ -231,21 +229,21 @@ app.post('/reset-password', (req, res, next) => {
 app.post('/signup', (req, res, next) => {
   app.jub.signup(req.body.username, req.body.password, req.body.email,
                 errorMsg => {
-    var success = (errorMsg === null || errorMsg.length === 0);
+    let success = (errorMsg === null || errorMsg.length === 0);
     res.send({ success: success, errorMsg: errorMsg });
   });
 }, console.error);
 
 // AJAX endpoint, sets sessionToken, username and userKind cookies
 app.post('/join-as-guest', (req, res, next) => {
-  var expiration = new Date();
+  let expiration = new Date();
   expiration = new Date(expiration.getTime() + 86400000 * 3);
   console.log("attempting join as guest with nickname", req.body.nickname);
   app.jub.joinAsGuest(req.body.nickname,
                       expiration.getTime(),
                       (token, errorMsg) => {
-    var success = !!token;
-    var data = { success: success };
+    let success = !!token;
+    let data = { success: success };
     if (success) {
       res.cookie('sessionToken', token, { expires: expiration, httpOnly: true });
       res.cookie('username', req.body.nickname, { expires: expiration });
@@ -262,9 +260,9 @@ app.post('/join-as-guest', (req, res, next) => {
 // the room (if they began by trying to get into a room). Otherwise, redirect
 // back to the welcome page.
 app.get('/login-confirm', (req, res, next) => {
-  var token = getSessionToken(req);
-  var room = null;
-  var welcomeRedirect = 'welcome';
+  let token = getSessionToken(req);
+  let room = null;
+  let welcomeRedirect = 'welcome';
   if (req.query.room) {
     room = req.query.room;
     welcomeRedirect += '?room=' + room;
@@ -278,9 +276,9 @@ app.get('/login-confirm', (req, res, next) => {
       return res.redirect(welcomeRedirect);
     }
 
-    var userKind = app.auth.parseToken(token).userKind;
-    var username = req.query.username;
-    var data = {
+    let userKind = app.auth.parseToken(token).userKind;
+    let username = req.query.username;
+    let data = {
       username: username,
       loggedIn: userKind === "account",
       show_login: true
@@ -305,21 +303,21 @@ app.get('/login-confirm', (req, res, next) => {
 
 // Minimal message at '/' route
 app.get('/', (req, res, next) => {
-  var data = { message: config.moved_message };
+  let data = { message: config.moved_message };
   simpleRender('moved', res, data, next);
 });
 
 // TODO make this view
 // Welcome -> create a nickname or an account
 app.get('/welcome', (req, res, next) => {
-  var data = { };
+  let data = { };
   if (req.query.room) { data.room = req.query.room; }
   simpleRender('welcome', res, data, next);
 });
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
