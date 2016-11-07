@@ -1,27 +1,22 @@
-/*
 var util = require('../util');
+let config = require('../config');
 module.exports = {
-  'Who\'s Jubbin\' username cookie' : function (browser) {
+  "Users appear in Who's Jubbin' list": function(browser) {
+    util.login(browser);
     browser.resizeWindow(1920, 1080)
-      .url('http://localhost:3001/test_private_route')
-      .setCookie({
-        name: 'username',
-        value: 'test_user',
-        domain: null,       // Workaround for chrome issue
-      })
+      .url('http://localhost:3001/' + config.private_room)
       .waitForElementVisible('body', util.DEFAULT_WAIT)
-      .refresh()
-      .pause(1000)
       .click('#jubbin-list-navtab-a')
-      .waitForElementVisible('#jubbin-list', util.DEFAULT_WAIT)
-      .assert.containsText('#jubbin-list-tbody', 'test_user')
+      .assert.containsText('#jubbin-list-tbody', config.test.user.name)
       .assert.containsText('#jubbin-list-tbody', 'jubbot')
+    browser
       .getLog('browser', util.logWriter(__filename))
       .end();
   },
+  /*
   'Who\'s Jubbin\' username form' : function (browser) {
     browser.resizeWindow(1920, 1080)
-      .url('http://localhost:3001/test_private_route')
+      .url('http://localhost:3001/' + config.private_room)
       .waitForElementVisible('body', util.DEFAULT_WAIT)
       .click('#chat-settings-navtab-a')
       .waitForElementVisible('#chat-settings-panel', util.DEFAULT_WAIT)
@@ -35,10 +30,11 @@ module.exports = {
       .getLog('browser', util.logWriter(__filename))
       .end();
   },
-
-  'Who\'s Jubbin\' karma' : function (browser) {
+  */
+  "Who's Jubbin' karma" : function (browser) {
+    util.login(browser);
     browser.resizeWindow(1920, 1080)
-      .url('http://localhost:3001/test_private_route')
+      .url('http://localhost:3001/' + config.private_room)
       .waitForElementVisible('body', util.DEFAULT_WAIT)
       .waitForElementVisible('#chat-input', util.DEFAULT_WAIT)
       .setValue('#chat-input', '++jubbot')
@@ -54,4 +50,3 @@ module.exports = {
       .end();
   },
 };
-*/

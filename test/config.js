@@ -8,7 +8,7 @@ module.exports = {
   auth: {
     token_len: '20'
   },
-  private_room: 'test_private_route',
+  private_room: 'testroom',
   moved_message: "Ask for the new URL!",
   chat: {
     cache_dir: 'test/chat_cache',
@@ -17,4 +17,13 @@ module.exports = {
   mail: {
     host: 'fake.host',
   },
+
+  // only used for test cases
+  test: {
+    user: {
+      name: 'test_user',
+      password: '9ogyrW94VyaxE77K',
+      email: 'contact@thejub.pub',
+    },
+  }
 }

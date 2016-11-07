@@ -20,7 +20,7 @@ module.exports = {
       'A lame update'
     ]
   },
-  private_room: 'test_private_route',
+  private_room: 'test',
   moved_message: "This is a message telling users how to find out what the private route is.",
   chat: {
     cache_dir: './chat_cache',

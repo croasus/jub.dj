@@ -35,7 +35,7 @@ sleep 5
 
 finally() {
   if [ ! -z ${JUB_TEST_CAPTURE_PAGE+x} ]; then
-    curl -s http://localhost:3001/test_private_route > $test/artifacts/curl.capture
+    curl -s http://localhost:3001/testroom > $test/artifacts/curl.capture
   fi
   kill $1
 }
