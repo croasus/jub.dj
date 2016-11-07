@@ -1,9 +1,10 @@
-/*
 var util = require('../util');
+let config = require('../config');
 module.exports = {
   'Update preferences (basic)' : function (browser) {
+    util.login(browser);
     browser.resizeWindow(1920, 1080)
-      .url('http://localhost:3001/test_private_route')
+      .url('http://localhost:3001/' + config.private_room)
       .waitForElementVisible('#chat-settings-navtab-a', util.DEFAULT_WAIT)
       .expect.element('#show-chat-images').to.not.have.attribute('checked');
     browser
@@ -20,4 +21,3 @@ module.exports = {
       .end();
   },
 };
-*/
