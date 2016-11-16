@@ -18,6 +18,14 @@ module.exports = {
     browser
       .url('http://localhost:3001/' + config.private_room)
       .assert.urlEquals('http://localhost:3001/' + config.private_room)
+    browser
+      .url('http://localhost:3001/' + config.private_room)
+      .useXpath()
+      .click('//a[@href="/logout?room=' + config.private_room + '"]')
+      .assert.urlEquals('http://localhost:3001/logout?room=' + config.private_room)
+      .click('//button[@id="logout"]')
+      .assert.urlEquals('http://localhost:3001/welcome?room=' + config.private_room)
+    browser
       .getLog('browser', util.logWriter(__filename))
       .end();
   },

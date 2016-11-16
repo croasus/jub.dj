@@ -38,6 +38,15 @@ body {
   height: 100%;
 }
 
+#beacon {
+  display: none;
+  width: 1;
+  height: 1;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
 .table>tbody>tr>td {
   border: 0;
 }

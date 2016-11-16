@@ -171,6 +171,15 @@ script.
 
     refreshSizes(true);
     socket.emit('video state');
+
+    setBeacon();
+  }
+
+  function setBeacon() {
+    var beacon = $('<div>', {
+      id: 'beacon',
+    });
+    $(document.body).append(beacon);
   }
 
   // The API calls this function when the player's state changes.
