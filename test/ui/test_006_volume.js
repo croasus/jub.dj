@@ -23,16 +23,19 @@ module.exports = {
       .refresh().waitForElementPresent('#beacon', util.DEFAULT_WAIT)
       .assert.value("#volume-slider", "75")
       .assert.cssClassPresent("#mute-icon", "glyphicon-volume-up")
+    browser
       .click("#volume-slider")
-      .assert.value("#volume-slider", "49")
+      .expect.element("#volume-slider").to.have.value.which.matches(/49|50|51/);
+    browser
       .assert.cssClassPresent("#mute-icon", "glyphicon-volume-up")
       .refresh().waitForElementPresent('#beacon', util.DEFAULT_WAIT)
-      .assert.value("#volume-slider", "49")
+      .expect.element("#volume-slider").to.have.value.which.matches(/49|50|51/);
+    browser
       .assert.cssClassPresent("#mute-icon", "glyphicon-volume-up")
       .click("#mute")
       .assert.value("#volume-slider", "0")
       .click("#mute")
-      .assert.value("#volume-slider", "49")
+      .expect.element("#volume-slider").to.have.value.which.matches(/49|50|51/);
     browser
       .getLog('browser', util.logWriter(__filename))
       .end();

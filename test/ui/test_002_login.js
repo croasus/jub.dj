@@ -22,8 +22,10 @@ module.exports = {
       .url('http://localhost:3001/' + config.private_room)
       .useXpath()
       .click('//a[@href="/logout?room=' + config.private_room + '"]')
+      .pause(200)
       .assert.urlEquals('http://localhost:3001/logout?room=' + config.private_room)
       .click('//button[@id="logout"]')
+      .pause(200)
       .assert.urlEquals('http://localhost:3001/welcome?room=' + config.private_room)
     browser
       .getLog('browser', util.logWriter(__filename))
