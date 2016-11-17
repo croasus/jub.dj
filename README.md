@@ -28,10 +28,21 @@ Tests are slowly being added. To run them:
 ```
 $ npm test
 ```
-There are two sets of tests: server tests and UI (integration) tests.
+There are two sets of tests: server (unit/functional) tests and UI (integration/end-to-end) tests.
 
-### Adding a server test
-To add a new server test, add a script to the `test/server/` directory. It should be a node.js script, and should output something meaningful (i.e., so that if the relevant feature broke, your test's output would change).
+### Adding a UI test
+The UI tests use Selenium via Nightwatch. See the tests in `test/ui/`.
+
+The quickest way to iterate is to start the Selenium server manually and then run only your test case, instead of the entire test suite:
+
+    # In one shell:
+    $ ./test/bin/start-selenium
+
+    # In another shell:
+    $ ./test/bin/run-ui-test YOUR_UI_TEST
+
+### Adding a library test
+To add a new test, add a script to the `test/server/` directory. It should be a node.js script, and should output something meaningful (i.e., so that if the relevant feature broke, your test's output would change).
 
 While developing your test, make sure to run your script with environment variable `TEST=1`.
 
@@ -46,9 +57,6 @@ $ node test/bin/baseline.js -b YOUR_TEST
 ```
 
 Next, run the baseline tool with no arguments to make sure the other server tests still pass. If any of the tests fail, it means their output has changed. If in fact their new output is now correct, then rewrite their baselines (using `-b` as above). Don't forget to commit your new test and its baseline.
-
-### Adding a UI test
-Currently UI tests are assertion-based and use Selenium via Nightwatch. See the tests in `test/ui/`. Unlike server tests, there are no baseline files for UI tests. Simply add a new file to `test/ui/`.
 
 ## Known issues
 Internet Explorer is currently not supported.
