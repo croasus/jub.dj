@@ -24,7 +24,7 @@
     "googleapis": "^2.1.5",
     "jade": "^1.11.0",
     "jquery": "^2.1.4",
-    "lodash": "4.3.0",
+    "lodash": "4.17.2",
     "moment": "^2.10.6",
     "moment-timezone": "^0.4.1",
     "mongoose": "^4.1.8",
