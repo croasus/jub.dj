@@ -1,6 +1,8 @@
 module.exports = {
-  date: '2016-10-21',
+  date: '2016-11-18',
   list: [
-    "Fixed jubbot imitate",
+    "Fixed video deletion bug",
+    "jubbot: wtf (alias for urban)",
+    "Upgraded server node.js",
   ],
 }
