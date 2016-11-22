@@ -1,7 +1,6 @@
 module.exports = {
-  date: '2016-11-18',
+  date: '2016-11-22',
   list: [
-    "Fixed video deletion bug",
-    "Upgraded server node",
+    "Fixed copy playlist bug",
   ],
 }
