@@ -186,6 +186,21 @@ broadcasting:
   color: '#888899' }
 has time? true
 
+=== A client asks wtf is something ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: wtf is defined-word',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: wtf is defined-word
+broadcasting:
+ { text: 'defined-word: The definition',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
 === A client asks urban dictionary for a definition that doesn't exist ===
 broadcasting:
  { user: 'test_user',
@@ -196,6 +211,51 @@ has time? true
 bot received new message: urban aldkfj,,,
 broadcasting:
  { text: '"aldkfj,,,"? I dunno.',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
+=== A client asks wtf is something that doesn't exist ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: wtf is aldkfj,,,',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: wtf is aldkfj,,,
+broadcasting:
+ { text: '"aldkfj,,,"? I dunno.',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
+=== A client asks for definition in a confusing way ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: wtf is urban defined-word',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: wtf is urban defined-word
+broadcasting:
+ { text: '"urban defined-word"? I dunno.',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
+=== A client asks for another definition in a confusing way ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: urban wtf is defined-word',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: urban wtf is defined-word
+broadcasting:
+ { text: '"wtf is defined-word"? I dunno.',
   user: 'jubbot',
   isBot: true,
   color: '#888899' }

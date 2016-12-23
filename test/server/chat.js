@@ -185,10 +185,34 @@ chat.newChatMessage({
   text: 'jubbot: urban defined-word'
 });
 
+testCase('A client asks wtf is something');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: 'jubbot: wtf is defined-word'
+});
+
 testCase('A client asks urban dictionary for a definition that doesn\'t exist');
 chat.newChatMessage({
   user: TEST_USER,
   text: 'jubbot: urban aldkfj,,,'
+});
+
+testCase('A client asks wtf is something that doesn\'t exist');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: 'jubbot: wtf is aldkfj,,,'
+});
+
+testCase('A client asks for definition in a confusing way');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: 'jubbot: wtf is urban defined-word'
+});
+
+testCase('A client asks for another definition in a confusing way');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: 'jubbot: urban wtf is defined-word'
 });
 
 testCase('A client asks for help');
