@@ -41,3 +41,36 @@ r = a.remove('a');
 console.log(r, a);
 r = a.remove('b');
 console.log(r, a);
+
+console.log('ifLet')
+let ifLet = ju.ifLet;
+ifLet(null,
+      res => { console.log('should not see this.') },
+      res => { console.log('should see this.') });
+ifLet(false,
+      res => { console.log('should not see this.') },
+      res => { console.log('should see this.') });
+ifLet(undefined,
+      res => { console.log('should not see this.') },
+      res => { console.log('should see this.') });
+ifLet(0,
+      res => { console.log(res + 1) },
+      res => { console.log(res - 1) });
+ifLet('',
+      res => { console.log(res + 'a') },
+      res => { console.log(res + 'b') });
+ifLet({},
+      res => { console.log(res) });
+console.log(ifLet(1 + 1,
+                  res => { return res + 1; }));
+console.log(ifLet(null,
+                  null,
+                  res => { return 'else'; }));
+
+console.log('getIn')
+let getIn = ju.getIn;
+console.log(getIn({ a: { b: 1 } }, ['a', 'b'], 'default'))
+console.log(getIn({ a: { b: 1 } }, ['a', 'b', 'c']))
+console.log(getIn({ a: { b: 1 } }, []))
+console.log(getIn({ a: { b: 1 } }, ['a']))
+console.log(getIn({ a: { b: 1 } }, ['a', 'c']))
