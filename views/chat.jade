@@ -288,11 +288,13 @@ script.
     if (msgObj.text.includes(getUsername())) {
       if (!msgObj.isBot) {
         msgObj.isMention = true;
-        $.titleAlert(msgObj.user + ' says...', {
-          requireBlur: true,
-          duration: 0,
-          interval: 700
-        });
+        if (!msgObj.history) {
+          $.titleAlert(msgObj.user + ' says...', {
+            requireBlur: true,
+            duration: 0,
+            interval: 700
+          });
+        }
       }
     }
 
