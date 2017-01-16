@@ -117,3 +117,19 @@ function redirectToWelcome() {
   if (room) { url = '/' + room; }
   window.location.href = url;
 }
+
+function getTextWidth(text) {
+  var widthTest = $('<div>');
+  widthTest.css({
+    position: 'absolute',
+    visibility: 'hidden',
+    height: 'auto', width: 'auto',
+    'white-space': 'nowrap'
+  });
+
+  widthTest.text(text).val();
+  document.body.appendChild(widthTest[0]);
+  var textWidth = widthTest[0].offsetWidth;
+  document.body.removeChild(widthTest[0]);
+  return textWidth;
+}

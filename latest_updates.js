@@ -1,6 +1,6 @@
 module.exports = {
-  date: '2016-11-22',
+  date: '2016-1-16',
   list: [
-    "Fixed copy playlist bug",
+    "Added autocomplete for user mentions",
   ],
 }

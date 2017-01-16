@@ -8,4 +8,7 @@ $('.btn').on('click', function(e) {
   this.blur();
 });
 
-
+const keys = {
+  TAB: 9,
+  RETURN: 13,
+}

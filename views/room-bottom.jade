@@ -101,6 +101,91 @@ script.
     }
   }
 
+  function usersStartingWith(text) {
+    return _
+      .chain(currentUsers)
+      .filter(function(o) { return o.name.startsWith(text); })
+      .value();
+  }
+
+  function getLastWord(text) {
+    var words = text.split(' ');
+    if (words.length === 0) { return null; }
+    return words[words.length - 1];
+  }
+
+  var mentionSuggestion = null;
+
+  function completeMention() {
+    if (mentionSuggestion === null) {
+      return;
+    }
+    var input = $('#chat-input');
+    var lastWord = getLastWord(input.val());
+    input.val(input.val() + mentionSuggestion.slice(lastWord.length));
+    updateMentionSuggestion();
+  }
+
+  function updateMentionSuggestion(text, left, top, user) {
+    var chat = $('#chat-input');
+    var chatText = chat.val();
+
+    $('#mention-suggestion').remove();
+    mentionSuggestion = null;
+
+    var lastWord = getLastWord(chatText);
+
+    if (lastWord.length < 2) {
+      return;
+    }
+
+    var users = usersStartingWith(lastWord);
+    if (users.length === 0) {
+      return;
+    }
+
+    var user = users[0];
+    if (user.name === lastWord) {
+      return;
+    }
+
+    var suggestion = $('<div id="mention-suggestion">');
+    suggestion.css({
+      position: 'absolute',
+      height: 'auto', width: 'auto',
+      padding: '2px 5px 2px 5px',
+      color: user.color,
+      fontWeight: 'bold',
+      backgroundColor: '#000000',
+      zIndex:9999,
+      whiteSpace: 'nowrap',
+      border: '1px solid #444',
+    });
+
+    var caretOffsetX = getTextWidth(chatText)
+                       - getTextWidth(lastWord)
+                       + parseInt(chat.css('padding-left'), 10)
+                       - parseInt(suggestion.css('padding-left'), 10)
+    suggestion.text(user.name);
+    $(document.body).append(suggestion[0]);
+    suggestion.css({
+      left: chat.offset().left + caretOffsetX,
+      top: chat.offset().top - 15,
+    });
+    mentionSuggestion = user.name;
+  }
+
+  $('#chat-input').on('input', function() {
+    updateMentionSuggestion();
+  });
+
+  $('#chat-input').keydown(function(e) {
+    if (e.which === keys.TAB && mentionSuggestion !== null) {
+      completeMention();
+      e.preventDefault();
+    }
+  });
+
   // Client chat message submission
   $('#chat').submit(function() {
     var msg = $('#chat-input').val();
@@ -114,5 +199,6 @@ script.
       });
     }
     $('#chat-input').val('');
+    updateMentionSuggestion();
     return false;
   });

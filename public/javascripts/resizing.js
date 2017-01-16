@@ -29,6 +29,8 @@ function refreshSizes() {
   if (vendor().lowercase === 'moz') {
     document.querySelector('#volume-slider').style.top = '2px';
   }
+
+  updateMentionSuggestion();
 }
 
 // Wait until some short period of time has passed after the user stops
