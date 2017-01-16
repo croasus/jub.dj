@@ -114,6 +114,17 @@ script.
     return words[words.length - 1];
   }
 
+  function stripPrefixPunct(text) {
+    console.log(text);
+    return ifLet(text.match(/^[^a-zA-Z0-9]*(.*)/), function(result) {
+      console.log(result);
+      if (result.length > 1) {
+        return result[1];
+      }
+      return '';
+    });
+  }
+
   var mentionSuggestion = null;
 
   function completeMention() {
@@ -121,7 +132,7 @@ script.
       return;
     }
     var input = $('#chat-input');
-    var lastWord = getLastWord(input.val());
+    var lastWord = stripPrefixPunct(getLastWord(input.val()));
     input.val(input.val() + mentionSuggestion.slice(lastWord.length));
     updateMentionSuggestion();
   }
@@ -133,7 +144,7 @@ script.
     $('#mention-suggestion').remove();
     mentionSuggestion = null;
 
-    var lastWord = getLastWord(chatText);
+    var lastWord = stripPrefixPunct(getLastWord(chatText));
 
     if (lastWord.length < 2) {
       return;
