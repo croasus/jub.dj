@@ -1,5 +1,10 @@
 /* Utility functions for the client */
 
+const keys = {
+  TAB: 9,
+  RETURN: 13,
+}
+
 // credit to http://stackoverflow.com/questions/5357442/how-to-inspect-javascript-objects
 function inspect(o, i) {
   if (typeof i === 'undefined') { i = ''; }
