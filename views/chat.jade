@@ -149,7 +149,7 @@ script.
 
   var makeLink = function(line) {
     var adjusted = line;
-    if(line.indexOf('http') !== 0) {
+    if (line.includes('http')) {
       adjusted = 'http://' + line;
     }
     var a = $( '<a>' ).attr({
@@ -163,7 +163,7 @@ script.
 
   var makeImage = function(line) {
     var adjusted = line;
-    if(line.indexOf('http') !== 0) {
+    if(line.includes('http')) {
       adjusted = 'http://' + line;
     }
     var image = $( '<img>' ).attr({
@@ -285,7 +285,7 @@ script.
     msgObj.user = msgObj.user || '???';
 
     // Detect mentions and notify in title bar
-    if (msgObj.text.indexOf(getUsername()) >= 0) {
+    if (msgObj.text.includes(getUsername())) {
       if (!msgObj.isBot) {
         msgObj.isMention = true;
         $.titleAlert(msgObj.user + ' says...', {

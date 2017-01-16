@@ -92,9 +92,9 @@ script.
     // Accept video URLs
     if (id.startsWith('https:\/\/www.youtube.com')) {
       // TODO do we have regex?
-      if (id.indexOf('youtube.com\/watch') > 0) {
+      if (id.includes('youtube.com\/watch')) {
         id = id.split('watch?v=')[1];
-      } else if (id.indexOf('youtube.com\/playlist') > 0) {
+      } else if (id.includes('youtube.com\/playlist')) {
         id = id.split('playlist?list=')[1];
       }
     }
