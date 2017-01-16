@@ -49,10 +49,6 @@ While developing your test, make sure to run your script with environment variab
 Once your test is producing the correct output, run the baseline tool to create its baseline file:
 
 ```
-# Unix-like
-$ ./test/bin/baseline -b YOUR_TEST
-
-# Windows or Unix-like
 $ node test/bin/baseline.js -b YOUR_TEST
 ```
 
