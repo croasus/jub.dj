@@ -43,6 +43,9 @@ socket.on('preferences', function(preferences) {
   if (_.has(preferences, 'showChatImages')) {
     $('#show-chat-images').prop('checked', !!(preferences.showChatImages));
   }
+  if (_.has(preferences, 'showChatAnimations')) {
+    $('#show-chat-animations').prop('checked', !!(preferences.showChatAnimations));
+  }
   if (_.has(preferences, 'allowMuteStatus')) {
     $('#enable-mute-updates').prop('checked', !!(preferences.allowMuteStatus));
   }

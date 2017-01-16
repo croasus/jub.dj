@@ -37,6 +37,12 @@ div(id="chat-tab-content", class="tab-content")
                   ) Show images from links in chat messages
               tr
                 td
+                  input(id='show-chat-animations', type='checkbox', action='')
+                  label(id='show-chat-animations-label', for='show-chat-animations'
+                  ) Show animations in chat window
+
+              tr
+                td
                   input(id='enable-mute-updates', type='checkbox', action='')
                   label(id='enable-mute-updates-label', for='enable-mute-updates'
                   ) Allow other jubs to see your mute status
@@ -130,10 +136,11 @@ script.
   });
 
   // Scroll chat to bottom if needed
-  $('#messages').bind('update_scroll', function() {
+  $('#messages').bind('update_scroll', function(event, callback) {
     if (!scrolledUp) {
       this.scrollTop = this.scrollHeight;
     }
+    if (callback) { callback(); }
   });
 
   // Called whenever chat box is scrolled, including on window resizes
@@ -261,6 +268,48 @@ script.
     return li;
   }
 
+  var nextAnimId = function() {
+    if (!this.hasOwnProperty('animId')) {
+      this.animId = 0;
+    }
+    this.animId += 1;
+    return this.animId;
+  }
+
+  var animateKarma = function(li, value) {
+    var id = nextAnimId();
+    var anim = $('<div class="karmaAnimation" id="' + id + '">');
+    var color = value > 0 ? "#00DD11" : "#DD0011";
+    var txt = (value > 0 ? "+" : "") + value;
+    anim.css({
+      position: 'absolute',
+      height: 'auto', width: 'auto',
+      padding: '2px 5px 2px 5px',
+      color: color,
+      fontWeight: 'bold',
+      transparent: true,
+      zIndex:9999,
+      whiteSpace: 'nowrap',
+      display: 'inline-block',
+      animationDuration: '1s',
+      animationIterationCount: 1,
+      animationName: 'karma-float',
+    });
+    anim.text(txt);
+
+    var wrap = $('<div>');
+    wrap.css({
+      position: 'relative',
+      width: 0, height: 0,
+      padding: 0, margin: 0,
+      display: 'inline-block'
+    });
+    $(wrap).append(anim);
+    $(li).append(wrap);
+
+    setTimeout(function() { $("#" + id).remove(); }, 999);
+  };
+
   var appendMsgToLi = function(msgObj, li) {
     if (msgObj.emote) {
       var fullText = msgObj.user + ' ' + msgObj.text;
@@ -312,15 +361,28 @@ script.
     chatLi = makeNewLi ? newChatLi(msgObj) : list.find('li').last();
     appendMsgToLi(msgObj, chatLi);
 
-    if (makeNewLi) { list.append(chatLi); }
+    if (makeNewLi) {
+      list.append(chatLi);
+    }
 
     unreadMessagesAlert(!latestMsgVisible());
-    $('#messages').trigger('update_scroll');
+    $('#messages').trigger('update_scroll', [function() {
+      // Show a fun animation upon resceiving karma
+      ifLet(getIn(msgObj, ['karma', getUsername()]), function(val) {
+        if (!msgObj.history && $('#show-chat-animations').is(":checked")) {
+          animateKarma(chatLi, val);
+        }
+      });
+    }]);
   });
 
-  // Server responds on 'preferences' channel, handled by global.js
   $('#show-chat-images').click(function (e) {
     var data = { showChatImages: this.checked };
+    socket.emit('update user preferences', data);
+  });
+
+  $('#show-chat-animations').click(function (e) {
+    var data = { showChatAnimations: this.checked };
     socket.emit('update user preferences', data);
   });
 

@@ -734,3 +734,25 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
   background: #fff;
 }*/
+
+@keyframes karma-float {
+  0% {
+    left: 0px;
+    top: -10px;
+    font-size: 10px;
+    opacity: 0.9;
+  }
+  5% {
+    left: 0;
+    top: -32px;
+    font-size: 32px;
+    opacity: 0.9;
+    animation-timing-function: linear;
+    text-shadow: 0;
+  }
+  100% {
+    top: -150px;
+    font-size: 32px;
+    opacity: 0.0;
+  }
+}
