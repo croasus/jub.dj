@@ -15,3 +15,18 @@ remove
 [ 'a' ] [ 'b', 'b', 'd' ]
 [] [ 'b', 'b', 'd' ]
 [ 'b', 'b' ] [ 'd' ]
+ifLet
+should see this.
+should see this.
+should see this.
+1
+a
+{}
+3
+else
+getIn
+1
+null
+{ a: { b: 1 } }
+{ b: 1 }
+null
