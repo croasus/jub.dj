@@ -115,9 +115,7 @@ script.
   }
 
   function stripPrefixPunct(text) {
-    console.log(text);
     return ifLet(text.match(/^[^a-zA-Z0-9]*(.*)/), function(result) {
-      console.log(result);
       if (result.length > 1) {
         return result[1];
       }
