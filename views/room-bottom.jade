@@ -189,7 +189,8 @@ script.
   });
 
   $('#chat-input').keydown(function(e) {
-    if (e.which === keys.TAB && mentionSuggestion !== null) {
+    if ((e.which === keys.TAB || e.which === keys.UP)
+        && mentionSuggestion !== null) {
       completeMention();
       e.preventDefault();
     }
