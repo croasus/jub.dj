@@ -294,6 +294,8 @@ script.
       animationDuration: '1s',
       animationIterationCount: 1,
       animationName: 'karma-float',
+      animationFillMode: 'forwards',
+      backgroundRepeat: 'no-repeat',
     });
     anim.text(txt);
 
@@ -307,7 +309,7 @@ script.
     $(wrap).append(anim);
     $(li).append(wrap);
 
-    setTimeout(function() { $("#" + id).remove(); }, 999);
+    setTimeout(function() { $("#" + id).remove(); }, 1000);
   };
 
   var appendMsgToLi = function(msgObj, li) {
