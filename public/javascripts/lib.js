@@ -118,7 +118,7 @@ function vendor() {
 function areVideoClipSettingsValid(videoObj) {
   return videoObj.hasOwnProperty('clipStartTime')
       && videoObj.hasOwnProperty('clipEndTime')
-      && ((videoObj.clipEndTime - videoObj.clipStartTime) < videoObj.duration );
+      && ((videoObj.clipEndTime - videoObj.clipStartTime) < videoObj.duration);
 }
 
 function redirectToWelcome() {
@@ -137,7 +137,8 @@ function getTextWidth(text) {
     'white-space': 'nowrap'
   });
 
-  widthTest.text(text).val();
+  // This is just an approximation; would not work in all fonts
+  widthTest.text(text.replace(/\s/g, '.')).val();
   document.body.appendChild(widthTest[0]);
   var textWidth = widthTest[0].offsetWidth;
   document.body.removeChild(widthTest[0]);
