@@ -125,6 +125,8 @@ script.
 
   var mentionSuggestion = null;
 
+  // TODO if they are typing a long message and tab-complete past the width
+  // of the input, the user will no longer see the cursor.
   function completeMention() {
     if (mentionSuggestion === null) {
       return;
@@ -197,16 +199,28 @@ script.
       zIndex:9999,
       whiteSpace: 'nowrap',
       border: '1px solid #444',
+      overflowX: 'hidden',
     });
 
-    var caretOffsetX = getTextWidth(chatText)
-                       - getTextWidth(lastWord)
-                       + parseInt(chat.css('padding-left'), 10)
-                       - parseInt(suggestion.css('padding-left'), 10)
+
+    var chatPaddingLeft = parseInt(chat.css('padding-left'), 10);
+    var chatPaddingRight = parseInt(chat.css('padding-right'), 10);
+
+    var offsetX = getTextWidth(chatText);
+    var maxTypeWidth = chat.width();
+    if (offsetX > maxTypeWidth) {
+      offsetX = maxTypeWidth - 1;
+    }
+
+    offsetX = offsetX - 1
+              - getTextWidth(lastWord)
+              + chatPaddingLeft
+              - parseInt(suggestion.css('padding-left'), 10);
+
     suggestion.text(mentionSuggestion.name);
     $(document.body).append(suggestion[0]);
     suggestion.css({
-      left: chat.offset().left + caretOffsetX,
+      left: chat.offset().left + offsetX,
       top: chat.offset().top - 15,
     });
   }

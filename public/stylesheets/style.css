@@ -36,6 +36,7 @@ body {
   color: #DDDDEE;
   max-height: 10000000px;
   height: 100%;
+  overflow-x: hidden;
 }
 
 #beacon {
