@@ -220,3 +220,9 @@ chat.newChatMessage({
   user: TEST_USER,
   text: 'jubbot: help'
 });
+
+testCase('A client addresses the bot with no colon');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: 'jubbot urban defined-word'
+});

@@ -275,3 +275,18 @@ broadcasting:
   isBot: true,
   color: '#888899' }
 has time? true
+
+=== A client addresses the bot with no colon ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot urban defined-word',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: urban defined-word
+broadcasting:
+ { text: 'defined-word: The definition',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
