@@ -46,6 +46,14 @@ div(id="chat-tab-content", class="tab-content")
                   input(id='enable-mute-updates', type='checkbox', action='')
                   label(id='enable-mute-updates-label', for='enable-mute-updates'
                   ) Allow other jubs to see your mute status
+
+              tr
+                td
+                  input(id='add-space-after-mention', type='checkbox', action='')
+                  label(id='add-space-after-mention-label',
+                        for='add-space-after-mention'
+                  ) Add a space after autocompleted user mentions
+
             tr
               td
                 a(href='https://github.com/aromatt/thejub.pub/issues',
@@ -385,6 +393,11 @@ script.
 
   $('#show-chat-animations').click(function (e) {
     var data = { showChatAnimations: this.checked };
+    socket.emit('update user preferences', data);
+  });
+
+  $('#add-space-after-mention').click(function (e) {
+    var data = { addSpaceAfterMention: this.checked };
     socket.emit('update user preferences', data);
   });
 

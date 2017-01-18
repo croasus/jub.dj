@@ -132,6 +132,9 @@ script.
     var input = $('#chat-input');
     var lastWord = stripPrefixPunct(getLastWord(input.val()));
     input.val(input.val() + mentionSuggestion.slice(lastWord.length));
+    if ($('#add-space-after-mention').is(":checked")) {
+      input.val(input.val() + ' ');
+    }
     updateMentionSuggestion();
   }
 
