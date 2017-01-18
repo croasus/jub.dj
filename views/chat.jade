@@ -154,24 +154,24 @@ script.
     }
   });
 
-  var makeLink = function(line) {
-    var adjusted = line;
-    if (line.includes('http')) {
-      adjusted = 'http://' + line;
+  var makeLink = function(word) {
+    var adjusted = word;
+    if (!/^http/.test(word)) {
+      adjusted = 'http://' + word;
     }
     var a = $( '<a>' ).attr({
       'class': 'a-link-to-the-past',
       'href': adjusted,
       'target': '_blank'
     });
-    a.append(document.createTextNode(line));
+    a.append(document.createTextNode(word));
     return a;
   }
 
-  var makeImage = function(line) {
-    var adjusted = line;
-    if(line.includes('http')) {
-      adjusted = 'http://' + line;
+  var makeImage = function(word) {
+    var adjusted = word;
+    if (!/^http/.test('http')) {
+      adjusted = 'http://' + word;
     }
     var image = $( '<img>' ).attr({
       'src': adjusted
