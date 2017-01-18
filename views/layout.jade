@@ -1,4 +1,7 @@
 doctype html
+
+- __version__ = "1.0.0"
+
 html(lang="en")
   head
     link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
@@ -16,4 +19,4 @@ html(lang="en")
     include bottom.jade
       block bottom-content
 
-script(src='/javascripts/global.js')
+script(src='/javascripts/global.js?' + __version__)

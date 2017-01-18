@@ -2,18 +2,18 @@ title thejub.pub
 meta(charset='utf-8')
 
 // Javascript libs
-script(src='/javascripts/jquery.js')
-script(src='/javascripts/jquery.titlealert.js')
-script(src='/javascripts/jquery.truncate.min.js')
-script(src='/javascripts/strftime-min.js')
-script(src='/javascripts/moment.min.js')
-script(src='/jquery-ui/jquery-ui.js')
+script(src='/javascripts/jquery.js?' + __version__)
+script(src='/javascripts/jquery.titlealert.js?' + __version__)
+script(src='/javascripts/jquery.truncate.min.js?' + __version__)
+script(src='/javascripts/strftime-min.js?' + __version__)
+script(src='/javascripts/moment.min.js?' + __version__)
+script(src='/jquery-ui/jquery-ui.js?' + __version__)
 script(src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js')
 script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
-script(src='/javascripts/lib.js')
+script(src='/javascripts/lib.js?' + __version__)
 
 // Style sheets
-link(rel='stylesheet', href='/jquery-ui/jquery-ui.css')
+link(rel='stylesheet', href='/jquery-ui/jquery-ui.css?' + __version__)
 link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
 link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
-link(rel='stylesheet', href='/stylesheets/style.css')
+link(rel='stylesheet', href='/stylesheets/style.css?' + __version__)
