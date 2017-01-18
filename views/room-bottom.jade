@@ -131,10 +131,14 @@ script.
     }
     var input = $('#chat-input');
     var lastWord = stripPrefixPunct(getLastWord(input.val()));
-    input.val(input.val() + mentionSuggestion.slice(lastWord.length));
+    input.val(input.val() + mentionSuggestion.name.slice(lastWord.length));
+
+    // Optionally add a space after the completed username
     if ($('#add-space-after-mention').is(":checked")) {
       input.val(input.val() + ' ');
     }
+
+    // Do this to remove the suggestion
     updateMentionSuggestion();
   }
 
@@ -161,12 +165,33 @@ script.
       return;
     }
 
+    mentionSuggestion = {
+      name: user.name,
+      color: user.color,
+    };
+
+
+    this.suggestionTimer;
+    if (this.suggestionTimer) {
+      window.clearTimeout(this.suggestionTimer)
+    }
+    this.suggestionTimer = window.setTimeout(drawSuggestion, 200);
+  }
+
+  function drawSuggestion() {
+    if (mentionSuggestion === null) {
+      return;
+    }
+    var chat = $('#chat-input');
+    var chatText = chat.val();
+    var lastWord = stripPrefixPunct(getLastWord(chatText));
     var suggestion = $('<div id="mention-suggestion">');
+
     suggestion.css({
       position: 'absolute',
       height: 'auto', width: 'auto',
       padding: '2px 5px 2px 5px',
-      color: user.color,
+      color: mentionSuggestion.color,
       fontWeight: 'bold',
       backgroundColor: '#000000',
       zIndex:9999,
@@ -178,13 +203,12 @@ script.
                        - getTextWidth(lastWord)
                        + parseInt(chat.css('padding-left'), 10)
                        - parseInt(suggestion.css('padding-left'), 10)
-    suggestion.text(user.name);
+    suggestion.text(mentionSuggestion.name);
     $(document.body).append(suggestion[0]);
     suggestion.css({
       left: chat.offset().left + caretOffsetX,
       top: chat.offset().top - 15,
     });
-    mentionSuggestion = user.name;
   }
 
   $('#chat-input').on('input', function() {
