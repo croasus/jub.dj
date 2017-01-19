@@ -6,7 +6,7 @@ let config = require('./config');
 artifact_dir = process.env.JUB_TEST_ARTIFACT_DIR || path.join(__dirname, '../artifacts');
 default_levels = ['ERROR', 'WARNING', 'INFO', 'DEBUG'];
 
-let DEFAULT_WAIT = 5000;
+let DEFAULT_WAIT = 10000;
 
 module.exports = {
   DEFAULT_WAIT: DEFAULT_WAIT,
