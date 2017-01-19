@@ -37,7 +37,13 @@ var urban = function(query) {
   }
 };
 
-var bot = require('../../lib/bot')(config, gapi, twitter, urban);
+var imitater = {
+  imitate: function(user, callback) {
+    callback('imitation');
+  }
+}
+
+var bot = require('../../lib/bot')(config, gapi, twitter, urban, imitater);
 bot.get_latest_updates = function() {
   return {
     date: '2015-01-01',
@@ -221,8 +227,26 @@ chat.newChatMessage({
   text: 'jubbot: help'
 });
 
+testCase('A client uses "imitate"');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: bot.name + ': imitate ' + TEST_USER
+});
+
 testCase('A client addresses the bot with no colon');
 chat.newChatMessage({
   user: TEST_USER,
   text: 'jubbot urban defined-word'
+});
+
+testCase('A client uses "show me" with no colon');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: bot.name + ' show me pickles'
+});
+
+testCase('A client uses "imitate" with no colon');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: bot.name + ' imitate ' + TEST_USER
 });
