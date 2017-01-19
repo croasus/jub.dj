@@ -276,6 +276,21 @@ broadcasting:
   color: '#888899' }
 has time? true
 
+=== A client uses "imitate" ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: imitate test_user',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: imitate test_user
+broadcasting:
+ { text: 'imitation',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
 === A client addresses the bot with no colon ===
 broadcasting:
  { user: 'test_user',
@@ -286,6 +301,38 @@ has time? true
 bot received new message: urban defined-word
 broadcasting:
  { text: 'defined-word: The definition',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
+=== A client uses "show me" with no colon ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot show me pickles',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: show me pickles
+gapi image search: pickles
+shorten url: [ { link: 'http://pretend.image' } ]
+broadcasting:
+ { text: 'http://pretend.shortened',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
+=== A client uses "imitate" with no colon ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot imitate test_user',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: imitate test_user
+broadcasting:
+ { text: 'imitation',
   user: 'jubbot',
   isBot: true,
   color: '#888899' }
