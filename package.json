@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "colors": "^1.1.2",
-    "jshint": "^2.9.1"
+    "jshint": "^2.9.1",
+    "webpack": "~2.2.0"
   }
 }
