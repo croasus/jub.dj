@@ -1,7 +1,6 @@
 module.exports = {
-  date: '2017-1-16',
+  date: '2017-3-22',
   list: [
-    "Added autocomplete for user mentions",
-    "Added animation for chat karma",
+    "Fixed performance bug",
   ],
 }
