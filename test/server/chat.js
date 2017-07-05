@@ -39,7 +39,7 @@ var urban = function(query) {
 
 var imitater = {
   imitate: function(user, callback) {
-    callback('imitation');
+    callback("imitating '" + user + "'");
   }
 }
 
@@ -249,4 +249,10 @@ testCase('A client uses "imitate" with no colon');
 chat.newChatMessage({
   user: TEST_USER,
   text: bot.name + ' imitate ' + TEST_USER
+});
+
+testCase('A client uses "imitate" with a trailing space');
+chat.newChatMessage({
+  user: TEST_USER,
+  text: bot.name + ': imitate ' + TEST_USER + ' '
 });

@@ -3,7 +3,7 @@
  * between the test's baseline (regress/*.js.baseline) and the output of the
  * invoked test is considered a test failure. USAGE:
  *
- *   $ node test/baseline.js [-v] [-b] [TEST_CASE [, ... ]]
+ *   $ node test/bin/baseline.js [-v] [-b] [TEST_CASE [, ... ]]
  *
  * -b: write new baselines
  * -v: verbose (show diffs)

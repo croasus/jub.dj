@@ -285,7 +285,7 @@ broadcasting:
 has time? true
 bot received new message: imitate test_user
 broadcasting:
- { text: 'imitation',
+ { text: 'imitating \'test_user\'',
   user: 'jubbot',
   isBot: true,
   color: '#888899' }
@@ -332,7 +332,22 @@ broadcasting:
 has time? true
 bot received new message: imitate test_user
 broadcasting:
- { text: 'imitation',
+ { text: 'imitating \'test_user\'',
+  user: 'jubbot',
+  isBot: true,
+  color: '#888899' }
+has time? true
+
+=== A client uses "imitate" with a trailing space ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: imitate test_user ',
+  isBot: false,
+  color: 'limegreen' }
+has time? true
+bot received new message: imitate test_user 
+broadcasting:
+ { text: 'imitating \'test_user\'',
   user: 'jubbot',
   isBot: true,
   color: '#888899' }
