@@ -1,5 +1,5 @@
 module.exports = {
-  date: '2017-7-05',
+  date: '2017-07-05',
   list: [
     "Fixed imitate trailing space bug",
     "Fixed webm/gifv images",
