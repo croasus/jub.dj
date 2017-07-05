@@ -70,6 +70,7 @@ script.
   // Basic regex that accepts a line that consists only of a URL
   var urlRegex = /^(http:\/\/|https:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*[^\s]*$/i;
   var imageRegex = /[^\s]+(\.(jpeg|jpg|png|gif|bmp))$/i;
+  var videoRegex = /[^\s]+(\.(gifv|webm))$/i;
 
   function unreadMessagesAlert(areUnread) {
     if (typeof areUnread === 'undefined') { areUnread = true; }
@@ -176,10 +177,10 @@ script.
     return a;
   }
 
-  var makeImage = function(word) {
-    var adjusted = word;
-    if (!/^http/.test('http')) {
-      adjusted = 'http://' + word;
+  var makeImage = function(url) {
+    var adjusted = url;
+    if (!/^http/.test(image)) {
+      adjusted = 'http://' + url;
     }
     var image = $( '<img>' ).attr({
       'src': adjusted
@@ -192,6 +193,29 @@ script.
     return image;
   }
 
+  var makeVideo = function(url) {
+    var adjusted = url;
+    if (!/^http/.test(url)) {
+      adjusted = 'http://' + url;
+    }
+    adjusted = adjusted.replace(/gifv$/, 'mp4');
+    var video = $( '<video>' ).attr({
+      preload: 'auto',
+      autoplay: 'autoplay',
+      muted: 'muted',
+      loop: 'loop',
+      src: adjusted,
+      'type': 'video/mp4',
+      controls: false,
+    });
+    _.defer(function() {
+      var elemMaxWidth = $('#messages > li');
+      $( this ).css( 'width', (0.9 * elemMaxWidth.width()) + 'px' );
+      $( this ).css( 'height', 'auto' );
+    }.bind(video))
+    return video;
+  }
+
   var convertLineToElement = function(line, isMention){
     var elem = $('<span>');
     _.chain(line.split(' '))
@@ -200,8 +224,11 @@ script.
        var isLink = (urlRegex).test(word);
        if(isLink) {
          var isImage = (imageRegex).test( word );
+         var isVideo = (videoRegex).test( word );
          if ( isImage && #{loggedIn} && $('#show-chat-images').is(":checked") ) {
            transformedWord = makeImage( word );
+         } else if ( isVideo && #{loggedIn} && $('#show-chat-images').is(":checked") ) {
+           transformedWord = makeVideo( word );
          } else {
            transformedWord = makeLink( word );
          }
