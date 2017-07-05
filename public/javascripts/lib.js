@@ -186,3 +186,18 @@ function getIn(obj, keys, _default) {
     return getIn(obj[keys[0]], keys.slice(1), _default);
   }
 }
+
+function verifyAuthToken() {
+  // Check for authentication
+  $.ajax({
+    url: "/verify-auth",
+    type: "GET",
+    statusCode: {
+      200: function() { },
+      401: function() {
+        console.log("auth invalid, reloading");
+        location.reload();
+      },
+    }
+  });
+}

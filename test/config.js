@@ -6,7 +6,8 @@ module.exports = {
   google_api_browser_key: 'AIzaSyAn4jI9fRs2i4A9Wvnfwx_XJ6m9rnUw4I0',
   google_api_cx_id: '015617422038491686005:ibyzcnlnobg',
   auth: {
-    token_len: '20'
+    token_len: '20',
+    expiration_days: 3,
   },
   private_room: 'testroom',
   moved_message: "Ask for the new URL!",

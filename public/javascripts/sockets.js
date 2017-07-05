@@ -1,17 +1,18 @@
 
 var socket = io();
 
-// Check for invalid presentation state
 socket.on('check auth', function(obj) {
+  // Check for invalid presentation state
   var userKind = getUserKind();
   var username = getUsername();
-  console.log('checking auth');
   if (userKind !== obj.userKind) {
     location.reload();
   }
   if (username !== obj.username) {
     location.reload();
   }
+
+  verifyAuthToken();
 });
 
 socket.on('force reload', function(obj) {

@@ -1,6 +1,6 @@
 doctype html
 
-- __version__ = "1.0.1"
+- __version__ = "1.0.2"
 
 html(lang="en")
   head
@@ -18,5 +18,7 @@ html(lang="en")
     // Outside of the container
     include bottom.jade
       block bottom-content
+
+block scripts
 
 script(src='/javascripts/global.js?' + __version__)

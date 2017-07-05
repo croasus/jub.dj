@@ -3,12 +3,16 @@ let path = require('path');
 let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
 let async = require("async");
+let _ = require('lodash');
 
 let config_path = process.env.JUB_CONFIG || './config'
-let config = require(config_path) || {
+let config = _.merge({
   private_room: 'foo',
-  moved_message: 'Ask around for the new URL!'
-};
+  moved_message: 'Ask around for the new URL!',
+  auth: {
+    expiration_days: 7,
+  }
+}, require(config_path));
 
 let app = express();
 require('./lib/logging')(app);
@@ -121,6 +125,18 @@ app.get('/report', (req, res, next) => {
   });
 }, console.error);
 
+// Returns 200 if logged in, 401 otherwise
+app.get('/verify-auth', (req, res, next) => {
+  let token = getSessionToken(req) || '';
+  app.jub.validateSessionToken(token, valid => {
+    if (valid) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(401);
+    }
+  });
+}, console.error);
+
 // On this page, user can either sign up or log in. The client uses AJAX calls
 // to create the account and/or log in, and ends up redirecting either to
 // login-confirm or welcome page.
@@ -147,7 +163,7 @@ app.get('/logout', (req, res, next) => {
 // AJAX endpoint, sets sessionToken, username and userKind cookies
 app.post('/login', (req, res, next) => {
   let expiration = new Date();
-  expiration = new Date(expiration.getTime() + 86400000 * 3);
+  expiration = new Date(expiration.getTime() + 86400 * 1000 * config.auth.expiration_days);
   console.log("attempting login");
   app.jub.login(req.body.username,
                 req.body.password,
