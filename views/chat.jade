@@ -179,8 +179,9 @@ script.
 
   var makeImage = function(url) {
     var adjusted = url;
-    if (!/^http/.test(image)) {
-      adjusted = 'http://' + url;
+    if (!/^http/.test(url)) {
+      // TODO: apparently the browser complains if the page is https but the image is http
+      adjusted = 'https://' + url;
     }
     var image = $( '<img>' ).attr({
       'src': adjusted
@@ -196,7 +197,8 @@ script.
   var makeVideo = function(url) {
     var adjusted = url;
     if (!/^http/.test(url)) {
-      adjusted = 'http://' + url;
+      // TODO: apparently the browser complains if the page is https but the image is http
+      adjusted = 'https://' + url;
     }
     adjusted = adjusted.replace(/gifv$/, 'mp4');
     var video = $( '<video>' ).attr({
