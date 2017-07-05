@@ -1,6 +1,8 @@
 module.exports = {
-  date: '2017-3-22',
+  date: '2017-7-05',
   list: [
-    "Fixed imitate",
+    "Fixed imitate trailing space bug",
+    "Fixed webm/gifv images",
+    "Automatically refresh page when login expires",
   ],
 }
