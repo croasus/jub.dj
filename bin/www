@@ -4,15 +4,11 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var {app, config} = require('../app');
 var debug = require('debug')('thejub-pub:server');
 var http = require('http');
 
-/**
- * Get port from environment and store in Express.
- */
-
-var port = normalizePort(process.env.JUB_PORT || '3000');
+var port = config.port
 app.set('port', port);
 
 /**
@@ -37,26 +33,6 @@ require('../lib/socket-routing')(app.jub, app.chat, app.bot, app.config, app.aut
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
 
 /**
  * Event listener for HTTP server "error" event.

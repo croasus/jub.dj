@@ -1,4 +1,5 @@
 let express = require('express');
+let ju = require('./lib/jub_util');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
@@ -11,8 +12,15 @@ let config = _.merge({
   moved_message: 'Ask around for the new URL!',
   auth: {
     expiration_days: 7,
-  }
+  },
+  port: 3000,
 }, require(config_path));
+
+let port = ju.normalizePort(process.env.JUB_PORT);
+if (port) {
+  // Always override config file port with env port
+  config.port = port;
+}
 
 let app = express();
 require('./lib/logging')(app);
@@ -361,4 +369,7 @@ app.use((err, req, res, next) => {
   res.render('error', { });
 });
 
-module.exports = app;
+module.exports = {
+  app: app,
+  config: config,
+}
