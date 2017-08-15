@@ -5,7 +5,7 @@ PATH=$JUB_HOME/bin:$PATH
 
 # To be run by cron (and let cronjob specify where to log).
 # Only to be used for automatic restarts due to crashes and hardware failures.
-if ! pidof node >/dev/null; then
+if ! pidof node >/dev/null || ! curl -s --fail localhost:9292 >/dev/null; then
   echo "$(date) - Relaunching"
   jub-launch
 fi;
