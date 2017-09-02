@@ -115,6 +115,9 @@ app.get('/' + config.private_room, (req, res, next) => {
           loggedIn: userKind === "account",
           show_login: true,
         };
+        if(req.query.chatonly == "true") {
+          data.chatonly = true;
+        }
         simpleRender('room', res, data, next);
       } else {
         res.redirect(welcomeRedirect);

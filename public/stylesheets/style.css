@@ -497,6 +497,8 @@ a.title:focus {
 footer {
   background-color: #222;
   border: 0;
+  position: fixed;
+  -webkit-transform: translateZ(0);
 }
 
 /* Current DJ and track */

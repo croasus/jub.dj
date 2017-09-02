@@ -1,29 +1,38 @@
-div(class='col-md-9', style='padding-right:0; padding-left: 8px;')
-  table(class='table', id='next-dj-banner',
-        style='margin-bottom: 0px; margin-top: 6px; width: 100%;')
-    tbody
-      tr
-        td(id='up-next-label', style='visibility:hidden;', rowspan=2) Next:
-        td(id='next-track')
-        td(id='join-dj-td', rowspan=2)
-          if loggedIn
-            button(class='btn btn-default', type='button', id='join-dj',
-                   data-toggle='tooltip', data-placement='top',
-                   style='margin-top: 11px; float: right; position: relative; top: -5px;'
-                   title='Click to DJ')
-              span(id='join-dj-icon', class='glyphicon glyphicon-headphones')
-      tr
-        td(id='next-dj')
-          span(id='next-dj-by-span',
-               style='visibility:hidden;') by
-          span(id='next-dj-name')
-
-div(class='col-md-3', style='padding-right:0px;')
-  form(id='chat', action='')
-    input(class='form-control jub-nav-input',
-          id='chat-input', autocomplete='off',
-          style='display:inline-block;',
-          placeholder='Chat')
+unless chatonly
+  div(class='col-md-9', style='padding-right:0; padding-left: 8px;')
+    table(class='table', id='next-dj-banner',
+          style='margin-bottom: 0px; margin-top: 6px; width: 100%;')
+      tbody
+        tr
+          td(id='up-next-label', style='visibility:hidden;', rowspan=2) Next:
+          td(id='next-track')
+          unless chatonly
+            td(id='join-dj-td', rowspan=2)
+              if loggedIn
+                button(class='btn btn-default', type='button', id='join-dj',
+                       data-toggle='tooltip', data-placement='top',
+                       style='margin-top: 11px; float: right; position: relative; top: -5px;'
+                       title='Click to DJ')
+                  span(id='join-dj-icon', class='glyphicon glyphicon-headphones')
+        tr
+          td(id='next-dj')
+            span(id='next-dj-by-span',
+                 style='visibility:hidden;') by
+            span(id='next-dj-name')
+if chatonly
+  div(class='container-fluid', style='padding-right:0px;')
+    form(id='chat', action='')
+      input(class='form-control jub-nav-input',
+            id='chat-input', autocomplete='off',
+            style='display:inline-block;',
+            placeholder='Chat')
+else
+  div(class='col-md-3', style='padding-right:0px;')
+    form(id='chat', action='')
+      input(class='form-control jub-nav-input',
+            id='chat-input', autocomplete='off',
+            style='display:inline-block;',
+            placeholder='Chat')
 script.
 
   // DJ button
@@ -252,4 +261,8 @@ script.
     $('#chat-input').val('');
     updateMentionSuggestion();
     return false;
+  });
+  
+  $('#document').ready(function() {
+    $('#chat-input').focus();
   });

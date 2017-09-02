@@ -1,11 +1,17 @@
 div(class='row', id='jub-row-main')
   input(type="hidden", name="room", value=room, id='room')
 
-  div(class='col-md-3', id='jub-col-queue')
-    include queue.jade
+  unless chatonly
+    div(class='col-md-3', id='jub-col-queue')
+      include queue.jade
 
-  div(class='col-md-6', id='jub-col-player')
-    include player.jade
-
-  div(class='col-md-3', id='jub-col-chat')
-    include chat.jade
+  unless chatonly
+    div(class='col-md-6', id='jub-col-player')
+      include player.jade
+  
+  if chatonly
+    div(class='container-fluid', id='jub-col-chat', style='height:50%;')
+      include chat.jade
+  else
+    div(class='col-md-3', id='jub-col-chat')
+      include chat.jade
